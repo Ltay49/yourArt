@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "types": ["jest", "node"],
+      "target": "ESNext",
+      "module": "ESNext",
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "resolveJsonModule": true,
+      "jsx": "react"  // This enables JSX processing
+    },
+    "include": [
+      "src/**/*.ts",
+      "db/config.ts",
+      "**/*.test.ts", 
+      "**/*.spec.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist"
+    ]
+  }
