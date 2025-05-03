@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, ImageBackground} from "react-native";
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, ImageBackground, Animated, Pressable} from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, usePathname } from 'expo-router';
 const Chicago = require('../../assets/images/ChicagoArtMus.png')

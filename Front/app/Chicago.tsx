@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'expo-router';
 import AddToCollection from "./Functions/addToCollection";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
+import SerachBar from "./Components/searchBar";
 
 
 
@@ -86,13 +87,7 @@ export default function Chicago() {
 
     return (
         <View style={styles.mainContainer}>
-            <View style={styles.searchContainer}>
-                <TextInput style={styles.searchBox}
-                    placeholder="e.g 'Calude Monet' or 'Modern Art'"
-                    placeholderTextColor="rgba(0,0,0,.5)"
-                    returnKeyType="search"
-                ></TextInput>
-            </View>
+           <SerachBar/>
             {loading ? (
                 <View style={styles.loaderContainer}>
                     <ActivityIndicator size="large" color="#333" />

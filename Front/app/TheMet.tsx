@@ -2,6 +2,8 @@ import { View, Text, TextInput, StyleSheet, ScrollView, Image } from "react-nati
 import axios from "axios";
 import { useState, useEffect } from "react";
 import React from 'react';
+import SerachBar from "./Components/searchBar";
+
 
 export default function TheMetScreen() {
 
@@ -55,13 +57,7 @@ export default function TheMetScreen() {
     return (
 
         <View style={styles.mainContainer}>
-            <View style={styles.searchContainer}>
-                <TextInput style={styles.searchBox}
-                    placeholder="e.g 'Calude Monet' or 'Modern Art'"
-                    placeholderTextColor="rgba(0,0,0,.5)"
-                    returnKeyType="search"
-                ></TextInput>
-            </View>
+           <SerachBar/>
             <ScrollView>
                 <View style={styles.gallery}>
                     {metArtwork.map((art) =>
