@@ -3,9 +3,13 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import React from 'react';
 import SerachBar from "./Components/searchBar";
+import { ActivityIndicator } from "react-native";
 
 
 export default function TheMetScreen() {
+
+    const [loading, setLoading] = useState(true);
+
 
     type Artwork = {
         objectID: number
@@ -47,27 +51,38 @@ export default function TheMetScreen() {
 
     useEffect(() => {
         const loadArt = async () => {
-            const artworks = await fetchArtwork();
-            setMetArtwork(artworks);
+          setLoading(true); // start loading
+          const artworks = await fetchArtwork();
+          setMetArtwork(artworks);
+          setLoading(false); // stop loading
         };
         loadArt();
-    }, []);
+      }, []);
 
 
     return (
 
         <View style={styles.mainContainer}>
            <SerachBar/>
-            <ScrollView>
-                <View style={styles.gallery}>
-                    {metArtwork.map((art) =>
-                        <View key={art.objectID}>
-                            <Text>{art.title}</Text>
-                            <Text>{art.artistDisplayName}</Text>
-                            <Image style={styles.image} source={{ uri: art.primaryImageSmall }} />
-                        </View>)}
-                </View>
-            </ScrollView>
+           {loading ? (
+  <View style={styles.loaderContainer}>
+    <Text style={styles.loaderText}>Loading artwork...</Text>
+    <ActivityIndicator size='large' color="#333" />
+  </View>
+) : (
+  <ScrollView>
+    <View style={styles.gallery}>
+      {metArtwork.map((art) => (
+        <View key={art.objectID}>
+          <Text>{art.title}</Text>
+          <Text>{art.artistDisplayName}</Text>
+          <Image style={styles.image} source={{ uri: art.primaryImageSmall }} />
+        </View>
+      ))}
+    </View>
+  </ScrollView>
+)}
+
         </View>
     )
 
@@ -120,5 +135,16 @@ const styles = StyleSheet.create({
         // flex:1,
         // flexWrap:'wrap',
         // flexDirection:'row'
-    }
+    },
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // paddingTop: 100,
+      },
+      loaderText: {
+        fontSize: 18,
+        color: '#444',
+        marginBottom: 15,
+      }
 })

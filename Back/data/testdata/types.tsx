@@ -1,4 +1,5 @@
 type ArtItem = {
+  collection: string
   artTitle: string;
   artist: string;
   imageUrl:string

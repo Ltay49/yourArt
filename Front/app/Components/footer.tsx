@@ -1,68 +1,90 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { RelativePathString } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getLastPath, useSavePathOnNavigate } from '../Functions/useLastPath'; // adjust path
+import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
 
 export default function Footer() {
   const router = useRouter();
   const pathname = usePathname();
+  const [breadcrumbParts, setBreadcrumbParts] = useState<string[]>([]);
+
+  const [fontsLoaded] = useFonts({
+    NunitoSans_900Black,
+    NunitoSans_400Regular_Italic,
+    NunitoSans_700Bold
+  });
 
   const nameMap: { [key: string]: string } = {
     "chicago": "Chicago",
     "artwork": "Artwork",
     "index": "Home",
+    "collection": "Collection",
   };
 
-  // Function to construct breadcrumb parts
-  const getBreadcrumbParts = (pathname: string) => {
-    const segments = pathname.split('/').filter(Boolean);
+  useSavePathOnNavigate(pathname); // Save path unless it's /Collection
 
-    if (segments.length === 0) {
-      return ['Home'];  // For the root path, return ["Home"]
-    }
+  useEffect(() => {
+    const generateBreadcrumbs = async () => {
+      const segments = pathname.split('/').filter(Boolean);
 
-    return ['Home', ...segments];  // For other paths, prepend "Home"
-  };
+      if (pathname === '/Collection') {
+        const lastPath = await getLastPath();
+        const lastSegments = lastPath?.split('/').filter(Boolean) || [];
+        setBreadcrumbParts(['Home', ...lastSegments, '']);
+      } else {
+        setBreadcrumbParts(['Home', ...segments]);
+      }
+    };
 
-  const breadcrumbParts = getBreadcrumbParts(pathname);
-  console.log("pathname:", pathname);
-console.log("breadcrumbParts:", breadcrumbParts);
+    generateBreadcrumbs();
+  }, [pathname]);
 
   return (
     <View style={styles.container}>
       <View style={styles.footer}>
-        {/* Left side: Breadcrumb navigation */}
+        {/* Breadcrumb navigation */}
         <View style={styles.breadcrumbContainer}>
           {breadcrumbParts.map((segment, index) => {
             const isLast = index === breadcrumbParts.length - 1;
-            const title = nameMap[segment.toLowerCase()] || (segment.charAt(0).toUpperCase() + segment.slice(1));
-            
-            // Only link the segment if it's not the last one
-            const path = segment.toLowerCase() === 'home' 
-            ? '/' 
-            : `/${breadcrumbParts.slice(1, index + 1).join('/')}` as RelativePathString; 
+            const title = nameMap[segment.toLowerCase()] || segment;
+
+            const path = segment.toLowerCase() === 'home'
+              ? '/'
+              : `/${breadcrumbParts.slice(1, index + 1).join('/')}`;
 
             return (
               <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text
                   style={[styles.footerText, isLast && styles.activeText]}
-                  onPress={() => !isLast && router.push(path)} 
+                  onPress={() => {
+                    if (!isLast) {
+                      router.push(path as any); // replace RelativePathString with `any` or `as const` to avoid TS error
+                    }
+                  }}
                 >
                   {title}
                 </Text>
-                {index < breadcrumbParts.length - 1 && (
+                {index < breadcrumbParts.length - 1 && breadcrumbParts[index + 1] !== '' && (
                   <Text style={styles.separator}> {'>'} </Text>
                 )}
               </View>
             );
           })}
+
         </View>
 
-        {/* Right side: Collection and Profile links */}
+        {/* Right side links */}
         <View style={styles.rightLinks}>
-          <Text style={styles.footerText}>Collection</Text>
+          <Text
+            style={styles.footerText}
+            onPress={() => router.push('/Collection')}
+          >
+            <Text style={styles.collection}>Collection</Text>
+          </Text>
           <TouchableOpacity>
-          <Text style={styles.footerText}>Log In</Text>
+            <Text style={styles.footerText}>Log In</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -85,7 +107,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,  // Set shadow opacity (0-1 range)
     shadowRadius: 2,  // Set blur radius
     elevation: 2,
-    padding: 25,
+    padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',  // Ensures space between the left and right sections
     alignItems: 'center',
@@ -95,10 +117,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    justifyContent:'flex-start',
-    textAlign:'left',
+    justifyContent: 'flex-start',
+    textAlign: 'left',
     color: "#333",
     fontSize: 16,
+    fontFamily:'NunitoSans_700Bold'
   },
   activeText: {
     fontWeight: 'bold',
@@ -112,5 +135,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 5,  // Adds space between "Collection" and "Profile"
   },
+  collection:{
+    color:'brown',
+
+  }
 });
 

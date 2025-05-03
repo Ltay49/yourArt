@@ -68,7 +68,7 @@ export default function ArtworkScreen() {
   console.log(artwork)
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>{title || "untitled"}</Text>
       <Text style={styles.date}>{artwork.date_display}</Text>
       <Text style={styles.artist}>{artwork.artist_display || "Unknown"}</Text>
       <View style={styles.gallery}>
@@ -92,6 +92,7 @@ export default function ArtworkScreen() {
         {(artwork.description && artwork.description.replace(/<[^>]*>/g, '')) || "No description available."}
       </Text>
       <View style={styles.collection}>
+        <Text style={styles.collectionText}>Add to your collection</Text>
       <AddToCollection/>
       </View>
       <Text style={styles.id}>Artwork ID: {id}</Text>
@@ -209,9 +210,15 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderBottomWidth:2,
     alignSelf: 'center',
-    flexDirection: 'row',       // Lay out children horizontally
-    justifyContent: 'center', // Push content to the right
+    flexDirection: 'row',     // Lay out children horizontally
+    justifyContent: 'space-evenly', // Push content to the right
     padding: 8,                 // Optional: spacing inside the container
   },
+  collectionText:{
+    fontFamily: 'NunitoSans_700Bold',
+    fontSize:20,
+    color:'brown',
+    marginTop:10
+  }
 });
 
