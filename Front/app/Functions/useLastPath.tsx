@@ -19,3 +19,7 @@ export const useSavePathOnNavigate = (pathname: string) => {
     }
   }, [pathname]);
 };
+
+export default function Placeholder() {
+  return null;
+}

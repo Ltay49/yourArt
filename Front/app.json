@@ -37,7 +37,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
@@ -48,6 +49,12 @@
         "projectId": "7dad9ac8-f4ae-417e-82c1-493461558532"
       }
     },
-    "owner": "bubba9"
+    "owner": "bubba9",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7dad9ac8-f4ae-417e-82c1-493461558532"
+    }
   }
 }

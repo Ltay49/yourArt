@@ -7,6 +7,7 @@ import AddToCollection from "./Functions/addToCollection";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
 import SerachBar from "./Components/searchBar";
+import { SpecialElite_400Regular, useFonts } from '@expo-google-fonts/special-elite'
 
 
 
@@ -17,7 +18,11 @@ export default function Chicago() {
     const router = useRouter();
     const pathname = usePathname();
     const [loading, setLoading] = useState(true);
-    const scrollRef = useRef<ScrollView>(null); // 
+    const scrollRef = useRef<ScrollView>(null); 
+
+    const [fontsLoaded] = useFonts({
+        SpecialElite_400Regular
+    });
 
     type Artwork = {
         id: number;
@@ -98,12 +103,17 @@ export default function Chicago() {
                     <View style={styles.gridContainer}>
                         {artworks.map((artwork) => (
                             <View key={artwork.id} style={styles.card}>
+                                { artwork.image_id?
                                 <Image
                                     source={{
                                         uri: `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`,
                                     }}
                                     style={styles.image}
-                                />
+                                /> :(
+                                    <View style={styles.noImageBox}>
+                                    <Text style={styles.noImageText}>No image available</Text>
+                                    </View>
+                                    )}
                                 <Text style={styles.title}>{artwork.title}</Text>
                                 <Text style={styles.artist}>{artwork.artist_titles}</Text>
                                 <View style={styles.row}>
@@ -279,4 +289,18 @@ const styles = StyleSheet.create({
     bold: {
         fontWeight: "bold",
     },
+    noImageText:{
+        textAlign:'center',
+        fontSize:50,
+        fontFamily:'SpecialElite_400Regular',
+        color: "brown",
+        transform: [{ rotate: '-45deg' }]
+    },
+    noImageBox:{
+        height: 300,
+        borderRadius:10,
+        borderWidth:2,
+        justifyContent:'center',
+        borderColor:'grey'
+    }
 })

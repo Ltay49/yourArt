@@ -1,15 +1,31 @@
-import { View, Text, TextInput, StyleSheet, ScrollView, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, ScrollView, Image, TouchableOpacity, ImageBackground } from "react-native";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import React from 'react';
 import SerachBar from "./Components/searchBar";
 import { ActivityIndicator } from "react-native";
+import AddToCollection from "./Functions/addToCollection";
+import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
+import { SpecialElite_400Regular } from '@expo-google-fonts/special-elite'
+import { useRouter, usePathname } from 'expo-router';
 
 
 export default function TheMetScreen() {
 
-    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+    const pathname = usePathname();
 
+
+    const [loading, setLoading] = useState(true);
+    const [total, setTotal] = useState(0)
+    const [pageNumber, setPageNumber] = useState([0, 10])
+
+    const [fontsLoaded] = useFonts({
+        NunitoSans_900Black,
+        NunitoSans_400Regular_Italic,
+        NunitoSans_700Bold,
+        SpecialElite_400Regular
+    });
 
     type Artwork = {
         objectID: number
@@ -24,13 +40,17 @@ export default function TheMetScreen() {
         try {
             const response = await axios.get('https://collectionapi.metmuseum.org/public/collection/v1/objects');
             const artIdList = response.data.objectIDs;
+            const total = response.data.total
+
+            console.log(total)
+            setTotal(total)
 
             if (!artIdList || artIdList.length === 0) {
                 console.log("No artwork IDs found.");
                 return [];
             }
 
-            const first12Ids = artIdList.slice(40, 50);
+            const first12Ids = artIdList.slice(pageNumber[0], pageNumber[1]);
 
             // Fetch artwork details in parallel
             const artworkPromises = first12Ids.map((id: any) =>
@@ -40,8 +60,6 @@ export default function TheMetScreen() {
             const artworkResponses = await Promise.all(artworkPromises);
             const artworks = artworkResponses.map((res) => res.data);
 
-            console.log(artworks); // Full objects for first 12 artworks
-
             return artworks ?? []
         } catch (error) {
             console.error("Error fetching artwork:", error);
@@ -49,39 +67,97 @@ export default function TheMetScreen() {
         }
     };
 
+
+    const nextPage = () => {
+        setPageNumber([pageNumber[0] + 10, pageNumber[1] + 10])
+    }
+    const prevPage = () => {
+        if (pageNumber[0] >= 10) {
+            setPageNumber([pageNumber[0] - 10, pageNumber[1] - 10]);
+        }
+    };
+
+
+
+
     useEffect(() => {
         const loadArt = async () => {
-          setLoading(true); // start loading
-          const artworks = await fetchArtwork();
-          setMetArtwork(artworks);
-          setLoading(false); // stop loading
+            setLoading(true); // start loading
+            const artworks = await fetchArtwork();
+            setMetArtwork(artworks);
+            setLoading(false); // stop loading
         };
         loadArt();
-      }, []);
+    }, [pageNumber]);
 
+    const totalPages = total / 10
 
     return (
 
         <View style={styles.mainContainer}>
-           <SerachBar/>
-           {loading ? (
-  <View style={styles.loaderContainer}>
-    <Text style={styles.loaderText}>Loading artwork...</Text>
-    <ActivityIndicator size='large' color="#333" />
-  </View>
-) : (
-  <ScrollView>
-    <View style={styles.gallery}>
-      {metArtwork.map((art) => (
-        <View key={art.objectID}>
-          <Text>{art.title}</Text>
-          <Text>{art.artistDisplayName}</Text>
-          <Image style={styles.image} source={{ uri: art.primaryImageSmall }} />
-        </View>
-      ))}
-    </View>
-  </ScrollView>
-)}
+            <SerachBar />
+            {loading ? (
+                <View style={styles.loaderContainer}>
+                    <Text style={styles.loaderText}>Loading artwork...</Text>
+                    <ActivityIndicator size='large' color="#333" />
+                </View>
+            ) : (
+                <ScrollView contentContainerStyle={styles.scrollContent}>
+                    <View style={styles.gallery}>
+                        {metArtwork.map((art) => (
+                            <View style={styles.card} key={art.objectID}>
+                                {art.primaryImageSmall ? (
+                                    <Image
+                                        style={styles.image}
+                                        source={{ uri: art.primaryImageSmall }}
+                                    />
+                                ) : (
+                                    <ImageBackground style={styles.noImageBox}>
+                                        <Text style={styles.noImageText}>No image available</Text>
+                                    </ImageBackground>
+                                )}
+                                <Text style={styles.title}>{art.title || "unknown"}</Text>
+                                <Text style={styles.artist}>{art.artistDisplayName || "Unknown"}</Text>
+                                <View style={styles.row}>
+                                <TouchableOpacity
+                                       onPress={async () => {
+                                        // await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
+                                    
+                                        router.push({
+                                            pathname: "/TheMet/[id]",
+                                            params: {
+                                                id: art.objectID,
+                                            },
+                                        });
+                                    }}
+                                        >
+                                        <Text style={styles.view}>
+                                            View Here
+                                        </Text>
+                                        <View style={styles.underline}>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <AddToCollection />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                    <View>
+                        <View style={styles.row1}>
+                            <TouchableOpacity onPress={prevPage}>
+                                <Text>Previous</Text>
+                            </TouchableOpacity>
+                            <Text>Page</Text>
+                            <Text></Text>
+                            <Text>of</Text>
+                            <Text>{Math.round(totalPages)}</Text>
+                            <TouchableOpacity onPress={nextPage}>
+                                <Text>Next</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </ScrollView>
+            )}
 
         </View>
     )
@@ -93,58 +169,94 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
     },
-    searchContainer: {
-        marginTop: 0,
-        marginBottom: 5,
-        height: 120,
-        // backgroundColor: "#f0f0f0",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 10,
-        borderBottomWidth: 1,
-        width: "100%",
-        backgroundColor: "#fff",
-        borderColor: 'grey',
-        shadowColor: 'black',  // Shadow color (black here)
-        shadowOffset: { width: 0, height: 2 },  // x: 0 (no horizontal offset), y: 10 (vertical offset)
-        shadowOpacity: .3,  // Set shadow opacity (0-1 range)
-        shadowRadius: 2,
+    scrollContent: {
+        paddingBottom: 80,
     },
-    searchBox: {
-        width: '90%',
-        borderWidth: 1,
-        borderRadius: 30,
-        height: '40%',
-        top: '13%',
-        paddingLeft: 20,
-        paddingRight: 20,
-        backgroundColor: 'white',
-        borderBottomWidth: 1,
-        borderColor: "#fff",
-        shadowColor: "grey",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 3,
+    card: {
+        width: "95%",
+        backgroundColor: "#f0f0f0",
+        borderColor: 'grey',
+        borderRadius: 20,
+        padding: 10,
+        marginBottom: 10,
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: 250,
     },
     image: {
-        height: 100,
-        width: 100
+        width: "100%",
+        height: 300,
+        borderRadius: 10,
     },
-    gallery:{
-        // flex:1,
-        // flexWrap:'wrap',
-        // flexDirection:'row'
+    gallery: {
+        flex: 1,
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
     loaderContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         // paddingTop: 100,
-      },
-      loaderText: {
+    },
+    loaderText: {
         fontSize: 18,
         color: '#444',
         marginBottom: 15,
-      }
+    },
+    view: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 10,
+    },
+    row1: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 10,
+    },
+    title: {
+        marginTop: 10,
+        fontSize: 16,
+        fontWeight: "bold",
+        flexShrink: 1,
+    },
+    artist: {
+        fontSize: 14,
+        color: "gray",
+        flexShrink: 1,
+    },
+    underline: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 20,
+        height: 2,
+        backgroundColor: 'black',
+        width: '100%'
+    },
+    noImageText: {
+        top:'0%',
+        height: '40%',
+        width: '90%',
+        alignSelf: 'center',
+        textAlign: 'center',
+        fontSize: 50,
+        fontFamily: 'SpecialElite_400Regular',
+        color: "brown",
+        transform: [{ rotate: '-45deg' }],
+        // borderWidth: 2
+    },
+    noImageBox: {
+        borderWidth: 2,
+        overflow: 'hidden',
+        height: 300,
+        borderRadius: 10,
+        justifyContent: 'center',
+        borderColor: 'grey'
+    }
 })
