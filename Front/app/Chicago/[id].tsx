@@ -2,7 +2,6 @@ import { useLocalSearchParams } from 'expo-router';
 import { Text, View, StyleSheet, ScrollView, Image } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import SimilarWork from '../Components/suggestions';
 import Suggestions from '../Components/suggestionsArtist';
 import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
 import AddToCollection from '../Functions/addToCollection';

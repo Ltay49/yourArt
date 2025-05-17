@@ -3,6 +3,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from "react";
 import axios from 'axios';
+import AddToCollection from "../Functions/addToCollection";
 
 
 export default function TheMetArtwork() {
@@ -50,6 +51,10 @@ export default function TheMetArtwork() {
             </ImageBackground>
             )}
             <Text>{artwork?.creditLine}</Text>
+            <View style={styles.collection}>
+        <Text style={styles.collectionText}>Add to your collection</Text>
+      <AddToCollection/>
+      </View>
         </View>
     )
 
@@ -73,10 +78,10 @@ const styles = StyleSheet.create({
         // borderWidth: 2
     },
     noImageBox: {
-        borderWidth: 2,
+        borderTopWidth: 2,
+        borderBottomWidth: 2,
         overflow: 'hidden',
         height: 300,
-        borderRadius: 10,
         justifyContent: 'center',
         borderColor: 'grey'
     },
@@ -84,5 +89,20 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 300,
         borderRadius: 10,
-    }
+    },
+  collection: {
+    width: '100%',
+    borderTopWidth: 2,
+    borderBottomWidth:2,
+    alignSelf: 'center',
+    flexDirection: 'row',     // Lay out children horizontally
+    justifyContent: 'space-evenly', // Push content to the right
+    padding: 8,                 // Optional: spacing inside the container
+  },
+  collectionText:{
+    fontFamily: 'NunitoSans_700Bold',
+    fontSize:20,
+    color:'brown',
+    marginTop:10
+  }
 })

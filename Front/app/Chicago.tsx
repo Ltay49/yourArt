@@ -123,7 +123,7 @@ export default function Chicago() {
                                         await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
                                     
                                         router.push({
-                                            pathname: "/Chicago/[id]",
+                                            pathname: "../Chicago/[id]",
                                             params: {
                                                 title: artwork.title,
                                                 id: artwork.id.toString(),

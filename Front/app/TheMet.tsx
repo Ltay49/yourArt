@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, ScrollView, Image, TouchableOpacity, ImageBackground } from "react-native";
+import { View, Text, TextInput, StyleSheet, ScrollView, Image, TouchableOpacity, ImageBackground, Button } from "react-native";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import React from 'react';
@@ -15,7 +15,7 @@ export default function TheMetScreen() {
     const router = useRouter();
     const pathname = usePathname();
 
-
+    const [currentPage, setCurrentPage] = useState(1)
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0)
     const [pageNumber, setPageNumber] = useState([0, 10])
@@ -69,10 +69,12 @@ export default function TheMetScreen() {
 
 
     const nextPage = () => {
+        setCurrentPage(currentPage +1)
         setPageNumber([pageNumber[0] + 10, pageNumber[1] + 10])
     }
     const prevPage = () => {
         if (pageNumber[0] >= 10) {
+            setCurrentPage(currentPage -1)
             setPageNumber([pageNumber[0] - 10, pageNumber[1] - 10]);
         }
     };
@@ -144,16 +146,17 @@ export default function TheMetScreen() {
                     </View>
                     <View>
                         <View style={styles.row1}>
-                            <TouchableOpacity onPress={prevPage}>
-                                <Text>Previous</Text>
-                            </TouchableOpacity>
-                            <Text>Page</Text>
-                            <Text></Text>
-                            <Text>of</Text>
-                            <Text>{Math.round(totalPages)}</Text>
-                            <TouchableOpacity onPress={nextPage}>
-                                <Text>Next</Text>
-                            </TouchableOpacity>
+                            <Button onPress={prevPage}
+                                title="Previous"/>
+                                <View style={styles.row}>
+                            <Text style={styles.pageNumber}>
+                                Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{totalPages}</Text>
+        
+                            </Text>
+                            </View>
+                            <Button onPress={nextPage}
+                                title="Next"/>
+                         
                         </View>
                     </View>
                 </ScrollView>
@@ -258,5 +261,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         borderColor: 'grey'
-    }
+    },
+    pageNumber: {
+        fontSize: 16,
+        color: "#333",
+        fontStyle: 'italic'
+    },
+    bold: {
+        fontWeight: "bold",
+    },
 })
