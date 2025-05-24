@@ -3,7 +3,8 @@ import { useRouter, usePathname } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import AddToCollection from "../Functions/addToCollection";
+import AddToCollection from "../../Functions/addToCollection";
+import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
 
 
 export default function TheMetArtwork() {
@@ -11,14 +12,24 @@ export default function TheMetArtwork() {
     const { id } = useLocalSearchParams()
     const [artwork, setArtwork] = useState<Artwork | null>(null);
 
+    const [fontsLoaded] = useFonts({
+        NunitoSans_900Black,
+        NunitoSans_400Regular_Italic,
+        NunitoSans_700Bold
+      });
+
     type Artwork = {
-        objectID: Number
+        objectID: number
         primaryImage: string
-        title: String
-        culture: String
-        artistDisplayName: String
-        artistDisplayBio: String
-        creditLine: String
+        title: string
+        culture: string
+        objectBeginDate: number
+        artistDisplayName: string
+        artistDisplayBio: string
+        creditLine: string
+        objectDate: string
+        country: string
+        artistNationality:string
     }
 
     useEffect(() => {
@@ -39,18 +50,24 @@ export default function TheMetArtwork() {
 
     return (
         <View style={styles.page}>
-            <Text>{artwork?.artistDisplayName || "Artist: Unknown"}</Text>
-            <Text>{artwork?.artistDisplayBio}</Text>
+            <Text style={styles.title}>{artwork?.title || "untitled"}</Text>
+            <View style={styles.row}>
+            <Text style={styles.date}>{artwork?.country || "location unknown"},</Text>
+            <Text style={styles.date}>{artwork?.objectDate}</Text>
+            </View>
+            <Text style={styles.artist}>{artwork?.artistDisplayName || "Artist: Unknown"}</Text>
+            <Text style={styles.artist}>{artwork?.artistDisplayBio}</Text>
             {artwork?.primaryImage ? (
             <Image
                  style={styles.image}
                 source={{ uri: artwork?.primaryImage || "https://example.com/no-image.png" }}
+                resizeMode="contain"
             /> ) : (
                 <ImageBackground style={styles.noImageBox}>
                 <Text style={styles.noImageText}>No image available</Text>
             </ImageBackground>
             )}
-            <Text>{artwork?.creditLine}</Text>
+            <Text style={styles.credit}>Credited:{artwork?.creditLine}</Text>
             <View style={styles.collection}>
         <Text style={styles.collectionText}>Add to your collection</Text>
       <AddToCollection/>
@@ -62,7 +79,7 @@ export default function TheMetArtwork() {
 
 const styles = StyleSheet.create({
     page: {
-        flex: 1,
+        // flex: 1,
         justifyContent: 'center'
     },
     noImageText: {
@@ -86,9 +103,9 @@ const styles = StyleSheet.create({
         borderColor: 'grey'
     },
     image: {
-        width: "100%",
-        height: 300,
-        borderRadius: 10,
+        width: '100%',           // Two images side by side with some margin
+        aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
+        resizeMode: 'contain',
     },
   collection: {
     width: '100%',
@@ -104,5 +121,35 @@ const styles = StyleSheet.create({
     fontSize:20,
     color:'brown',
     marginTop:10
-  }
+  },
+  row:{
+    flexDirection:'row'
+  },
+  title: {
+    fontSize: 28,
+    fontFamily: 'NunitoSans_900Black',
+    fontWeight: "bold",
+    color: "#222",
+    marginTop: 40,
+    padding: 10
+  },
+  date: {
+    marginTop: -20,
+    marginLeft: 0,
+    fontFamily: 'NunitoSans_400Regular_Italic',
+    padding: 10,
+    fontSize: 16,
+    color: "black",
+  },
+  artist: {
+    padding: 10,
+    fontFamily: 'NunitoSans_900Black',
+    fontSize: 18,
+    color: "#555",
+    marginBottom: -10,
+  },
+  credit: {
+    marginTop: 0,
+    marginBottom: 20
+  },
 })

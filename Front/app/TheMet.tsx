@@ -92,7 +92,8 @@ export default function TheMetScreen() {
         loadArt();
     }, [pageNumber]);
 
-    const totalPages = total / 10
+    const totalPages = Math.ceil(total/ 10);
+
 
     return (
 

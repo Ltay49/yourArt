@@ -2,9 +2,9 @@ import { useLocalSearchParams } from 'expo-router';
 import { Text, View, StyleSheet, ScrollView, Image } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Suggestions from '../Components/suggestionsArtist';
+import Suggestions from '../../Components/suggestionsArtist';
 import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
-import AddToCollection from '../Functions/addToCollection';
+import AddToCollection from '../../Functions/addToCollection';
 import React from 'react';
 
 export default function ArtworkScreen() {
@@ -64,7 +64,7 @@ export default function ArtworkScreen() {
       </View>
     );
   }
-  console.log(artwork)
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
       <Text style={styles.title}>{title || "untitled"}</Text>

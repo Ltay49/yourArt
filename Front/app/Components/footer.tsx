@@ -1,45 +1,78 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
-import { RelativePathString } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { getLastPath, useSavePathOnNavigate } from '../Functions/useLastPath'; // adjust path
-import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
+import {
+  setReturnPath,
+  getReturnPath,
+  clearReturnPath
+} from '../Functions/useLastPath';
+import {
+  useFonts,
+  NunitoSans_900Black,
+  NunitoSans_400Regular_Italic,
+  NunitoSans_700Bold,
+} from '@expo-google-fonts/nunito-sans';
 
 export default function Footer() {
   const router = useRouter();
   const pathname = usePathname();
   const [breadcrumbParts, setBreadcrumbParts] = useState<string[]>([]);
+  const [routeGroup, setRouteGroup] = useState<string>('');
 
   const [fontsLoaded] = useFonts({
     NunitoSans_900Black,
     NunitoSans_400Regular_Italic,
-    NunitoSans_700Bold
+    NunitoSans_700Bold,
   });
 
   const nameMap: { [key: string]: string } = {
-    "chicago": "Chicago",
-    "artwork": "Artwork",
-    "index": "Home",
-    "collection": "Collection",
+    chicago: 'Chicago',
+    artwork: 'Artwork',
+    index: 'Home',
+    collection: 'Collection',
   };
 
-  useSavePathOnNavigate(pathname); // Save path unless it's /Collection
+  // useSavePathOnNavigate(pathname);
 
   useEffect(() => {
     const generateBreadcrumbs = async () => {
       const segments = pathname.split('/').filter(Boolean);
-
+      const clean = (s: string) => s.replace(/\[|\]/g, '');
+      const visibleSegments = segments
+        .filter((s: string) => !s.startsWith('('))
+        .map(clean);
+  
+      // Find raw group segment (with parentheses)
+      const rawGroup = segments.find((s: string) => s.startsWith('(')) || '';
+      let group = rawGroup.replace(/[()]/g, ''); // remove parentheses
+  
+      // If last segment is a number, force group to 'artwork'
+      const lastSegment = visibleSegments[visibleSegments.length - 1] || '';
+      const isLastSegmentNumber = /^\d+$/.test(lastSegment);
+  
+      if (isLastSegmentNumber) {
+        group = 'artwork';
+      }
+  
       if (pathname === '/Collection') {
-        const lastPath = await getLastPath();
-        const lastSegments = lastPath?.split('/').filter(Boolean) || [];
-        setBreadcrumbParts(['Home', ...lastSegments, '']);
+        const returnPath = await getReturnPath();
+        const returnSegments = returnPath
+          ?.split('/')
+          .filter((s: string) => !s.startsWith('(') && s)
+          .map(clean) || [];
+  
+        setBreadcrumbParts(['Home', ...returnSegments, '']);
+        setRouteGroup(group);
       } else {
-        setBreadcrumbParts(['Home', ...segments]);
+        setRouteGroup(group);
+        setBreadcrumbParts(['Home', ...visibleSegments]);
       }
     };
-
+  
     generateBreadcrumbs();
   }, [pathname]);
+  
+  
 
   return (
     <View style={styles.container}>
@@ -50,9 +83,17 @@ export default function Footer() {
             const isLast = index === breadcrumbParts.length - 1;
             const title = nameMap[segment.toLowerCase()] || segment;
 
-            const path = segment.toLowerCase() === 'home'
-              ? '/'
-              : `/${breadcrumbParts.slice(1, index + 1).join('/')}`;
+            const basePath =
+              segment.toLowerCase() === 'home'
+                ? '/'
+                : `/${breadcrumbParts.slice(1, index + 1).join('/')}`;
+
+            const isIdLike = /^\d+$/.test(segment);
+
+            const pathWithGroup =
+            routeGroup && isLast && isIdLike
+              ? `/Chicago/${routeGroup}/${segment}`
+              : basePath;
 
             return (
               <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -60,29 +101,32 @@ export default function Footer() {
                   style={[styles.footerText, isLast && styles.activeText]}
                   onPress={() => {
                     if (!isLast) {
-                      router.push(path as any); // replace RelativePathString with `any` or `as const` to avoid TS error
+                      router.push(pathWithGroup as any);
                     }
                   }}
                 >
                   {title}
                 </Text>
-                {index < breadcrumbParts.length - 1 && breadcrumbParts[index + 1] !== '' && (
-                  <Text style={styles.separator}> {'>'} </Text>
-                )}
+                {index < breadcrumbParts.length - 1 &&
+                  breadcrumbParts[index + 1] !== '' && (
+                    <Text style={styles.separator}> {'>'} </Text>
+                  )}
               </View>
             );
           })}
-
         </View>
 
         {/* Right side links */}
         <View style={styles.rightLinks}>
-          <Text
-            style={styles.footerText}
-            onPress={() => router.push('/Collection')}
-          >
-            <Text style={styles.collection}>Collection</Text>
-          </Text>
+        <Text
+  style={styles.footerText}
+  onPress={async () => {
+    await setReturnPath(pathname); // save where we’re coming from
+    router.push('/Collection');
+  }}
+>
+  <Text style={styles.collection}>Collection</Text>
+</Text>
           <TouchableOpacity>
             <Text style={styles.footerText}>Log In</Text>
           </TouchableOpacity>

@@ -37,21 +37,6 @@ export default function Search() {
             The Metropolitan Museum of Art</Text>
         </ImageBackground>
         </View>
-        <View style={styles.galleryName}>
-        <ImageBackground source={RKJ} style={styles.galleryPic}>
-     <LinearGradient
-            colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)']}
-            style={styles.gradient}
-          />
-          <Text style={styles.galLink}
-            onPress={() => router.push('/Chicago')}
-            >
-           Rajkmuseam</Text>
-        </ImageBackground>
-        </View>
-        <View style={styles.galleryName}>
-        <Text>Rajkmuseam</Text>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );

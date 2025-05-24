@@ -122,13 +122,7 @@ export default function Chicago() {
                                        onPress={async () => {
                                         await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
                                     
-                                        router.push({
-                                            pathname: "../Chicago/[id]",
-                                            params: {
-                                                title: artwork.title,
-                                                id: artwork.id.toString(),
-                                            },
-                                        });
+                                        router.push(`/Chicago/(artwork)/${artwork.id}`);
                                     }}
                                         >
                                             <Text style={styles.view}>
