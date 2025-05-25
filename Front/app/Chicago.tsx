@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'expo-router';
 import AddToCollection from "./Functions/addToCollection";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
-import SerachBar from "./Components/searchBar";
+import SerachBar from "./Components/searchBarChicago";
 import { SpecialElite_400Regular, useFonts } from '@expo-google-fonts/special-elite'
 
 
@@ -18,7 +18,7 @@ export default function Chicago() {
     const router = useRouter();
     const pathname = usePathname();
     const [loading, setLoading] = useState(true);
-    const scrollRef = useRef<ScrollView>(null); 
+    const scrollRef = useRef<ScrollView>(null);
 
     const [fontsLoaded] = useFonts({
         SpecialElite_400Regular
@@ -40,7 +40,7 @@ export default function Chicago() {
 
     const fetchArtwork = async (url?: string) => {
         setLoading(true);
-    
+
         try {
             // If no URL is passed, try loading the last saved URL
             if (!url) {
@@ -50,11 +50,11 @@ export default function Chicago() {
                 // Save current URL to storage
                 await AsyncStorage.setItem("lastArtworkUrl", url);
             }
-    
+
             const response = await axios.get(url);
             const newArtworks = response.data.data;
             const pagination = response.data.pagination;
-    
+
             setArtworks(newArtworks);
             setNextUrl(pagination.next_url || null);
             setPrevUrl(pagination.prev_url || null);
@@ -69,7 +69,7 @@ export default function Chicago() {
             }, 100);
         }
     };
-    
+
 
     useFocusEffect(
         React.useCallback(() => {
@@ -88,11 +88,11 @@ export default function Chicago() {
             }
         }, [pathname])
     );
-    
+
 
     return (
         <View style={styles.mainContainer}>
-           <SerachBar/>
+            <SerachBar />
             {loading ? (
                 <View style={styles.loaderContainer}>
                     <ActivityIndicator size="large" color="#333" />
@@ -103,27 +103,27 @@ export default function Chicago() {
                     <View style={styles.gridContainer}>
                         {artworks.map((artwork) => (
                             <View key={artwork.id} style={styles.card}>
-                                { artwork.image_id?
-                                <Image
-                                    source={{
-                                        uri: `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`,
-                                    }}
-                                    style={styles.image}
-                                /> :(
-                                    <View style={styles.noImageBox}>
-                                    <Text style={styles.noImageText}>No image available</Text>
-                                    </View>
+                                {artwork.image_id ?
+                                    <Image
+                                        source={{
+                                            uri: `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`,
+                                        }}
+                                        style={styles.image}
+                                    /> : (
+                                        <View style={styles.noImageBox}>
+                                            <Text style={styles.noImageText}>No image available</Text>
+                                        </View>
                                     )}
                                 <Text style={styles.title}>{artwork.title}</Text>
                                 <Text style={styles.artist}>{artwork.artist_titles}</Text>
                                 <View style={styles.row}>
                                     <View style={{ alignSelf: 'flex-start' }}>
                                         <TouchableOpacity
-                                       onPress={async () => {
-                                        await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-                                    
-                                        router.push(`/Chicago/(artwork)/${artwork.id}`);
-                                    }}
+                                            onPress={async () => {
+                                                await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
+
+                                                router.push(`/Chicago/(artwork)/${artwork.id}`);
+                                            }}
                                         >
                                             <Text style={styles.view}>
                                                 View Here
@@ -131,7 +131,7 @@ export default function Chicago() {
                                         </TouchableOpacity>
                                         <View style={styles.underline} />
                                     </View>
-                                    <AddToCollection/>
+                                    <AddToCollection />
                                 </View>
                             </View>
                         ))}
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
         shadowColor: 'black',  // Shadow color (black here)
         shadowOffset: { width: 0, height: 2 },  // x: 0 (no horizontal offset), y: 10 (vertical offset)
         shadowOpacity: .3,  // Set shadow opacity (0-1 range)
-        shadowRadius: 2, 
+        shadowRadius: 2,
     },
     searchText: {
         color: "#fff",
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
         // borderRightWidth:2,
         // borderBottomWidth:2,
         backgroundColor: "#f0f0f0",
-        borderColor:'grey',
+        borderColor: 'grey',
         borderRadius: 20,
         padding: 10,
         // marginLeft: 10,
@@ -237,10 +237,10 @@ const styles = StyleSheet.create({
     collect: {
         color: 'brown',
         fontWeight: 'bold',
-        fontSize:16,
+        fontSize: 16,
     },
     view: {
-        fontSize:16,
+        fontSize: 16,
         fontWeight: 'bold',
     },
     underline: {
@@ -283,18 +283,18 @@ const styles = StyleSheet.create({
     bold: {
         fontWeight: "bold",
     },
-    noImageText:{
-        textAlign:'center',
-        fontSize:50,
-        fontFamily:'SpecialElite_400Regular',
+    noImageText: {
+        textAlign: 'center',
+        fontSize: 50,
+        fontFamily: 'SpecialElite_400Regular',
         color: "brown",
         transform: [{ rotate: '-45deg' }]
     },
-    noImageBox:{
+    noImageBox: {
         height: 300,
-        borderRadius:10,
-        borderWidth:2,
-        justifyContent:'center',
-        borderColor:'grey'
+        borderRadius: 10,
+        borderWidth: 2,
+        justifyContent: 'center',
+        borderColor: 'grey'
     }
 })

@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, ScrollView, Image, TouchableOpacity,
 import axios from "axios";
 import { useState, useEffect } from "react";
 import React from 'react';
-import SerachBar from "./Components/searchBar";
+import SerachBar from "./Components/searchBarMet";
 import { ActivityIndicator } from "react-native";
 import AddToCollection from "./Functions/addToCollection";
 import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
@@ -42,7 +42,6 @@ export default function TheMetScreen() {
             const artIdList = response.data.objectIDs;
             const total = response.data.total
 
-            console.log(total)
             setTotal(total)
 
             if (!artIdList || artIdList.length === 0) {
@@ -69,12 +68,12 @@ export default function TheMetScreen() {
 
 
     const nextPage = () => {
-        setCurrentPage(currentPage +1)
+        setCurrentPage(currentPage + 1)
         setPageNumber([pageNumber[0] + 10, pageNumber[1] + 10])
     }
     const prevPage = () => {
         if (pageNumber[0] >= 10) {
-            setCurrentPage(currentPage -1)
+            setCurrentPage(currentPage - 1)
             setPageNumber([pageNumber[0] - 10, pageNumber[1] - 10]);
         }
     };
@@ -92,7 +91,7 @@ export default function TheMetScreen() {
         loadArt();
     }, [pageNumber]);
 
-    const totalPages = Math.ceil(total/ 10);
+    const totalPages = Math.ceil(total / 10);
 
 
     return (
@@ -122,18 +121,18 @@ export default function TheMetScreen() {
                                 <Text style={styles.title}>{art.title || "unknown"}</Text>
                                 <Text style={styles.artist}>{art.artistDisplayName || "Unknown"}</Text>
                                 <View style={styles.row}>
-                                <TouchableOpacity
-                                       onPress={async () => {
-                                        // await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-                                    
-                                        router.push({
-                                            pathname: "/TheMet/[id]",
-                                            params: {
-                                                id: art.objectID,
-                                            },
-                                        });
-                                    }}
-                                        >
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            // await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
+
+                                            router.push({
+                                                pathname: "/TheMet/[id]",
+                                                params: {
+                                                    id: art.objectID,
+                                                },
+                                            });
+                                        }}
+                                    >
                                         <Text style={styles.view}>
                                             View Here
                                         </Text>
@@ -148,16 +147,16 @@ export default function TheMetScreen() {
                     <View>
                         <View style={styles.row1}>
                             <Button onPress={prevPage}
-                                title="Previous"/>
-                                <View style={styles.row}>
-                            <Text style={styles.pageNumber}>
-                                Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{totalPages}</Text>
-        
-                            </Text>
+                                title="Previous" />
+                            <View style={styles.row}>
+                                <Text style={styles.pageNumber}>
+                                    Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{totalPages}</Text>
+
+                                </Text>
                             </View>
                             <Button onPress={nextPage}
-                                title="Next"/>
-                         
+                                title="Next" />
+
                         </View>
                     </View>
                 </ScrollView>
@@ -244,7 +243,7 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     noImageText: {
-        top:'0%',
+        top: '0%',
         height: '40%',
         width: '90%',
         alignSelf: 'center',

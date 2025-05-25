@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, ScrollView, Image, Button, TouchableOpacity } from "react-native";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
-import SearchBar from "../../Components/searchBar";
+import SearchBar from "../../Components/searchBarChicago";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import SortBy from "../../Components/sortBy";
@@ -111,48 +111,48 @@ export default function ArtistSearch() {
 
     const sortAndSetArtistWorks = (artworks: Artwork[], sortKey: string | null) => {
         if (!sortKey) {
-          setArtistWorks(artworks);
-          return;
+            setArtistWorks(artworks);
+            return;
         }
-      
+
         const sorted = [...artworks];
-      
+
         switch (sortKey) {
-          case 'year_asc':
-            sorted.sort((a, b) => (a.date_start ?? 0) - (b.date_start ?? 0));
-            break;
-          case 'year_desc':
-            sorted.sort((a, b) => (b.date_start ?? 0) - (a.date_start ?? 0));
-            break;
-          case 'alpha_asc':
-            sorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-            break;
-          case 'alpha_desc':
-            sorted.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
-            break;
-          default:
-            break;
+            case 'year_asc':
+                sorted.sort((a, b) => (a.date_start ?? 0) - (b.date_start ?? 0));
+                break;
+            case 'year_desc':
+                sorted.sort((a, b) => (b.date_start ?? 0) - (a.date_start ?? 0));
+                break;
+            case 'alpha_asc':
+                sorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+                break;
+            case 'alpha_desc':
+                sorted.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
+                break;
+            default:
+                break;
         }
-      
+
         setArtistWorks(sorted);
-      };
+    };
 
     console.log(artistWorks)
     return (
         <>
             <SearchBar />
             <SortBy
-  onSort={(sortKey) => {
-    setSortOption(sortKey);
-    sortAndSetArtistWorks(artistWorks, sortKey);
-  }}
-  activeSort={sortOption}
-/>
-{loading && (
-  <View style={styles.loadingContainer}>
-    <Text style={styles.loadingText}>Sorting...</Text>
-  </View>
-)}
+                onSort={(sortKey) => {
+                    setSortOption(sortKey);
+                    sortAndSetArtistWorks(artistWorks, sortKey);
+                }}
+                activeSort={sortOption}
+            />
+            {loading && (
+                <View style={styles.loadingContainer}>
+                    <Text style={styles.loadingText}>Sorting...</Text>
+                </View>
+            )}
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.gridContainer}>
                     <Text>{total} </Text>
@@ -307,10 +307,10 @@ const styles = StyleSheet.create({
     loadingContainer: {
         padding: 20,
         alignItems: 'center',
-      },
-      loadingText: {
+    },
+    loadingText: {
         fontSize: 16,
         fontStyle: 'italic',
         color: 'gray',
-      },
+    },
 })
