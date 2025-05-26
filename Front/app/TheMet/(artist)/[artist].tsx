@@ -2,7 +2,7 @@ import SearchBar from "@/app/Components/searchBarMet"
 import SortBy from "@/app/Components/sortBy"
 import { useRouter, useLocalSearchParams, usePathname, router } from "expo-router";
 import { useState, useEffect } from "react";
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity, Image, } from "react-native";
+import { ScrollView, Text, View, StyleSheet, TouchableOpacity, Image, Button } from "react-native";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddToCollection from "@/app/Functions/addToCollection";
@@ -18,6 +18,10 @@ export default function artistWork() {
 
     const [artistWorks, setArtistWorks] = useState<Artwork[]>(parsedArtworks || [])
     const [totalItems, setTotalItems] = useState<number | null>(items ? parseInt(items as string) : null);
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageNumber, setPageNumber] = useState([0, 10])
+
+    const totalPages = Math.ceil(Number(items || 0) / 25);
 
 
     type Artwork = {
@@ -51,18 +55,24 @@ export default function artistWork() {
         }
     }, [artist]);
 
-    console.log(parsedArtworks)
+    const nextPage = () => {
+        setCurrentPage(currentPage + 1)
+        setPageNumber([pageNumber[0] + 10, pageNumber[1] + 10])
+    }
+    const prevPage = () => {
+        if (pageNumber[0] >= 10) {
+            setCurrentPage(currentPage - 1)
+            setPageNumber([pageNumber[0] - 10, pageNumber[1] - 10]);
+        }
+    };
 
-    console.log(artist)
+    
 
     return (
         <View style={styles.mainContainer}>
             <SearchBar />
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.gallery}>
-                <Text>{totalItems ?? items}</Text>
-                    <Text>results found for:</Text>
-                    <Text>{artist}</Text>
                     {artistWorks.map((artwork: any, index: number) => (
                         <View style={styles.card} key={artwork.id}>
                             <Image
@@ -76,8 +86,7 @@ export default function artistWork() {
                             <TouchableOpacity
                                 onPress={async () => {
                                     console.log(artwork.objectID)
-                                    await AsyncStorage.setItem("lastVisitedId", artwork.id);
-
+                                    await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
                                     router.push(`/TheMet/(artwork)/${artwork.id}`);
                                 }
                                 }>
@@ -91,6 +100,21 @@ export default function artistWork() {
                                 </View>
                             </View>
                         ))}
+                            <View>
+                        <View style={styles.row1}>
+                            <Button onPress={prevPage}
+                                title="Previous" />
+                            <View style={styles.row}>
+                                <Text style={styles.pageNumber}>
+                                    Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{totalPages}</Text>
+
+                                </Text>
+                            </View>
+                            <Button onPress={nextPage}
+                                title="Next" />
+
+                        </View>
+                    </View>
                 </View>
             </ScrollView>
         </View>
@@ -161,4 +185,17 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         marginTop: 10,
     },
+    row1: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 10,
+    },
+    pageNumber: {
+        fontSize: 16,
+        color: "#333",
+        fontStyle: 'italic'
+    },
+    bold: {
+        fontWeight: "bold",
+    }
 })

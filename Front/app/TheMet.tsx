@@ -8,7 +8,7 @@ import AddToCollection from "./Functions/addToCollection";
 import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
 import { SpecialElite_400Regular } from '@expo-google-fonts/special-elite'
 import { useRouter, usePathname } from 'expo-router';
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TheMetScreen() {
 
@@ -123,13 +123,13 @@ export default function TheMetScreen() {
                                 <View style={styles.row}>
                                     <TouchableOpacity
                                         onPress={async () => {
-                                            // await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
+                                            await AsyncStorage.setItem("lastVisitedId", art.objectID.toString());
 
                                             router.push({
-                                                pathname: "./TheMet/(artist)/[id]",
-                                                params: {
-                                                    id: art.objectID,
-                                                },
+                                              pathname: "./TheMet/(artist)/[id]",
+                                              params: {
+                                                id: art.objectID,
+                                              },
                                             });
                                         }}
                                     >

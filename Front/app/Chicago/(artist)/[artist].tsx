@@ -174,6 +174,7 @@ export default function ArtistSearch() {
                                     )}
                                 <Text style={styles.title}>{artwork.artist_titles}</Text>
                                 <Text style={styles.artist}>{artwork.title}</Text>
+                                <Text>{artwork.date_start}</Text>
                                 <View style={styles.row}>
                                     <View style={{ alignSelf: 'flex-start' }}>
                                         <TouchableOpacity

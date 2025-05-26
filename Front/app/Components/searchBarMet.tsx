@@ -1,14 +1,21 @@
 import axios from "axios";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet, Text } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from 'expo-router';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ActivityIndicator } from "react-native";
+
 
 export default function SearchBar() {
     const [searchPage, setSearchPage] = useState(1);
     const [artworks, setArtworks] = useState<any[]>([]);
     const [artistName, setArtistName] = useState<string>("");
     const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
+    const [processedCount, setProcessedCount] = useState(0)
+    const [allObjectIDs, setAllObjectIDs] = useState<number[]>([]);
+
+
 
     const router = useRouter();
 
@@ -17,12 +24,14 @@ export default function SearchBar() {
 
         const searchMetMuseum = async () => {
             try {
+                setLoading(true);
                 const searchRes = await axios.get(
                     `https://collectionapi.metmuseum.org/public/collection/v1/search`,
                     { params: { q: artistName } }
                 );
 
                 const allObjectIDs: number[] = searchRes.data.objectIDs || [];
+                setAllObjectIDs(allObjectIDs);
                 console.log("All objectIDs from search:", allObjectIDs);
 
                 if (allObjectIDs.length === 0) {
@@ -60,14 +69,13 @@ export default function SearchBar() {
                     } catch (err) {
                         console.warn(`Error fetching ID ${id}:`, err);
                     }
+                    setProcessedCount(i + 1);
                 }
 
                 if (validArtworks.length === 0) {
                     console.warn("No valid artworks with images found.");
-                    router.push({
-                        pathname: "./TheMet/not-found",
-                        params: { artist: artistName },
-                    });
+                    router.push("/TheMet/not-found")
+                  
                     return;
                 }
 
@@ -86,12 +94,11 @@ export default function SearchBar() {
                     },
                 });
             } catch (error) {
-                console.error("Error fetching from Met Museum API:", error);
-                router.push({
-                    pathname: "./TheMet/not-found",
-                    params: { artist: artistName },
-                });
+                // console.error("Error fetching from Met Museum API:", error);
+                router.push('/TheMet/not-found')
+                  
             } finally {
+                setLoading(false);
                 setSearchTriggered(false);
             }
         };
@@ -110,6 +117,7 @@ export default function SearchBar() {
     };
 
     return (
+        <>
         <View style={styles.searchContainer}>
             <TextInput
                 style={styles.searchBox}
@@ -121,6 +129,18 @@ export default function SearchBar() {
                 onSubmitEditing={handleSubmit}
             />
         </View>
+        {loading && (
+  <View style={styles.loading}>
+    <ActivityIndicator size="large" color="#333" />
+    <Text>
+      Fetching artworks...
+    </Text>
+    <Text>
+      Almost there, finding all your results for '{artistName}'
+    </Text>
+  </View>
+)}
+        </>
     );
 }
 
@@ -157,4 +177,10 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 3,
     },
+    loading: {
+        // flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+      }
 });

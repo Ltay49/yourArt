@@ -5,7 +5,7 @@ import {
   setReturnPath,
   getReturnPath,
   clearReturnPath
-} from '../Functions/useLastPath';
+} from '../../utils/useLastPath';
 
 import {
   useFonts,
