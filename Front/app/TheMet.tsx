@@ -126,7 +126,7 @@ export default function TheMetScreen() {
                                             // await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
 
                                             router.push({
-                                                pathname: "/TheMet/[id]",
+                                                pathname: "./TheMet/(artist)/[id]",
                                                 params: {
                                                     id: art.objectID,
                                                 },

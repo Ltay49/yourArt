@@ -49,6 +49,7 @@ export default function TheMetArtwork() {
     console.log(artwork)
 
     return (
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.page}>
             <Text style={styles.title}>{artwork?.title || "untitled"}</Text>
             <View style={styles.row}>
@@ -73,6 +74,7 @@ export default function TheMetArtwork() {
       <AddToCollection/>
       </View>
         </View>
+        </ScrollView>
     )
 
 }
@@ -81,6 +83,10 @@ const styles = StyleSheet.create({
     page: {
         // flex: 1,
         justifyContent: 'center'
+    },
+    scrollContent: {
+      paddingBottom: 80,
+      padding: 0
     },
     noImageText: {
         top:'0%',
