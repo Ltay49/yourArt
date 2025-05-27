@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 
 const envFile =
-  process.env.NODE_ENV === "test" ? ".env.local" : ".env.development";
+process.env.NODE_ENV === "test" ? ".env.local" : ".env.dev";
 dotenv.config({ path: envFile });
 console.log("MONGODB_URI:", process.env.MONGODB_URI);
 console.log("DATABASE_NAME:", process.env.DATABASE_NAME);

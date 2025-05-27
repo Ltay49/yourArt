@@ -1,8 +1,15 @@
 import express from "express";
-import {getApi} from './controllers/app.controller'
 import cors from "cors";
+import { getApi, getUser, addArtwork } from "./controllers/app.controller";
+
 const app = express();
 
-export default app;
+app.get("/api", getApi);
 
-app.get("/api", getApi)
+app.use(cors());
+app.use(express.json()); // ✅ Essential for parsing JSON
+
+app.get("/api/userProfile/:username", getUser);
+app.post('/api/userProfile/:username/collection' ,addArtwork)
+
+export default app;

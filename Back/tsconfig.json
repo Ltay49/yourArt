@@ -2,15 +2,16 @@
     "compilerOptions": {
       "isolatedModules": true,
       "types": ["jest", "node"],
-      "target": "ESNext",
-      "module": "ESNext",
+      "module": "CommonJS",
+      "target": "ES6",
+      "outDir": "dist",
       "moduleResolution": "node",
       "esModuleInterop": true,
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true,
       "strict": true,
       "resolveJsonModule": true,
-      "jsx": "react"  // This enables JSX processing
+      "jsx": "react"
     },
     "include": [
       "src/**/*.ts",

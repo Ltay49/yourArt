@@ -8,6 +8,7 @@ type ArtItem = {
 export type Profile = {
   firstname: string;
   surname: string;
+  username:string;
   email: string;
   collection: ArtItem[];
 };

@@ -10,7 +10,7 @@ export async function seeding(
     
 
     const collections = [
-      { name: "PlayerStats", data: userProfile },
+      { name: "Profile", data: userProfile },
     ];
 
     for (const { name, data } of collections) {
