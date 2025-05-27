@@ -1,17 +1,16 @@
-import { getDb, initializeConnection, closeConnection } from "./connect";
-import { userProfile } from "../data/testdata/profile";
-import { MONGODB_URI, DATABASE_NAME } from "./config";
-
+import { getDb } from "./connect";
 console.log("Starting the seeding process...");
 
-export async function seeding(profile: any): Promise<void> {
+export async function seeding(
+  userProfile: any
+): Promise<void> {
   try {
-    await initializeConnection(MONGODB_URI, DATABASE_NAME);
     const db = getDb();
-    console.log("Connected to database:", db.databaseName);
+    console.log("Connected to database:", db.databaseName);  // Logs the database name to confirm
+    
 
     const collections = [
-      { name: "Profile", data: profile },
+      { name: "PlayerStats", data: userProfile },
     ];
 
     for (const { name, data } of collections) {
@@ -22,13 +21,9 @@ export async function seeding(profile: any): Promise<void> {
       await collection.insertMany(data);
       console.log(`${name} collection seeded with ${data.length} records.`);
     }
+
   } catch (err) {
     console.error("Seeding failed:", err);
     throw err;
-  } finally {
-    await closeConnection();
   }
 }
-
-// ✅ Run seeding immediately if script is executed directly
-seeding(userProfile);
