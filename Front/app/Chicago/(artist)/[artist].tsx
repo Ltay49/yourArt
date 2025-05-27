@@ -12,7 +12,7 @@ export default function ArtistSearch() {
     const { artist, artworks, total, limit, offset, total_pages, current_page } = useLocalSearchParams();
     const [sortOption, setSortOption] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-
+    const [mounted, setMounted] = useState(false);
 
     const router = useRouter();
     const pathname = usePathname();
@@ -59,14 +59,20 @@ export default function ArtistSearch() {
         }
     };
 
-    useEffect(() => {
-        // Normalize artist param to string
-        const artistStr = Array.isArray(artist) ? artist[0] : artist;
 
+    useEffect(() => {
+        setMounted(true);
+      }, []);
+    
+      useEffect(() => {
+        if (!mounted) return; // Wait for mount
+    
+        const artistStr = Array.isArray(artist) ? artist[0] : artist;
+    
         if (artistStr && /^\d+$/.test(artistStr)) {
-            router.replace(`/Chicago/(artwork)/${artistStr}`);
+          router.replace(`/Chicago/(artwork)/${artistStr}`);
         }
-    }, [artist]);
+      }, [artist, mounted]);
 
     useEffect(() => {
         const saveArtistWorks = async () => {

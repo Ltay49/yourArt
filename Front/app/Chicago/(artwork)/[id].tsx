@@ -57,6 +57,8 @@ export default function ArtworkScreen() {
     }
   }, [id, fontsLoaded]);
 
+  console.log(artwork?.image_id)
+
   if (!fontsLoaded || !artwork) {
     return (
       <View style={styles.mainContainer}>
