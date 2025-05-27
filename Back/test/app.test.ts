@@ -98,4 +98,15 @@ afterAll(async () => {
     });
   });
   
+  describe("DELETE: will remove artwork from users collection",()=>{
+      test("on press will remove artwork from collection via the title",()=>{
+          const removeArtwork = {artTitle: "Water Lilies"}
+
+          const response = request(app)
+          .delete("/api/userProfile/Jimmy123/collection/Water Lilies")
+          .send(removeArtwork)
+          .expect(200)
+
+      })
+  })
   
