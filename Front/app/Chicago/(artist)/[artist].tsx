@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ScrollView, Image, Button, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, ScrollView, Image, Button, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
 import SearchBar from "../../Components/searchBarChicago";
 import { useState, useEffect } from "react";
@@ -6,6 +6,7 @@ import axios from "axios";
 import SortBy from "../../Components/sortBy";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddToCollection from "@/app/Functions/addToCollection";
+
 
 
 export default function ArtistSearch() {
@@ -21,6 +22,8 @@ export default function ArtistSearch() {
     const [artistWorks, setArtistWorks] = useState<Artwork[]>(parsedArtworks || []);
     const [searchPage, setSearchPage] = useState(Number(current_page) || 1);
     const [currentPage, setCurrentPage] = useState(1)
+    const { width } = useWindowDimensions();
+    const isWeb = width > 768;
 
     type Artwork = {
         id: number;
@@ -160,13 +163,13 @@ export default function ArtistSearch() {
                 </View>
             )}
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.gridContainer}>
-                    <Text>{total} </Text>
-                    <Text>Results Found For: '{artist}'</Text>
+                <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb ]}>
+                    {/* <Text>{total} </Text>
+                    <Text>Results Found For: '{artist}'</Text> */}
                     {/* <Text> - {limit} per page</Text> */}
                     {artistWorks.length > 0 ? (
                         artistWorks.map((artwork: any, index: number) => (
-                            <View key={index} style={styles.card}>
+                            <View key={index} style={[styles.card, isWeb && styles.cardWeb]}>
                                 {artwork.image_id ?
                                     <Image
                                         source={{
@@ -238,6 +241,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: 'white'
     },
+    gridContainerWeb: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+      },
     card: {
         width: "95%",
         backgroundColor: "#f0f0f0",
@@ -248,6 +256,10 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "space-between",
         minHeight: 250, // ensure there's enough space
+    },
+    cardWeb: {
+        width: '31%',
+        margin: '1%',
     },
     image: {
         width: "100%",

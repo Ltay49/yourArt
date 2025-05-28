@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native"
+import { Text, View, StyleSheet, Image, TouchableOpacity, useWindowDimensions } from "react-native"
 import axios, { Axios } from "axios";
 import { useEffect, useState} from "react";
 import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
@@ -12,6 +12,8 @@ type SuggestionsProps = {
 export default function Suggestions({ artist }: SuggestionsProps) {
 
     const router = useRouter();
+    const { width } = useWindowDimensions();
+    const isWeb = width > 768;
 
     const [fontsLoaded] = useFonts({
         NunitoSans_900Black,
@@ -62,10 +64,10 @@ export default function Suggestions({ artist }: SuggestionsProps) {
     console.log(artworks)
 
     return (
-        <View style={styles.gallery}>
+        <View style={[styles.gallery, isWeb && styles.galleryWeb]}>
             {artworks.map((art) => (
                 <View key={art.id} style={styles.gallery}>
-                    <View style={styles.card}>
+                    <View style={[styles.card, isWeb && styles.cardWeb ]}>
                         <Image
                             source={{
                                 uri: `https://www.artic.edu/iiif/2/${art.image_id}/full/843,/0/default.jpg`,
@@ -102,6 +104,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         // padding: 10,
     },
+    galleryWeb: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: "center",
+        // padding: 10,
+    },
     // artItem: {
     //     width: '48%', // Two per row with space
     //     marginBottom: 10,
@@ -110,6 +118,11 @@ const styles = StyleSheet.create({
     card: {
         marginBottom: 10,
         width: 190,
+        flexDirection: 'column'
+    },
+    cardWeb: {
+        margin: 10,
+        width: 250,
         flexDirection: 'column'
     },
     image: {
