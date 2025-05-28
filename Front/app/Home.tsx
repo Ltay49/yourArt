@@ -5,11 +5,19 @@ import { useFonts } from 'expo-font';
 import Search from "./Components/search";
 import React from 'react';
 const KH = require('../assets/images/KH.png');
+import { useWindowDimensions } from 'react-native';
 
 export default function MainScreen() {
+
   const intro = `"Art is for everybody. I don’t think art should be only for the select few, I think it should be for the masses of people." 
 — Keith Haring`;
 
+const introWeb = `"Art is for everybody. I don’t think art should be only for the select few, I think it should be for the masses of people."  — Keith Haring`;
+
+const { width } = useWindowDimensions();
+
+  // Dynamically set font size
+  const isWeb = width > 768;
   const [fontsLoaded] = useFonts({
     Knewave_400Regular,
   });
@@ -21,13 +29,15 @@ export default function MainScreen() {
   return (
     <>
       <View style={styles.introContainer}>
-        <ImageBackground source={KH} style={styles.background}>
+        <ImageBackground source={KH} style={styles.background}
+         resizeMode="cover">
           {/* Gradient Overlay */}
           <LinearGradient
             colors={['rgba(255,255,255,0.7)', 'rgba(255,255,255,1)']} // transparent top → white bottom
             style={styles.gradient}
+
           />
-          <Text style={styles.intro}>{intro}</Text>
+          <Text style={[styles.intro, isWeb && styles.introWeb]}> {isWeb ? introWeb : intro}</Text>
         </ImageBackground>
       </View>
 
@@ -42,8 +52,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     position: 'absolute',
     top: '-1%',
-    // borderWidth: 1,
-    height: '34%',
+    // borderBottomWidth: 1,
+    height: '35%',
   },
   intro: {
     fontSize: 25,
@@ -53,6 +63,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 10,
     zIndex: 2, // make sure text is above gradient
+  },
+  introWeb:{
+    marginLeft:30,
+    fontSize: 40,
+    color: 'black',
+    fontWeight: 'bold',
+    fontFamily: 'Copperplate',
+    textAlign: 'left',
+    paddingHorizontal: 10,
+    zIndex: 2,
   },
   background: {
     width: '100%',

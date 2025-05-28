@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
 import SerachBar from "./Components/searchBarChicago";
 import { SpecialElite_400Regular, useFonts } from '@expo-google-fonts/special-elite'
-
+import { useWindowDimensions } from 'react-native';
 
 
 // Add to collection - POST request 
@@ -37,6 +37,9 @@ export default function Chicago() {
     const [prevUrl, setPrevUrl] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<string | null>(null);
     const [totalPages, setToatlPages] = useState<string | null>(null);
+    const { width } = useWindowDimensions();
+
+    const isWeb = width > 768;
 
     const fetchArtwork = async (url?: string) => {
         setLoading(true);
@@ -100,9 +103,9 @@ export default function Chicago() {
                 </View>
             ) : (
                 <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
-                    <View style={styles.gridContainer}>
+                    <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                         {artworks.map((artwork) => (
-                            <View key={artwork.id} style={styles.card}>
+                            <View key={artwork.id} style={[styles.card, isWeb && styles.cardWeb]}>
                                 {artwork.image_id ?
                                     <Image
                                         source={{
@@ -193,6 +196,11 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         justifyContent: "center",
     },
+    gridContainerWeb: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+      },
     card: {
         width: "95%",
         // borderRightWidth:2,
@@ -208,6 +216,10 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         minHeight: 250, // ensure there's enough space
     },
+    cardWeb: {
+        width: '31%',
+        margin: '1%',
+      },
     image: {
         width: "100%",
         height: 300,

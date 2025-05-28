@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { Text, View, StyleSheet, ScrollView, Image } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Image, useWindowDimensions } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Suggestions from '../../Components/suggestionsArtist';
@@ -15,8 +15,8 @@ export default function ArtworkScreen() {
     NunitoSans_400Regular_Italic,
     NunitoSans_700Bold
   });
-
-
+  const { width } = useWindowDimensions();
+  const isWeb = width > 850;
 
   type Artwork = {
     id: number;
@@ -79,7 +79,7 @@ export default function ArtworkScreen() {
               source={{
                 uri: `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`,
               }}
-              style={styles.image}
+              style={[styles.image, isWeb && styles.imageWeb]}
               resizeMode="contain"
             />
           </View>
@@ -123,7 +123,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   image: {
+    alignSelf:'center',
     width: '100%',           // Two images side by side with some margin
+    aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
+    resizeMode: 'contain',
+  },
+  imageWeb: {
+    alignSelf:'center',
+    width: '60%',           // Two images side by side with some margin
     aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
     resizeMode: 'contain',
   },
