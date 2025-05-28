@@ -44,3 +44,18 @@ export const addToCollection = async (
       throw err;
     }
   };
+
+  export const removeArtworkFromCollection = async (
+    username: string,
+    artTitle: string
+  ): Promise<boolean> => {
+    const db = getDb();
+    const collection: Collection<Profile> = db.collection("Profile");
+  
+    const result = await collection.updateOne(
+      { username },
+      { $pull: { collection: { artTitle } } }
+    );
+  
+    return result.modifiedCount > 0;
+  };

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { fetchUserProfile, addToCollection } from "../models/model";
+import { fetchUserProfile, addToCollection, removeArtworkFromCollection } from "../models/model";
 const endpoints = require('../data/testdata/api.json');
 
 export const getApi = (req: Request, res: Response, next: NextFunction): void => {
@@ -53,6 +53,28 @@ export const addArtwork = async (
     next(error);
   }
 };
+
+export const removeArtwork = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { username, artTitle } = req.params;
+
+    const removed = await removeArtworkFromCollection(username, artTitle);
+
+    if (!removed) {
+      res.status(404).json({ message: "Artwork not found or already removed" });
+      return;
+    }
+
+    res.status(200).json({ message: "Artwork removed" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 

@@ -98,15 +98,19 @@ afterAll(async () => {
     });
   });
   
-  describe("DELETE: will remove artwork from users collection",()=>{
-      test("on press will remove artwork from collection via the title",()=>{
-          const removeArtwork = {artTitle: "Water Lilies"}
-
-          const response = request(app)
-          .delete("/api/userProfile/Jimmy123/collection/Water Lilies")
-          .send(removeArtwork)
-          .expect(200)
-
-      })
-  })
+  describe("DELETE: will remove artwork from user's collection", () => {
+    test("removes artwork from collection by title", async () => {
+      const response = await request(app)
+        .delete("/api/userProfile/Jimmy123/collection/Water%20Lilies") // encode the space
+        .expect(200);
   
+      expect(response.body).toMatchObject({
+        message: "Artwork removed"
+      });
+    });
+  });
+  
+  
+  // DELETE ARTWORK
+  // PASSWORD
+  // ADD USER
