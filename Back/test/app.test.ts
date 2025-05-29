@@ -57,6 +57,20 @@ afterAll(async () => {
         ],
       });
     });
+    test("POST: Adds a userProfile", async () => {
+      const userDetails = {
+        firstname: "Gary",
+        surname: "Singleton",
+        username: "GazzaSing8386",
+        email: "lewistaylor01@outlook.com",
+      };
+      const response = await request(app)
+        .post("/api/userProfile") 
+        .send(userDetails)      
+        .expect(201);             
+    
+      expect(response.body).toMatchObject(userDetails);
+    });
   });
 
   describe("Adds to collection of user", () => {
@@ -111,6 +125,5 @@ afterAll(async () => {
   });
   
   
-  // DELETE ARTWORK
+
   // PASSWORD
-  // ADD USER

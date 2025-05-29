@@ -24,38 +24,59 @@ export const fetchUserProfile = async (
 export const addToCollection = async (
     username: string,
     artwork: object
-  ): Promise<Profile | null> => {
+): Promise<Profile | null> => {
     try {
-      await initializeConnection(MONGODB_URI, DATABASE_NAME);
-      const db = getDb();
-  
-      const collection: Collection<Profile> = db.collection("Profile");
-  
-      // Update the user's document by pushing to the collection array
-      const result = await collection.findOneAndUpdate(
-        { username }, // Find user by username
-        { $push: { collection: artwork } }, // Add new artwork to collection array
-        { returnDocument: "after" } // Return the updated document
-      );
-  
-      return result
-    } catch (err) {
-      console.error("Error updating user collection:", err);
-      throw err;
-    }
-  };
+        await initializeConnection(MONGODB_URI, DATABASE_NAME);
+        const db = getDb();
 
-  export const removeArtworkFromCollection = async (
+        const collection: Collection<Profile> = db.collection("Profile");
+
+        // Update the user's document by pushing to the collection array
+        const result = await collection.findOneAndUpdate(
+            { username }, // Find user by username
+            { $push: { collection: artwork } }, // Add new artwork to collection array
+            { returnDocument: "after" } // Return the updated document
+        );
+
+        return result
+    } catch (err) {
+        console.error("Error updating user collection:", err);
+        throw err;
+    }
+};
+
+export const removeArtworkFromCollection = async (
     username: string,
     artTitle: string
-  ): Promise<boolean> => {
+): Promise<boolean> => {
     const db = getDb();
     const collection: Collection<Profile> = db.collection("Profile");
-  
+
     const result = await collection.updateOne(
-      { username },
-      { $pull: { collection: { artTitle } } }
+        { username },
+        { $pull: { collection: { artTitle } } }
     );
-  
+
     return result.modifiedCount > 0;
+};
+
+
+export const addNewUser = async (
+    newUser: Profile // or use `object` if you prefer looser typing
+  ): Promise<Profile> => {
+    await initializeConnection(MONGODB_URI, DATABASE_NAME);
+    const db = getDb();
+  
+    try {
+      const collection = db.collection<Profile>("Profile");
+  
+   
+      await collection.insertOne(newUser);
+  
+    
+      return newUser;
+    } catch (err) {
+      console.error("Error inserting new user:", err);
+      throw err;
+    }
   };

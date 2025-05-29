@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { fetchUserProfile, addToCollection, removeArtworkFromCollection } from "../models/model";
+import { fetchUserProfile, addToCollection, removeArtworkFromCollection, addNewUser } from "../models/model";
 const endpoints = require('../data/testdata/api.json');
 
 export const getApi = (req: Request, res: Response, next: NextFunction): void => {
@@ -24,7 +24,7 @@ export const getUser = async (
       return;
     }
 
-    res.status(200).send(userProfile); // ✅ changed from `return res.status(...)`
+    res.status(200).send(userProfile);
   } catch (err) {
     next(err);
   }
@@ -70,6 +70,21 @@ export const removeArtwork = async (
     }
 
     res.status(200).json({ message: "Artwork removed" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const newUser = req.body;
+
+    const newUserAdded = await addNewUser(newUser);
+    res.status(201).json(newUserAdded);
   } catch (error) {
     next(error);
   }
