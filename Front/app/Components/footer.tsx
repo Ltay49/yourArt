@@ -37,41 +37,41 @@ export default function Footer() {
 
   useEffect(() => {
     const generateBreadcrumbs = async () => {
-      const segments = pathname.split('/').filter(Boolean);
       const clean = (s: string) => s.replace(/\[|\]/g, '');
+  
+      let workingPath = pathname;
+  
+      if (pathname === '/Collection' || pathname === '/LogIn') {
+        const returnPath = await getReturnPath();
+        workingPath = returnPath || '/';
+      }
+  
+      const segments = workingPath.split('/').filter(Boolean);
       const visibleSegments = segments
         .filter((s: string) => !s.startsWith('('))
         .map(clean);
   
-      // Find raw group segment (with parentheses)
       const rawGroup = segments.find((s: string) => s.startsWith('(')) || '';
-      let group = rawGroup.replace(/[()]/g, ''); // remove parentheses
+      let group = rawGroup.replace(/[()]/g, '');
   
-      // If last segment is a number, force group to 'artwork'
       const lastSegment = visibleSegments[visibleSegments.length - 1] || '';
       const isLastSegmentNumber = /^\d+$/.test(lastSegment);
-  
       if (isLastSegmentNumber) {
         group = 'artwork';
       }
   
-      if (pathname === '/Collection') {
-        const returnPath = await getReturnPath();
-        const returnSegments = returnPath
-          ?.split('/')
-          .filter((s: string) => !s.startsWith('(') && s)
-          .map(clean) || [];
+      const breadcrumbTrail =
+        pathname === '/Collection' || pathname === '/LogIn'
+          ? ['Home', ...visibleSegments, '']
+          : ['Home', ...visibleSegments];
   
-        setBreadcrumbParts(['Home', ...returnSegments, '']);
-        setRouteGroup(group);
-      } else {
-        setRouteGroup(group);
-        setBreadcrumbParts(['Home', ...visibleSegments]);
-      }
+      setBreadcrumbParts(breadcrumbTrail);
+      setRouteGroup(group);
     };
   
     generateBreadcrumbs();
   }, [pathname]);
+  
   
   
 
@@ -124,14 +124,23 @@ export default function Footer() {
         <Text
   style={styles.footerText}
   onPress={async () => {
-    await setReturnPath(pathname); // save where we’re coming from
+    if (pathname !== '/Collection' && pathname !== '/LogIn') {
+      await setReturnPath(pathname); // only save real pages
+    }
     router.push('/Collection');
   }}
 >
   <Text style={styles.collection}>Collection</Text>
 </Text>
           <TouchableOpacity>
-            <Text style={styles.footerText}>Log In</Text>
+            <Text style={styles.footerText}
+            onPress={async () => {
+              if (pathname !== '/Collection' && pathname !== '/LogIn') {
+                await setReturnPath(pathname); // only save real pages
+              }
+              router.push('/LogIn');
+            }}
+            >Log In</Text>
           </TouchableOpacity>
         </View>
       </View>

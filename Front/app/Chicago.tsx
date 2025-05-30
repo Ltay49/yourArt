@@ -1,6 +1,6 @@
 import { Text, StyleSheet, View, ScrollView, Image, TextInput, Button, TouchableOpacity } from "react-native"
 import axios from "axios"
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { ActivityIndicator } from "react-native";
 import { useRouter, usePathname } from 'expo-router';
 import AddToCollection from "./Functions/addToCollection";
@@ -9,7 +9,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import SerachBar from "./Components/searchBarChicago";
 import { SpecialElite_400Regular, useFonts } from '@expo-google-fonts/special-elite'
 import { useWindowDimensions } from 'react-native';
-
+import { UserContext } from '../utils/UserConext'
 
 // Add to collection - POST request 
 
@@ -23,6 +23,8 @@ export default function Chicago() {
     const [fontsLoaded] = useFonts({
         SpecialElite_400Regular
     });
+
+    const { user } = useContext(UserContext);
 
     type Artwork = {
         id: number;
@@ -134,7 +136,16 @@ export default function Chicago() {
                                         </TouchableOpacity>
                                         <View style={styles.underline} />
                                     </View>
-                                    <AddToCollection />
+                                    <AddToCollection
+                                        collectionItem={{
+                                            collection: "The Art Institute of Chicago",
+                                            artTitle: artwork?.title || "Untitled",
+                                            artist: artwork?.artist_titles[0]|| "Unknown Artist",
+                                            imageUrl: artwork?.image_id
+                                                ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
+                                                : ""
+                                        }}
+                                    />
                                 </View>
                             </View>
                         ))}
@@ -200,7 +211,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-      },
+    },
     card: {
         width: "95%",
         // borderRightWidth:2,
@@ -219,7 +230,7 @@ const styles = StyleSheet.create({
     cardWeb: {
         width: '31%',
         margin: '1%',
-      },
+    },
     image: {
         width: "100%",
         height: 300,

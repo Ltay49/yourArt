@@ -57,6 +57,7 @@ export default function ArtworkScreen() {
     }
   }, [id, fontsLoaded]);
 
+
   console.log(artwork?.image_id)
 
   if (!fontsLoaded || !artwork) {
@@ -66,6 +67,9 @@ export default function ArtworkScreen() {
       </View>
     );
   }
+  const imageUrl = artwork.image_id
+    ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
+    : "";
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -94,7 +98,16 @@ export default function ArtworkScreen() {
       </Text>
       <View style={styles.collection}>
         <Text style={styles.collectionText}>Add to your collection</Text>
-      <AddToCollection/>
+        <AddToCollection
+          collectionItem={{
+            collection: "The Art Institute of Chicago",
+            artTitle: artwork?.title || "Untitled",
+            artist: artwork?.artist_titles[0] || "Unknown Artist",
+            imageUrl: artwork?.image_id
+              ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
+              : ""
+          }}
+        />
       </View>
       <Text style={styles.id}>Artwork ID: {id}</Text>
       <Text style={styles.category}>Catagory: {artwork.category_titles}</Text>
@@ -123,13 +136,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   image: {
-    alignSelf:'center',
+    alignSelf: 'center',
     width: '100%',           // Two images side by side with some margin
     aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
     resizeMode: 'contain',
   },
   imageWeb: {
-    alignSelf:'center',
+    alignSelf: 'center',
     width: '60%',           // Two images side by side with some margin
     aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
     resizeMode: 'contain',
@@ -216,17 +229,17 @@ const styles = StyleSheet.create({
   collection: {
     width: '100%',
     borderTopWidth: 2,
-    borderBottomWidth:2,
+    borderBottomWidth: 2,
     alignSelf: 'center',
     flexDirection: 'row',     // Lay out children horizontally
     justifyContent: 'space-evenly', // Push content to the right
     padding: 8,                 // Optional: spacing inside the container
   },
-  collectionText:{
+  collectionText: {
     fontFamily: 'NunitoSans_700Bold',
-    fontSize:20,
-    color:'brown',
-    marginTop:10
+    fontSize: 20,
+    color: 'brown',
+    marginTop: 10
   }
 });
 

@@ -126,10 +126,10 @@ export default function TheMetScreen() {
                                             await AsyncStorage.setItem("lastVisitedId", art.objectID.toString());
 
                                             router.push({
-                                              pathname: "./TheMet/(artist)/[id]",
-                                              params: {
-                                                id: art.objectID,
-                                              },
+                                                pathname: "./TheMet/(artist)/[id]",
+                                                params: {
+                                                    id: art.objectID,
+                                                },
                                             });
                                         }}
                                     >
@@ -139,7 +139,14 @@ export default function TheMetScreen() {
                                         <View style={styles.underline}>
                                         </View>
                                     </TouchableOpacity>
-                                    <AddToCollection />
+                                    <AddToCollection
+                                        collectionItem={{
+                                            collection: "...",
+                                            artTitle: "...",
+                                            artist: "...",
+                                            imageUrl: "..."
+                                        }}
+                                    />
                                 </View>
                             </View>
                         ))}

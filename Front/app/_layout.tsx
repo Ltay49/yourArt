@@ -1,26 +1,28 @@
-import { Stack } from "expo-router";
 import React from 'react';
-import { View, StyleSheet } from "react-native";
-import Footer from './Components/footer'
+import { View, StyleSheet } from 'react-native';
+import { Stack } from 'expo-router'; // or your navigation lib
+import { UserProvider } from '../utils/UserConext'; // adjust path
+import Footer from './Components/footer'; // assuming Footer is a component you import
 
 export default function RootLayout() {
   return (
-    <View style={styles.container}>
-      <View style={styles.stackContainer}>
-        <Stack screenOptions={{ headerShown: false }} />
+    <UserProvider>
+      <View style={styles.container}>
+        <View style={styles.stackContainer}>
+          <Stack screenOptions={{ headerShown: false }} />
+        </View>
+        <Footer />
       </View>
-      <Footer />
-    </View>
+    </UserProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   stackContainer: {
-    flex: 1, // Stack area takes up the screen space above footer
+    flex: 1,
   },
 });
 

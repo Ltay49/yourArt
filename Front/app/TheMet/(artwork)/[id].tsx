@@ -71,7 +71,14 @@ export default function TheMetArtwork() {
             <Text style={styles.credit}>Credited:{artwork?.creditLine}</Text>
             <View style={styles.collection}>
         <Text style={styles.collectionText}>Add to your collection</Text>
-      <AddToCollection/>
+        <AddToCollection
+            collectionItem={{
+              collection: "...",
+              artTitle: "...",
+              artist: "...",
+              imageUrl: "..."
+            }}
+          />
       </View>
         </View>
         </ScrollView>

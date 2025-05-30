@@ -65,17 +65,17 @@ export default function ArtistSearch() {
 
     useEffect(() => {
         setMounted(true);
-      }, []);
-    
-      useEffect(() => {
+    }, []);
+
+    useEffect(() => {
         if (!mounted) return; // Wait for mount
-    
+
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
-    
+
         if (artistStr && /^\d+$/.test(artistStr)) {
-          router.replace(`/Chicago/(artwork)/${artistStr}`);
+            router.replace(`/Chicago/(artwork)/${artistStr}`);
         }
-      }, [artist, mounted]);
+    }, [artist, mounted]);
 
     useEffect(() => {
         const saveArtistWorks = async () => {
@@ -163,7 +163,7 @@ export default function ArtistSearch() {
                 </View>
             )}
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb ]}>
+                <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                     {/* <Text>{total} </Text>
                     <Text>Results Found For: '{artist}'</Text> */}
                     {/* <Text> - {limit} per page</Text> */}
@@ -199,7 +199,14 @@ export default function ArtistSearch() {
                                         </TouchableOpacity>
                                         <View style={styles.underline} />
                                     </View>
-                                    <AddToCollection />
+                                    <AddToCollection
+                                        collectionItem={{
+                                            collection: "...",
+                                            artTitle: "...",
+                                            artist: "...",
+                                            imageUrl: "..."
+                                        }}
+                                    />
                                 </View>
                             </View>
                         ))
@@ -245,7 +252,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-      },
+    },
     card: {
         width: "95%",
         backgroundColor: "#f0f0f0",

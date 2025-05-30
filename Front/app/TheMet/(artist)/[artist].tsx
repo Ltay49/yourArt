@@ -66,7 +66,7 @@ export default function artistWork() {
         }
     };
 
-    
+
 
     return (
         <View style={styles.mainContainer}>
@@ -83,24 +83,31 @@ export default function artistWork() {
                             <Text style={styles.date}>{artwork.date}</Text>
                             <Text style={styles.artist}>{artwork.artist}</Text>
                             <View style={styles.row}>
-                            <TouchableOpacity
-                                onPress={async () => {
-                                    console.log(artwork.objectID)
-                                    await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-                                    router.push(`/TheMet/(artwork)/${artwork.id}`);
-                                }
-                                }>
-                                <Text style={styles.view}>
-                                            View Here
-                                        </Text>
-                                        <View style={styles.underline}>
-                                        </View>
-                                    </TouchableOpacity>
-                                    <AddToCollection />
-                                </View>
+                                <TouchableOpacity
+                                    onPress={async () => {
+                                        console.log(artwork.objectID)
+                                        await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
+                                        router.push(`/TheMet/(artwork)/${artwork.id}`);
+                                    }
+                                    }>
+                                    <Text style={styles.view}>
+                                        View Here
+                                    </Text>
+                                    <View style={styles.underline}>
+                                    </View>
+                                </TouchableOpacity>
+                                <AddToCollection
+                                    collectionItem={{
+                                        collection: "...",
+                                        artTitle: "...",
+                                        artist: "...",
+                                        imageUrl: "..."
+                                    }}
+                                />
                             </View>
-                        ))}
-                            <View>
+                        </View>
+                    ))}
+                    <View>
                         <View style={styles.row1}>
                             <Button onPress={prevPage}
                                 title="Previous" />
