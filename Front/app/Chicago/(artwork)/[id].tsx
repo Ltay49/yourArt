@@ -1,14 +1,16 @@
 import { useLocalSearchParams } from 'expo-router';
 import { Text, View, StyleSheet, ScrollView, Image, useWindowDimensions } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import Suggestions from '../../Components/suggestionsArtist';
 import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
 import AddToCollection from '../../Functions/addToCollection';
 import React from 'react';
+import { UserContext } from '@/utils/UserContext';
 
 export default function ArtworkScreen() {
   const { title, id } = useLocalSearchParams();
+  const { user } = useContext(UserContext)
 
   const [fontsLoaded] = useFonts({
     NunitoSans_900Black,
@@ -58,8 +60,6 @@ export default function ArtworkScreen() {
   }, [id, fontsLoaded]);
 
 
-  console.log(artwork?.image_id)
-
   if (!fontsLoaded || !artwork) {
     return (
       <View style={styles.mainContainer}>
@@ -70,6 +70,11 @@ export default function ArtworkScreen() {
   const imageUrl = artwork.image_id
     ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
     : "";
+  const artTitle = artwork?.title || "Untitled";
+
+  const isAlreadyAdded = user?.collection?.some(
+    (item) => item.artTitle === artTitle
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -107,6 +112,7 @@ export default function ArtworkScreen() {
               ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
               : ""
           }}
+          defaultRotated={isAlreadyAdded}
         />
       </View>
       <Text style={styles.id}>Artwork ID: {id}</Text>

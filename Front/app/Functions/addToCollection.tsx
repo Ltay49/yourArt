@@ -2,7 +2,7 @@ import { TouchableOpacity, Animated, StyleSheet, View } from "react-native";
 import React, { useState, useRef } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useContext } from 'react'
-import { UserContext } from "@/utils/UserConext";
+import { UserContext } from "@/utils/UserContext";
 
 type CollectionItem = {
   collection: string;
@@ -13,15 +13,18 @@ type CollectionItem = {
 
 type AddToCollectionProps = {
   collectionItem: CollectionItem;
+  defaultRotated?: boolean;
 };
 
-export default function AddToCollection({ collectionItem }: AddToCollectionProps) {
+export default function AddToCollection({ collectionItem, defaultRotated = false }: AddToCollectionProps) {
+
   if (!collectionItem) {
     console.warn("AddToCollection: collectionItem prop is missing or undefined");
     return null; // or a fallback UI
   }
   const rotateValue = useRef(new Animated.Value(0)).current;
-  const [rotated, setRotated] = useState(false);
+  const [rotated, setRotated] = useState(defaultRotated);
+
 
   const { user, setUser } = useContext(UserContext);
 
@@ -30,7 +33,7 @@ export default function AddToCollection({ collectionItem }: AddToCollectionProps
 
   const handlePress = async () => {
     Animated.timing(rotateValue, {
-      toValue: rotated ? 0 : 45,
+      toValue: rotated ? 0 : 1,
       duration: 300,
       useNativeDriver: true,
     }).start();
@@ -103,8 +106,8 @@ export default function AddToCollection({ collectionItem }: AddToCollectionProps
 
 
   const rotate = rotateValue.interpolate({
-    inputRange: [0, 45],
-    outputRange: ["0deg", "45deg"],
+    inputRange: [0, 1],
+    outputRange: ["0deg", "90deg"],
   });
 
   const wrapperColor = rotated ? "red" : "green";
@@ -113,7 +116,7 @@ export default function AddToCollection({ collectionItem }: AddToCollectionProps
     <TouchableOpacity onPress={handlePress}>
       <Animated.View style={[styles.iconWrapper, { transform: [{ rotate }], borderColor: wrapperColor }]}>
         <Icon
-          name="add"
+          name={rotated ? "close" : "add"}
           size={30}
           color={wrapperColor}
         />

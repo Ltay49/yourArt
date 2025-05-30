@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router'; // or your navigation lib
-import { UserProvider } from '../utils/UserConext'; // adjust path
+import { UserProvider } from '../utils/UserContext'; // adjust path
 import Footer from './Components/footer'; // assuming Footer is a component you import
 
 export default function RootLayout() {

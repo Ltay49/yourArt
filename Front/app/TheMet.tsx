@@ -141,10 +141,10 @@ export default function TheMetScreen() {
                                     </TouchableOpacity>
                                     <AddToCollection
                                         collectionItem={{
-                                            collection: "...",
-                                            artTitle: "...",
-                                            artist: "...",
-                                            imageUrl: "..."
+                                            collection: "The Metropolitan Museum of Art",
+                                            artTitle: art.title,
+                                            artist: art.artistDisplayName,
+                                            imageUrl: art.primaryImageSmall
                                         }}
                                     />
                                 </View>

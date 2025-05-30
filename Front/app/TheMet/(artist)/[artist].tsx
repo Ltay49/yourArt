@@ -98,10 +98,10 @@ export default function artistWork() {
                                 </TouchableOpacity>
                                 <AddToCollection
                                     collectionItem={{
-                                        collection: "...",
-                                        artTitle: "...",
-                                        artist: "...",
-                                        imageUrl: "..."
+                                        collection: "The Metropolitan Museum of Art",
+                                        artTitle: artwork.title,
+                                        artist: artwork.artist,
+                                        imageUrl: artwork.image
                                     }}
                                 />
                             </View>

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
-import { UserContext } from '../utils/UserConext'
+import { UserContext } from '../utils/UserContext'
 
 export default function LogIn() {
     const { user, setUser } = useContext(UserContext);

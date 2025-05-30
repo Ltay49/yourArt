@@ -6,6 +6,8 @@ import axios from "axios";
 import SortBy from "../../Components/sortBy";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddToCollection from "@/app/Functions/addToCollection";
+import { useContext } from "react";
+import { UserContext } from "@/utils/UserContext";
 
 
 
@@ -14,6 +16,9 @@ export default function ArtistSearch() {
     const [sortOption, setSortOption] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
+
+
+    const { user } = useContext(UserContext);
 
     const router = useRouter();
     const pathname = usePathname();
@@ -144,9 +149,9 @@ export default function ArtistSearch() {
         }
 
         setArtistWorks(sorted);
+
     };
 
-    console.log(artistWorks)
     return (
         <>
             <SearchBar />
@@ -168,51 +173,62 @@ export default function ArtistSearch() {
                     <Text>Results Found For: '{artist}'</Text> */}
                     {/* <Text> - {limit} per page</Text> */}
                     {artistWorks.length > 0 ? (
-                        artistWorks.map((artwork: any, index: number) => (
-                            <View key={index} style={[styles.card, isWeb && styles.cardWeb]}>
-                                {artwork.image_id ?
-                                    <Image
-                                        source={{
-                                            uri: `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`,
-                                        }}
-                                        style={styles.image}
-                                    /> : (
+                        artistWorks.map((artwork: any, index: number) => {
+                            const isAlreadyAdded = user?.collection?.some(
+                                (item) => item.artTitle === artwork.title
+                            );
+
+                            return (
+                                <View key={index} style={[styles.card, isWeb && styles.cardWeb]}>
+                                    {artwork.image_id ? (
+                                        <Image
+                                            source={{
+                                                uri: `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`,
+                                            }}
+                                            style={styles.image}
+                                        />
+                                    ) : (
                                         <View style={styles.noImageBox}>
                                             <Text style={styles.noImageText}>No image available</Text>
                                         </View>
                                     )}
-                                <Text style={styles.title}>{artwork.artist_titles}</Text>
-                                <Text style={styles.artist}>{artwork.title}</Text>
-                                <Text>{artwork.date_start}</Text>
-                                <View style={styles.row}>
-                                    <View style={{ alignSelf: 'flex-start' }}>
-                                        <TouchableOpacity
-                                            onPress={async () => {
-                                                await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-
-                                                router.push(`/Chicago/(artwork)/${artwork.id}`);
+                                    <Text style={styles.title}>{artwork.artist_titles}</Text>
+                                    <Text style={styles.artist}>{artwork.title}</Text>
+                                    <Text>{artwork.date_start}</Text>
+                                    <View style={styles.row}>
+                                        <View style={{ alignSelf: 'flex-start' }}>
+                                            <TouchableOpacity
+                                                onPress={async () => {
+                                                    await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
+                                                    router.push(`/Chicago/(artwork)/${artwork.id}`);
+                                                }}
+                                            >
+                                                <Text style={styles.view}>
+                                                    View Here
+                                                </Text>
+                                            </TouchableOpacity>
+                                            <View style={styles.underline} />
+                                        </View>
+                                        <AddToCollection
+                                            collectionItem={{
+                                                collection: "The Art Institute of Chicago",
+                                                artTitle: artwork?.title || "Untitled",
+                                                artist: artwork?.artist_titles[0] || "Unknown Artist",
+                                                imageUrl: artwork?.image_id
+                                                    ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
+                                                    : ""
                                             }}
-                                        >
-                                            <Text style={styles.view}>
-                                                View Here
-                                            </Text>
-                                        </TouchableOpacity>
-                                        <View style={styles.underline} />
+                                            defaultRotated={isAlreadyAdded}
+                                        />
                                     </View>
-                                    <AddToCollection
-                                        collectionItem={{
-                                            collection: "...",
-                                            artTitle: "...",
-                                            artist: "...",
-                                            imageUrl: "..."
-                                        }}
-                                    />
                                 </View>
-                            </View>
-                        ))
+                            );
+                        })
                     ) : (
                         <Text>No artworks found.</Text>
                     )}
+
+
                 </View>
                 <View style={styles.row1}>
                     <Button
@@ -297,7 +313,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: 10,
-
     },
     row1: {
         flexDirection: "row",
@@ -339,4 +354,4 @@ const styles = StyleSheet.create({
         fontStyle: 'italic',
         color: 'gray',
     },
-})
+});

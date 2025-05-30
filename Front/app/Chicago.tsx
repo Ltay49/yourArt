@@ -9,7 +9,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import SerachBar from "./Components/searchBarChicago";
 import { SpecialElite_400Regular, useFonts } from '@expo-google-fonts/special-elite'
 import { useWindowDimensions } from 'react-native';
-import { UserContext } from '../utils/UserConext'
+import { UserContext } from '../utils/UserContext'
 
 // Add to collection - POST request 
 
@@ -106,49 +106,56 @@ export default function Chicago() {
             ) : (
                 <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
                     <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
-                        {artworks.map((artwork) => (
-                            <View key={artwork.id} style={[styles.card, isWeb && styles.cardWeb]}>
-                                {artwork.image_id ?
-                                    <Image
-                                        source={{
-                                            uri: `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`,
-                                        }}
-                                        style={styles.image}
-                                    /> : (
+                        {artworks.map((artwork) => {
+                            const imageUrl = artwork?.image_id
+                                ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
+                                : "";
+
+                            const artTitle = artwork?.title || "Untitled";
+
+                            const isAlreadyAdded = user?.collection?.some(
+                                (item) => item.artTitle === artTitle
+                            );
+
+                            return (
+                                <View key={artwork.id} style={[styles.card, isWeb && styles.cardWeb]}>
+                                    {artwork.image_id ? (
+                                        <Image
+                                            source={{ uri: imageUrl }}
+                                            style={styles.image}
+                                        />
+                                    ) : (
                                         <View style={styles.noImageBox}>
                                             <Text style={styles.noImageText}>No image available</Text>
                                         </View>
                                     )}
-                                <Text style={styles.title}>{artwork.title}</Text>
-                                <Text style={styles.artist}>{artwork.artist_titles}</Text>
-                                <View style={styles.row}>
-                                    <View style={{ alignSelf: 'flex-start' }}>
-                                        <TouchableOpacity
-                                            onPress={async () => {
-                                                await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-
-                                                router.push(`/Chicago/(artwork)/${artwork.id}`);
+                                    <Text style={styles.title}>{artwork.title}</Text>
+                                    <Text style={styles.artist}>{artwork.artist_titles}</Text>
+                                    <View style={styles.row}>
+                                        <View style={{ alignSelf: 'flex-start' }}>
+                                            <TouchableOpacity
+                                                onPress={async () => {
+                                                    await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
+                                                    router.push(`/Chicago/(artwork)/${artwork.id}`);
+                                                }}
+                                            >
+                                                <Text style={styles.view}>View Here</Text>
+                                            </TouchableOpacity>
+                                            <View style={styles.underline} />
+                                        </View>
+                                        <AddToCollection
+                                            collectionItem={{
+                                                collection: "The Art Institute of Chicago",
+                                                artTitle,
+                                                artist: artwork?.artist_titles[0] || "Unknown Artist",
+                                                imageUrl,
                                             }}
-                                        >
-                                            <Text style={styles.view}>
-                                                View Here
-                                            </Text>
-                                        </TouchableOpacity>
-                                        <View style={styles.underline} />
+                                            defaultRotated={isAlreadyAdded}
+                                        />
                                     </View>
-                                    <AddToCollection
-                                        collectionItem={{
-                                            collection: "The Art Institute of Chicago",
-                                            artTitle: artwork?.title || "Untitled",
-                                            artist: artwork?.artist_titles[0]|| "Unknown Artist",
-                                            imageUrl: artwork?.image_id
-                                                ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
-                                                : ""
-                                        }}
-                                    />
                                 </View>
-                            </View>
-                        ))}
+                            );
+                        })}
                     </View>
                     <View style={styles.row1}>
                         {prevUrl && (
