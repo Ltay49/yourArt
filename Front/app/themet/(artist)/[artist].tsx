@@ -196,7 +196,7 @@ export default function artistWork() {
                                     onPress={async () => {
                                         console.log(artwork.objectID)
                                         await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-                                        router.push(`./themet/(artwork)/${artwork.id}`);
+                                        router.push(`/themet/(artwork)/${artwork.id}`);
                                     }
                                     }>
                                     <Text style={styles.view}>
