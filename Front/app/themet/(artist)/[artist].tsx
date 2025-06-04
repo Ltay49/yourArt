@@ -52,33 +52,47 @@ export default function artistWork() {
         url: string
     }
 
-    console.log(items)
     useEffect(() => {
-        if (!artistWorks.length) {
-            (async () => {
-                const saved = await AsyncStorage.getItem("lastArtistResults");
-                const savedArtist = await AsyncStorage.getItem("lastArtist");
-                const savedTotalItems = await AsyncStorage.getItem("totalLastItems");
-                if (saved && savedArtist && savedTotalItems) {
-                    setArtistWorks(JSON.parse(saved));
-                    setTotalItems(JSON.parse(savedTotalItems));
-                }
-            })();
+        if (allObjectIDs.length > 0) {
+          AsyncStorage.setItem("lastArtistObjectIDs", JSON.stringify(allObjectIDs));
         }
-    }, []);
+      }, [allObjectIDs]);
+
+
+   useEffect(() => {
+  (async () => {
+    if (!artistWorks.length) {
+      const saved = await AsyncStorage.getItem("lastArtistResults");
+      const savedArtist = await AsyncStorage.getItem("lastArtist");
+      const savedTotalItems = await AsyncStorage.getItem("totalLastItems");
+      const savedIndex = await AsyncStorage.getItem("lastArtistIndex");
+      const savedPage = await AsyncStorage.getItem("lastArtistPage");
+      const savedObjectIDs = await AsyncStorage.getItem("lastArtistObjectIDs"); // NEW
+
+      if (saved && savedArtist && savedTotalItems) {
+        setArtistWorks(JSON.parse(saved));
+        setTotalItems(JSON.parse(savedTotalItems));
+
+        if (savedIndex) setCurrentIndex(parseInt(savedIndex));
+        if (savedPage) setCurrentPage(parseInt(savedPage));
+        if (savedObjectIDs) setAllObjectIDs(JSON.parse(savedObjectIDs)); // NEW
+      }
+    }
+  })();
+}, []);
 
     useEffect(() => {
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
-      
+
         if (artistStr && /^\d+$/.test(artistStr)) {
-          // Delay navigation until after mount
-          const timeout = setTimeout(() => {
-            router.replace(`/themet/(artwork)/${artistStr}`);
-          }, 0); // Can also use 100ms if needed
-      
-          return () => clearTimeout(timeout);
+            // Delay navigation until after mount
+            const timeout = setTimeout(() => {
+                router.replace(`/themet/(artwork)/${artistStr}`);
+            }, 0); // Can also use 100ms if needed
+
+            return () => clearTimeout(timeout);
         }
-      }, [artist]);
+    }, [artist]);
 
     const fetchArtworksByIDs = async (ids: number[], startIndex = 0, limit = 25) => {
         const artworks: Artwork[] = [];
@@ -108,45 +122,61 @@ export default function artistWork() {
         return artworks;
     };
 
-    const handleNext = () => {
-        if (currentIndex + 25 >= allObjectIDs.length || loading) return;
-        scrollRef.current?.scrollTo({ y: 0, animated: false }); // Jump to top instantly
-        setCurrentIndex(prev => prev + 25);
-        setCurrentPage(prev => prev + 1);
-      };
+    console.log("object",allObjectIDs)
+
+    const handleNext = async () => {
+        if (totalItems === null || currentIndex + 25 >= totalItems || loading) return;
       
-      const handlePrevious = () => {
+        scrollRef.current?.scrollTo({ y: 0, animated: false });
+      
+        const newIndex = currentIndex + 25;
+        const newPage = currentPage + 1;
+        setCurrentIndex(newIndex);
+        setCurrentPage(newPage);
+      
+        await AsyncStorage.setItem("lastArtistIndex", newIndex.toString());
+        await AsyncStorage.setItem("lastArtistPage", newPage.toString());
+      };
+
+    const handlePrevious = async () => {
         if (currentIndex === 0 || loading) return;
-        scrollRef.current?.scrollTo({ y: 0, animated: false }); // Jump to top instantly
-        setCurrentIndex(prev => prev - 25);
-        setCurrentPage(prev => prev - 1);
-      };
-      
-      useEffect(() => {
+        scrollRef.current?.scrollTo({ y: 0, animated: false });
+
+        const newIndex = currentIndex - 25;
+        const newPage = currentPage - 1;
+        setCurrentIndex(newIndex);
+        setCurrentPage(newPage);
+
+        await AsyncStorage.setItem("lastArtistIndex", newIndex.toString());
+        await AsyncStorage.setItem("lastArtistPage", newPage.toString());
+    };
+
+
+    useEffect(() => {
         if (currentIndex === 0 && parsedArtworks?.length > 0) return;
-      
+
         const fetch = async () => {
-          setLoading(true);
-          const newArtworks = await fetchArtworksByIDs(allObjectIDs, currentIndex);
-          setArtistWorks(newArtworks);
-          setLoading(false);
+            setLoading(true);
+            const newArtworks = await fetchArtworksByIDs(allObjectIDs, currentIndex);
+            setArtistWorks(newArtworks);
+            setLoading(false);
         };
-      
+
         fetch();
-      }, [currentIndex]);
-      
+    }, [currentIndex]);
+
 
     return (
         <View style={styles.mainContainer}>
             <SearchBar />
             {loading && (
-  <View style={styles.loadingOverlay}>
-    <Text style={styles.loadingText}>
-      Not long now, just fetching more results for '{artist}'
-    </Text>
-    <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
-  </View>
-)}
+                <View style={styles.loadingOverlay}>
+                    <Text style={styles.loadingText}>
+                        Not long now, just fetching more results for '{artist}'
+                    </Text>
+                    <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+                </View>
+            )}
             <ScrollView
                 ref={scrollRef}
                 contentContainerStyle={styles.scrollContent}
@@ -206,13 +236,17 @@ export default function artistWork() {
                     />
                     <View style={styles.row}>
                         <Text style={styles.pageNumber}>
-                            Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{totalPages}</Text>
+                            Page <Text style={styles.bold}>{currentPage}</Text> of{" "}
+                            <Text style={styles.bold}>
+                                {totalPages || (totalItems ? Math.ceil(totalItems / 25) : "?")}
+                            </Text>
                         </Text>
+
                     </View>
                     <Button
                         title="Next"
                         onPress={handleNext}
-                        disabled={currentIndex + 25 >= allObjectIDs.length || loading}
+                        disabled={totalItems === null || currentIndex + 25 >= totalItems || loading}
                     />
                 </View>
             </ScrollView>
@@ -313,12 +347,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         zIndex: 10,
         padding: 20,
-      },
-      
-      loadingText: {
+    },
+
+    loadingText: {
         fontSize: 18,
         color: "#333",
         textAlign: "center",
         fontStyle: "italic",
-      }
+    }
 })

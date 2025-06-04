@@ -122,7 +122,7 @@ export default function Footer() {
 
         {/* Right side links */}
         <View style={styles.rightLinks}>
-          <Text
+        <Text
             style={styles.footerText}
             onPress={async () => {
               if (pathname !== '/collection' && pathname !== '/login') {

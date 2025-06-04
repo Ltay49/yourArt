@@ -179,6 +179,7 @@ export default function Chicago() {
     );
 }
 
+
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,

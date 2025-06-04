@@ -97,7 +97,7 @@ export default function SearchBar() {
                 setArtworks(validArtworks);
 
                 router.push({
-                    pathname: "./themet/(artist)/[artist]",
+                    pathname: "/themet/(artist)/[artist]",
                     params: {
                         artist: artistName,
                         artworks: JSON.stringify(validArtworks),

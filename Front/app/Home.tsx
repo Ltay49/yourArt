@@ -9,10 +9,10 @@ import { useWindowDimensions } from 'react-native';
 
 export default function MainScreen() {
 
-  const intro = `"Art is for everybody. I don’t think art should be only for the select few, I think it should be for the masses of people." 
+  const intro = `"Art is for everybody. I don't think art should be only for the select few, I think it should be for the masses of people." 
 — Keith Haring`;
 
-const introWeb = `"Art is for everybody. I don’t think art should be only for the select few, I think it should be for the masses of people."  — Keith Haring`;
+const introWeb = `"Art is for everybody. I don't think art should be only for the select few, I think it should be for the masses of people."  — Keith Haring`;
 
 const { width } = useWindowDimensions();
 

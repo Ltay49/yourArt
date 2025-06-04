@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Alert, useWindowDimensions } from 'react-native';
 import { UserContext } from '../utils/UserContext';
+import { router} from 'expo-router';
 
 export default function Collection() {
     const { user } = useContext(UserContext);
@@ -11,8 +12,11 @@ export default function Collection() {
 
     if (!user) {
         return (
-            <View style={styles.container}>
-                <Text>Please log in to view your collection.</Text>
+            <View style={styles.centeredContainer}>
+                <Text style={styles.message}>Please log in to view your collection.</Text>
+                <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
+                    <Text style={styles.buttonText}>Go to Login</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -123,7 +127,6 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         justifyContent: 'center',
         marginBottom: 0,
-        // margin:'2%',
         paddingHorizontal: 10,
         width:'100%'
     },
@@ -132,8 +135,8 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 6,
-        alignItems: 'center', // ✅ centers children horizontally
-        justifyContent: 'center', // ✅ centers vertically
+        alignItems: 'center',
+        justifyContent: 'center', 
         marginBottom: 5,
         marginHorizontal: 5,
       },
@@ -150,7 +153,6 @@ const styles = StyleSheet.create({
     },
     card: {
         flex: 1,
-        // margin: 8,
         backgroundColor: '#fff',
         borderRadius: 12,
         overflow: 'hidden',
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
-        alignItems: 'center', // ← Ensures children are centered horizontally
+        alignItems: 'center',
     },
     image: {
         width: '100%',
@@ -167,16 +169,13 @@ const styles = StyleSheet.create({
     },
     imageWeb: {
         alignSelf: 'center',
-        width: '59%',           // Two images side by side with some margin
-        aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
+        width: '59%',
+        aspectRatio: 4 / 3,  
         resizeMode: 'contain',
     },
     textContainer: {
         width:'50%',
-        // marginTop: 10,
         padding: 12,
-        // backgroundColor: 'darkgrey',
-        // borderRadius: 6,
         alignItems: 'center',
     },
     artTitle: {
@@ -204,6 +203,35 @@ const styles = StyleSheet.create({
     removeText: {
         color: '#fff',
         fontWeight: 'bold',
+    },
+    centeredContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24,
+        backgroundColor: '#f8f9fa',
+    },
+    message: {
+        fontSize: 18,
+        color: '#333',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    button: {
+        backgroundColor: '#007bff',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });
 
