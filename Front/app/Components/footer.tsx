@@ -27,10 +27,10 @@ export default function Footer() {
   });
 
   const nameMap: { [key: string]: string } = {
-    chicago: 'Chicago',
+    chicago: 'chicago',
     artwork: 'Artwork',
     index: 'Home',
-    collection: 'Collection',
+    collection: 'collection',
     themet: 'themet'
   };
 
@@ -42,7 +42,7 @@ export default function Footer() {
 
       let workingPath = pathname;
 
-      if (pathname === '/Collection' || pathname === '/LogIn') {
+      if (pathname === '/collection' || pathname === '/login') {
         const returnPath = await getReturnPath();
         workingPath = returnPath || '/';
       }
@@ -62,7 +62,7 @@ export default function Footer() {
       }
 
       const breadcrumbTrail =
-        pathname === '/Collection' || pathname === '/LogIn'
+        pathname === '/collection' || pathname === '/login'
           ? ['Home', ...visibleSegments, '']
           : ['Home', ...visibleSegments];
 
@@ -125,10 +125,10 @@ export default function Footer() {
           <Text
             style={styles.footerText}
             onPress={async () => {
-              if (pathname !== '/Collection' && pathname !== '/LogIn') {
+              if (pathname !== '/collection' && pathname !== '/login') {
                 await setReturnPath(pathname); // only save real pages
               }
-              router.push('/Collection');
+              router.push('/collection');
             }}
           >
             <Text style={styles.collection}>Collection</Text>
@@ -136,10 +136,10 @@ export default function Footer() {
           <TouchableOpacity>
             <Text style={styles.footerText}
               onPress={async () => {
-                if (pathname !== '/Collection' && pathname !== '/LogIn') {
+                if (pathname !== '/collection' && pathname !== '/login') {
                   await setReturnPath(pathname); // only save real pages
                 }
-                router.push('./LogIn');
+                router.push('/login');
               }}
             >Log In</Text>
           </TouchableOpacity>
