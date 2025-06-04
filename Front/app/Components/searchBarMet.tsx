@@ -84,7 +84,7 @@ export default function SearchBar() {
 
                 if (validArtworks.length === 0) {
                     console.warn("No valid artworks with images found.");
-                    router.push("/TheMet/not-found");
+                    router.push("./themet/not-found");
                     return;
                 }
 
@@ -97,7 +97,7 @@ export default function SearchBar() {
                 setArtworks(validArtworks);
 
                 router.push({
-                    pathname: "/TheMet/(artist)/[artist]",
+                    pathname: "./themet/(artist)/[artist]",
                     params: {
                         artist: artistName,
                         artworks: JSON.stringify(validArtworks),
@@ -106,7 +106,7 @@ export default function SearchBar() {
                     },
                 });
             } catch (error) {
-                router.push('/TheMet/not-found');
+                router.push('./themet/not-found');
             } finally {
                 setLoading(false);
                 setSearchTriggered(false);

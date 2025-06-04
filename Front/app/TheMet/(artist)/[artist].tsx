@@ -72,7 +72,7 @@ export default function artistWork() {
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
 
         if (artistStr && /^\d+$/.test(artistStr)) {
-            router.replace(`/TheMet/(artwork)/${artistStr}`);
+            router.replace(`/themet/(artwork)/${artistStr}`);
         }
     }, [artist]);
 
@@ -162,7 +162,7 @@ export default function artistWork() {
                                     onPress={async () => {
                                         console.log(artwork.objectID)
                                         await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-                                        router.push(`/TheMet/(artwork)/${artwork.id}`);
+                                        router.push(`./themet/(artwork)/${artwork.id}`);
                                     }
                                     }>
                                     <Text style={styles.view}>
