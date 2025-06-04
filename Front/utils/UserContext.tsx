@@ -11,7 +11,8 @@ type User = {
     artTitle: string;
     artist: string;
     imageUrl: string;
-  }>;
+  }
+  >;
 } | null;
 
 type UserContextType = {

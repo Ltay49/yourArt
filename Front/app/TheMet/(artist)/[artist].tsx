@@ -1,28 +1,48 @@
 import SearchBar from "@/app/Components/searchBarMet"
 import SortBy from "@/app/Components/sortBy"
 import { useRouter, useLocalSearchParams, usePathname, router } from "expo-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity, Image, Button } from "react-native";
 import axios from "axios";
+import { useWindowDimensions, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddToCollection from "@/app/Functions/addToCollection";
-
+import { UserContext } from "@/utils/UserContext";
 
 export default function artistWork() {
 
+    const scrollRef = useRef<ScrollView>(null);
 
-    const { artist
-        , artworks, total, limit, offset, total_pages, current_page, items } = useLocalSearchParams();
+    const {
+        artist,
+        artworks,
+        total,
+        limit,
+        offset,
+        total_pages,
+        current_page,
+        items,
+        objectIDs } = useLocalSearchParams();
 
     const parsedArtworks = artworks ? JSON.parse(artworks as string) : [];
+
+    const [loading, setLoading] = useState(false);
+
 
     const [artistWorks, setArtistWorks] = useState<Artwork[]>(parsedArtworks || [])
     const [totalItems, setTotalItems] = useState<number | null>(items ? parseInt(items as string) : null);
     const [currentPage, setCurrentPage] = useState(1)
     const [pageNumber, setPageNumber] = useState([0, 10])
+    const parsedObjectIDs = objectIDs ? JSON.parse(objectIDs as string) : [];
+    const [allObjectIDs, setAllObjectIDs] = useState<number[]>(parsedObjectIDs);
+
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     const totalPages = Math.ceil(Number(items || 0) / 25);
 
+    const { width } = useWindowDimensions();
+    const isWeb = width > 768;
+    const { user } = useContext(UserContext);
 
     type Artwork = {
         id: number
@@ -32,6 +52,7 @@ export default function artistWork() {
         url: string
     }
 
+    console.log(items)
     useEffect(() => {
         if (!artistWorks.length) {
             (async () => {
@@ -55,26 +76,80 @@ export default function artistWork() {
         }
     }, [artist]);
 
-    const nextPage = () => {
-        setCurrentPage(currentPage + 1)
-        setPageNumber([pageNumber[0] + 10, pageNumber[1] + 10])
-    }
-    const prevPage = () => {
-        if (pageNumber[0] >= 10) {
-            setCurrentPage(currentPage - 1)
-            setPageNumber([pageNumber[0] - 10, pageNumber[1] - 10]);
+    const fetchArtworksByIDs = async (ids: number[], startIndex = 0, limit = 25) => {
+        const artworks: Artwork[] = [];
+        let i = startIndex;
+
+        while (artworks.length < limit && i < ids.length) {
+            const id = ids[i];
+            try {
+                const res = await axios.get(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
+                const data = res.data;
+
+                if (data) {
+                    artworks.push({
+                        id: data.objectID,
+                        title: data.title,
+                        artistDisplayName: data.artistDisplayName,
+                        primaryImage: data.primaryImage,
+                        url: data.objectURL,
+                    });
+                }
+            } catch (error) {
+                console.warn(`Failed to fetch object ${id}`, error);
+            }
+            i++;
         }
+
+        return artworks;
     };
 
-
+    const handleNext = () => {
+        if (currentIndex + 25 >= allObjectIDs.length || loading) return;
+        scrollRef.current?.scrollTo({ y: 0, animated: false }); // Jump to top instantly
+        setCurrentIndex(prev => prev + 25);
+        setCurrentPage(prev => prev + 1);
+      };
+      
+      const handlePrevious = () => {
+        if (currentIndex === 0 || loading) return;
+        scrollRef.current?.scrollTo({ y: 0, animated: false }); // Jump to top instantly
+        setCurrentIndex(prev => prev - 25);
+        setCurrentPage(prev => prev - 1);
+      };
+      
+      useEffect(() => {
+        if (currentIndex === 0 && parsedArtworks?.length > 0) return;
+      
+        const fetch = async () => {
+          setLoading(true);
+          const newArtworks = await fetchArtworksByIDs(allObjectIDs, currentIndex);
+          setArtistWorks(newArtworks);
+          setLoading(false);
+        };
+      
+        fetch();
+      }, [currentIndex]);
+      
 
     return (
         <View style={styles.mainContainer}>
             <SearchBar />
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.gallery}>
+            {loading && (
+  <View style={styles.loadingOverlay}>
+    <Text style={styles.loadingText}>
+      Not long now, just fetching more results for '{artist}'
+    </Text>
+    <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+  </View>
+)}
+            <ScrollView
+                ref={scrollRef}
+                contentContainerStyle={styles.scrollContent}
+            >
+                <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                     {artistWorks.map((artwork: any, index: number) => (
-                        <View style={styles.card} key={artwork.id}>
+                        <View style={[styles.card, isWeb && styles.cardWeb]} key={artwork.id}>
                             <Image
                                 style={styles.image}
                                 source={{ uri: artwork?.image || "https://example.com/no-image.png" }}
@@ -96,32 +171,45 @@ export default function artistWork() {
                                     <View style={styles.underline}>
                                     </View>
                                 </TouchableOpacity>
-                                <AddToCollection
-                                    collectionItem={{
-                                        collection: "The Metropolitan Museum of Art",
-                                        artTitle: artwork.title,
-                                        artist: artwork.artist,
-                                        imageUrl: artwork.image
-                                    }}
-                                />
+                                {(() => {
+                                    const isAlreadyAdded = user?.collection?.some(
+                                        (item) => item.artTitle === artwork.title
+                                    );
+
+                                    return (
+                                        <AddToCollection
+                                            collectionItem={{
+                                                collection: "The Metropolitan Museum of Art",
+                                                artTitle: artwork.title,
+                                                artist: artwork.artist,
+                                                imageUrl: artwork.image
+                                            }}
+                                            defaultRotated={isAlreadyAdded}
+                                        />
+                                    );
+                                })()}
                             </View>
                         </View>
                     ))}
                     <View>
-                        <View style={styles.row1}>
-                            <Button onPress={prevPage}
-                                title="Previous" />
-                            <View style={styles.row}>
-                                <Text style={styles.pageNumber}>
-                                    Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{totalPages}</Text>
-
-                                </Text>
-                            </View>
-                            <Button onPress={nextPage}
-                                title="Next" />
-
-                        </View>
                     </View>
+                </View>
+                <View style={styles.row1}>
+                    <Button
+                        title="Previous"
+                        onPress={handlePrevious}
+                        disabled={currentIndex === 0 || loading}
+                    />
+                    <View style={styles.row}>
+                        <Text style={styles.pageNumber}>
+                            Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{totalPages}</Text>
+                        </Text>
+                    </View>
+                    <Button
+                        title="Next"
+                        onPress={handleNext}
+                        disabled={currentIndex + 25 >= allObjectIDs.length || loading}
+                    />
                 </View>
             </ScrollView>
         </View>
@@ -133,11 +221,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
     },
-    gallery: {
-        flex: 1,
-        flexWrap: 'wrap',
+    gridContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        backgroundColor: 'white'
+    },
+    gridContainerWeb: {
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
     },
     scrollContent: {
         paddingBottom: 80,
@@ -157,6 +250,10 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "space-between",
         minHeight: 250,
+    },
+    cardWeb: {
+        width: '47%',
+        margin: '1%',
     },
     title: {
         marginTop: 10,
@@ -204,5 +301,20 @@ const styles = StyleSheet.create({
     },
     bold: {
         fontWeight: "bold",
-    }
+    },
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10,
+        padding: 20,
+      },
+      
+      loadingText: {
+        fontSize: 18,
+        color: "#333",
+        textAlign: "center",
+        fontStyle: "italic",
+      }
 })

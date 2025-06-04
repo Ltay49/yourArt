@@ -129,12 +129,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   galleryNameWeb: {
-    width: '100%',
+    width: '95%',
     height: 400,
     borderColor: 'black',
     // borderBottomWidth:2,
-    borderTopWidth:2,
-    borderRadius: 0 // bigger on web
+    // borderTopWidth:2,
+    borderRadius: 1 // bigger on web
   },
   galLink: {
     textAlign: 'center',
@@ -154,7 +154,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     overflow: 'hidden',
-    borderRadius: 0,
+    borderRadius: 2,
+
   },
   gradient: {
     ...StyleSheet.absoluteFillObject, // full cover

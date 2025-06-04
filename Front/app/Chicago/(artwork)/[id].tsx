@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { Text, View, StyleSheet, ScrollView, Image, useWindowDimensions } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Image, useWindowDimensions, ActivityIndicator } from 'react-native';
 import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import Suggestions from '../../Components/suggestionsArtist';
@@ -11,6 +11,7 @@ import { UserContext } from '@/utils/UserContext';
 export default function ArtworkScreen() {
   const { title, id } = useLocalSearchParams();
   const { user } = useContext(UserContext)
+  const [loading, setIsLoading] = useState(false)
 
   const [fontsLoaded] = useFonts({
     NunitoSans_900Black,
@@ -45,6 +46,7 @@ export default function ArtworkScreen() {
   useEffect(() => {
     const fetchArtwork = async () => {
       if (!id) return;
+      setIsLoading(true)
 
       try {
         const response = await axios.get(`https://api.artic.edu/api/v1/artworks/${id}`);
@@ -53,7 +55,7 @@ export default function ArtworkScreen() {
         console.error("Error fetching artwork:", error);
       }
     };
-
+    setIsLoading(false)
     if (fontsLoaded) {
       fetchArtwork();
     }
@@ -62,9 +64,12 @@ export default function ArtworkScreen() {
 
   if (!fontsLoaded || !artwork) {
     return (
-      <View style={styles.mainContainer}>
-        <Text>Loading artwork...</Text>
-      </View>
+      <View style={styles.loadingOverlay}>
+      <Text style={styles.loadingText}>
+        Not long now, your artwork is on its way!
+      </Text>
+      <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+    </View>
     );
   }
   const imageUrl = artwork.image_id
@@ -108,7 +113,7 @@ export default function ArtworkScreen() {
             collection: "The Art Institute of Chicago",
             artTitle: artwork?.title || "Untitled",
             artist: artwork?.artist_titles[0] || "Unknown Artist",
-            imageUrl: artwork?.image_id
+            imageUrl: imageUrl
               ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
               : ""
           }}
@@ -246,6 +251,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'brown',
     marginTop: 10
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+    padding: 20,
+  },
+  loadingText: {
+    fontSize: 18,
+    color: "#333",
+    textAlign: "center",
+    fontStyle: "italic",
   }
 });
 

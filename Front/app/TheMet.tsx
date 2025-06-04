@@ -1,6 +1,6 @@
 import { View, Text, TextInput, StyleSheet, ScrollView, Image, TouchableOpacity, ImageBackground, Button } from "react-native";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import React from 'react';
 import SerachBar from "./Components/searchBarMet";
 import { ActivityIndicator } from "react-native";
@@ -8,7 +8,9 @@ import AddToCollection from "./Functions/addToCollection";
 import { useFonts, NunitoSans_900Black, NunitoSans_400Regular_Italic, NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans';
 import { SpecialElite_400Regular } from '@expo-google-fonts/special-elite'
 import { useRouter, usePathname } from 'expo-router';
+import { useWindowDimensions } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserContext } from "@/utils/UserContext";
 
 export default function TheMetScreen() {
 
@@ -19,6 +21,7 @@ export default function TheMetScreen() {
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0)
     const [pageNumber, setPageNumber] = useState([0, 10])
+    const { user } = useContext(UserContext)
 
     const [fontsLoaded] = useFonts({
         NunitoSans_900Black,
@@ -33,6 +36,8 @@ export default function TheMetScreen() {
         artistDisplayName: string
         primaryImageSmall: string
     }
+    const { width } = useWindowDimensions();
+    const isWeb = width > 768;
 
     const [metArtwork, setMetArtwork] = useState<Artwork[]>([]);
 
@@ -93,7 +98,6 @@ export default function TheMetScreen() {
 
     const totalPages = Math.ceil(total / 10);
 
-
     return (
 
         <View style={styles.mainContainer}>
@@ -105,51 +109,52 @@ export default function TheMetScreen() {
                 </View>
             ) : (
                 <ScrollView contentContainerStyle={styles.scrollContent}>
-                    <View style={styles.gallery}>
-                        {metArtwork.map((art) => (
-                            <View style={styles.card} key={art.objectID}>
-                                {art.primaryImageSmall ? (
-                                    <Image
-                                        style={styles.image}
-                                        source={{ uri: art.primaryImageSmall }}
-                                    />
-                                ) : (
-                                    <ImageBackground style={styles.noImageBox}>
-                                        <Text style={styles.noImageText}>No image available</Text>
-                                    </ImageBackground>
-                                )}
-                                <Text style={styles.title}>{art.title || "unknown"}</Text>
-                                <Text style={styles.artist}>{art.artistDisplayName || "Unknown"}</Text>
-                                <View style={styles.row}>
-                                    <TouchableOpacity
-                                        onPress={async () => {
-                                            await AsyncStorage.setItem("lastVisitedId", art.objectID.toString());
+                    <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
+                        {metArtwork.map((art) => {
+                            const isAlreadyAdded = user?.collection?.some(
+                                (item) => item.artTitle === (art.title || "Untitled")
+                            );
 
-                                            router.push({
-                                                pathname: "./TheMet/(artist)/[id]",
-                                                params: {
-                                                    id: art.objectID,
-                                                },
-                                            });
-                                        }}
-                                    >
-                                        <Text style={styles.view}>
-                                            View Here
-                                        </Text>
-                                        <View style={styles.underline}>
-                                        </View>
-                                    </TouchableOpacity>
-                                    <AddToCollection
-                                        collectionItem={{
-                                            collection: "The Metropolitan Museum of Art",
-                                            artTitle: art.title,
-                                            artist: art.artistDisplayName,
-                                            imageUrl: art.primaryImageSmall
-                                        }}
-                                    />
+                            return (
+                                <View key={art.objectID} style={[styles.card, isWeb && styles.cardWeb]}>
+
+                                    {art.primaryImageSmall ? (
+                                        <Image style={styles.image} source={{ uri: art.primaryImageSmall }} />
+                                    ) : (
+                                        <ImageBackground style={styles.noImageBox}>
+                                            <Text style={styles.noImageText}>No image available</Text>
+                                        </ImageBackground>
+                                    )}
+                                    <Text style={styles.title}>{art.title || "unknown"}</Text>
+                                    <Text style={styles.artist}>{art.artistDisplayName || "Unknown"}</Text>
+                                    <View style={styles.row}>
+                                        <TouchableOpacity
+                                            onPress={async () => {
+                                                await AsyncStorage.setItem("lastVisitedId", art.objectID.toString());
+
+                                                router.push({
+                                                    pathname: "./TheMet/(artist)/[id]",
+                                                    params: { id: art.objectID },
+                                                });
+                                            }}
+                                        >
+                                            <Text style={styles.view}>View Here</Text>
+                                            <View style={styles.underline} />
+                                        </TouchableOpacity>
+
+                                        <AddToCollection
+                                            collectionItem={{
+                                                collection: "The Metropolitan Museum of Art",
+                                                artTitle: art.title || "Untitled",
+                                                artist: art.artistDisplayName || "Unknown Artist",
+                                                imageUrl: art.primaryImageSmall || "https://example.com/no-image.png",
+                                            }}
+                                            defaultRotated={isAlreadyAdded}
+                                        />
+                                    </View>
                                 </View>
-                            </View>
-                        ))}
+                            );
+                        })}
                     </View>
                     <View>
                         <View style={styles.row1}>
@@ -184,25 +189,37 @@ const styles = StyleSheet.create({
     },
     card: {
         width: "95%",
+        // borderRightWidth:2,
+        // borderBottomWidth:2,
         backgroundColor: "#f0f0f0",
         borderColor: 'grey',
         borderRadius: 20,
         padding: 10,
+        // marginLeft: 10,
+        // marginRight:10,
         marginBottom: 10,
         flexDirection: "column",
         justifyContent: "space-between",
-        minHeight: 250,
+        minHeight: 250, // ensure there's enough space
+    },
+    cardWeb: {
+        width: '47%',
+        margin: '1%',
     },
     image: {
         width: "100%",
         height: 300,
         borderRadius: 10,
     },
-    gallery: {
-        flex: 1,
-        flexWrap: 'wrap',
+    gridContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+    },
+    gridContainerWeb: {
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
     },
     loaderContainer: {
         flex: 1,
@@ -250,15 +267,15 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     noImageText: {
-        top: '0%',
+        top: '10%',
         height: '40%',
-        width: '90%',
+        width: '80%',
         alignSelf: 'center',
         textAlign: 'center',
-        fontSize: 50,
+        fontSize: 35,
         fontFamily: 'SpecialElite_400Regular',
         color: "brown",
-        transform: [{ rotate: '-45deg' }],
+        // transform: [{ rotate: '-45deg' }],
         // borderWidth: 2
     },
     noImageBox: {

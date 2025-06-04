@@ -1,7 +1,7 @@
-import { Text, View, StyleSheet, ScrollView, Image, Button, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Text, View, StyleSheet, ScrollView, Image, Button, TouchableOpacity, useWindowDimensions, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
 import SearchBar from "../../Components/searchBarChicago";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef} from "react";
 import axios from "axios";
 import SortBy from "../../Components/sortBy";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,13 +10,13 @@ import { useContext } from "react";
 import { UserContext } from "@/utils/UserContext";
 
 
-
 export default function ArtistSearch() {
     const { artist, artworks, total, limit, offset, total_pages, current_page } = useLocalSearchParams();
     const [sortOption, setSortOption] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
-
+    
+    const scrollRef = useRef<ScrollView>(null);
 
     const { user } = useContext(UserContext);
 
@@ -162,11 +162,14 @@ export default function ArtistSearch() {
                 }}
                 activeSort={sortOption}
             />
-            {loading && (
-                <View style={styles.loadingContainer}>
-                    <Text style={styles.loadingText}>Sorting...</Text>
-                </View>
-            )}
+                    {loading && (
+  <View style={styles.loadingOverlay}>
+    <Text style={styles.loadingText}>
+      Not long now, just fetching more results for '{artist}'
+    </Text>
+    <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+  </View>
+)}
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                     {/* <Text>{total} </Text>
@@ -345,13 +348,19 @@ const styles = StyleSheet.create({
         color: "gray",
         flexShrink: 1,
     },
-    loadingContainer: {
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10,
         padding: 20,
-        alignItems: 'center',
-    },
-    loadingText: {
-        fontSize: 16,
-        fontStyle: 'italic',
-        color: 'gray',
-    },
+      },
+      
+      loadingText: {
+        fontSize: 18,
+        color: "#333",
+        textAlign: "center",
+        fontStyle: "italic",
+      }
 });

@@ -1,7 +1,6 @@
 import { TouchableOpacity, Animated, StyleSheet, View } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useContext } from 'react'
 import { UserContext } from "@/utils/UserContext";
 
 type CollectionItem = {
@@ -17,21 +16,32 @@ type AddToCollectionProps = {
 };
 
 export default function AddToCollection({ collectionItem, defaultRotated = false }: AddToCollectionProps) {
-
   if (!collectionItem) {
     console.warn("AddToCollection: collectionItem prop is missing or undefined");
-    return null; // or a fallback UI
+    return null;
   }
-  const rotateValue = useRef(new Animated.Value(0)).current;
-  const [rotated, setRotated] = useState(defaultRotated);
 
+  const rotateValue = useRef(new Animated.Value(defaultRotated ? 1 : 0)).current;
+  const [rotated, setRotated] = useState(defaultRotated);
 
   const { user, setUser } = useContext(UserContext);
 
-
-  console.log("AddToCollection props:", collectionItem);
+  useEffect(() => {
+    setRotated(defaultRotated);
+    Animated.timing(rotateValue, {
+      toValue: defaultRotated ? 1 : 0,
+      duration: 0,
+      useNativeDriver: true,
+    }).start();
+  }, [defaultRotated]);
 
   const handlePress = async () => {
+
+    if (!user?.username) {
+      alert("Please log in or sign up to add items to your collection.");
+      return;
+    }
+
     Animated.timing(rotateValue, {
       toValue: rotated ? 0 : 1,
       duration: 300,
@@ -39,11 +49,6 @@ export default function AddToCollection({ collectionItem, defaultRotated = false
     }).start();
 
     setRotated(!rotated);
-
-    if (!user?.username) {
-      console.warn("User not logged in");
-      return;
-    }
 
     const { collection, artTitle, artist, imageUrl } = collectionItem;
 
@@ -53,19 +58,13 @@ export default function AddToCollection({ collectionItem, defaultRotated = false
 
     try {
       if (artworkExists) {
-        // 🔴 REMOVE request
         const response = await fetch(
           `https://yourart-production.up.railway.app/api/userProfile/${user.username}/collection/${encodeURIComponent(artTitle)}`,
-          {
-            method: "DELETE",
-          }
+          { method: "DELETE" }
         );
 
-        if (!response.ok) {
-          throw new Error(`Failed to remove artwork. Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Failed to remove artwork. Status: ${response.status}`);
 
-        // 🔄 Update context
         setUser({
           ...user,
           collection: user.collection.filter((item) => item.artTitle !== artTitle),
@@ -73,23 +72,17 @@ export default function AddToCollection({ collectionItem, defaultRotated = false
 
         alert("Artwork removed from your collection.");
       } else {
-        // ✅ ADD request
         const response = await fetch(
           `https://yourart-production.up.railway.app/api/userProfile/${user.username}/collection`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ collection, artTitle, artist, imageUrl }),
           }
         );
 
-        if (!response.ok) {
-          throw new Error(`Failed to add artwork. Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Failed to add artwork. Status: ${response.status}`);
 
-        // 🔄 Update context
         setUser({
           ...user,
           collection: [...(user.collection || []), collectionItem],
@@ -102,8 +95,6 @@ export default function AddToCollection({ collectionItem, defaultRotated = false
       alert("Failed to update your collection.");
     }
   };
-
-
 
   const rotate = rotateValue.interpolate({
     inputRange: [0, 1],
@@ -134,5 +125,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
 
 

@@ -25,78 +25,88 @@ export default function SearchBar() {
         const searchMetMuseum = async () => {
             try {
                 setLoading(true);
+
+                // 1. Search for all objectIDs based on the artist name
                 const searchRes = await axios.get(
                     `https://collectionapi.metmuseum.org/public/collection/v1/search`,
                     { params: { q: artistName } }
                 );
 
-                const allObjectIDs: number[] = searchRes.data.objectIDs || [];
-                setAllObjectIDs(allObjectIDs);
-                console.log("All objectIDs from search:", allObjectIDs);
+                const rawObjectIDs: number[] = searchRes.data.objectIDs || [];
 
-                if (allObjectIDs.length === 0) {
+                if (!rawObjectIDs.length) {
                     throw new Error("No object IDs found.");
                 }
 
-                // Try to gather up to 10 valid artworks with images
-                const maxAttempts = 50;
-                const desiredValid = 25;
-                const validArtworks = [];
+                // 2. Validate the objectIDs — remove ones with { message: "Not a valid object" }
+                const validatedResults = await Promise.allSettled(
+                    rawObjectIDs.map(id =>
+                        axios
+                            .get(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+                            .then(res => (!res.data.message ? id : null))
+                            .catch(() => null)
+                    )
+                );
 
-                for (let i = 0; i < maxAttempts && validArtworks.length < desiredValid; i++) {
-                    const id = allObjectIDs[i];
-                    if (!id) break;
+                const validObjectIDs = validatedResults
+                    .filter(
+                        (result): result is PromiseFulfilledResult<number> =>
+                            result.status === "fulfilled" && result.value !== null
+                    )
+                    .map(result => result.value);
 
-                    try {
-                        const res = await axios.get(
-                            `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
-                        );
-                        const data = res.data;
-
-                        if (data) {
-                            validArtworks.push({
-                                id: data.objectID,
-                                title: data.title,
-                                artist: data.artistDisplayName,
-                                date: data.objectDate,
-                                image: data.primaryImage,
-                                url: data.objectUrl
-
-                            });
-                        } else {
-                            console.warn(`Skipping ID ${id} (no image)`);
-                        }
-                    } catch (err) {
-                        console.warn(`Error fetching ID ${id}:`, err);
-                    }
-                    setProcessedCount(i + 1);
+                if (!validObjectIDs.length) {
+                    throw new Error("No valid object IDs found.");
                 }
+
+                // Use validObjectIDs directly — don't rely on state
+                setAllObjectIDs(validObjectIDs); // This is still useful if other components depend on it
+
+                const first25 = validObjectIDs.slice(0, 25);
+
+                const artworkResponses = await Promise.all(
+                    first25.map(id =>
+                        axios.get(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+                    )
+                );
+
+                const validArtworks = artworkResponses.map(res => {
+                    const data = res.data;
+                    return {
+                        id: data.objectID,
+                        title: data.title,
+                        artist: data.artistDisplayName,
+                        date: data.objectDate,
+                        image: data.primaryImage,
+                        url: data.objectUrl
+                    };
+                });
 
                 if (validArtworks.length === 0) {
                     console.warn("No valid artworks with images found.");
-                    router.push("/TheMet/not-found")
-                  
+                    router.push("/TheMet/not-found");
                     return;
                 }
 
+                // Persist results
                 await AsyncStorage.setItem("lastArtistResults", JSON.stringify(validArtworks));
                 await AsyncStorage.setItem("lastArtist", artistName);
-                await AsyncStorage.setItem("totalLastItems", JSON.stringify(allObjectIDs.length))
+                await AsyncStorage.setItem("totalLastItems", JSON.stringify(validObjectIDs.length));
+                await AsyncStorage.setItem("allObjectIDs", JSON.stringify(validObjectIDs));
 
                 setArtworks(validArtworks);
-          
+
                 router.push({
                     pathname: "/TheMet/(artist)/[artist]",
                     params: {
                         artist: artistName,
                         artworks: JSON.stringify(validArtworks),
-                        items: JSON.stringify(allObjectIDs.length),
+                        items: JSON.stringify(validObjectIDs.length),
+                        objectIDs: JSON.stringify(validObjectIDs)
                     },
                 });
             } catch (error) {
-                // console.error("Error fetching from Met Museum API:", error);
-                router.push('/TheMet/not-found')
-                  
+                router.push('/TheMet/not-found');
             } finally {
                 setLoading(false);
                 setSearchTriggered(false);
@@ -105,9 +115,6 @@ export default function SearchBar() {
 
         searchMetMuseum();
     }, [artistName, searchTriggered]);
-
-
-    console.log(artworks)
 
     const handleSubmit = () => {
         if (artistName.trim()) {
@@ -118,28 +125,25 @@ export default function SearchBar() {
 
     return (
         <>
-        <View style={styles.searchContainer}>
-            <TextInput
-                style={styles.searchBox}
-                placeholder="Search artist (e.g. 'Van Gogh')"
-                placeholderTextColor="rgba(0,0,0,.5)"
-                returnKeyType="search"
-                value={artistName}
-                onChangeText={setArtistName}
-                onSubmitEditing={handleSubmit}
-            />
-        </View>
-        {loading && (
-  <View style={styles.loading}>
-    <ActivityIndicator size="large" color="#333" />
-    <Text>
-      Fetching artworks...
-    </Text>
-    <Text>
-      Almost there, finding all your results for '{artistName}'
-    </Text>
-  </View>
-)}
+            <View style={styles.searchContainer}>
+                <TextInput
+                    style={styles.searchBox}
+                    placeholder="Search artist (e.g. 'Van Gogh')"
+                    placeholderTextColor="rgba(0,0,0,.5)"
+                    returnKeyType="search"
+                    value={artistName}
+                    onChangeText={setArtistName}
+                    onSubmitEditing={handleSubmit}
+                />
+            </View>
+            {loading && (
+                <View style={styles.loadingOverlay}>
+                    <Text style={styles.loadingText}>
+                        Not long now, just fetching results for '{artistName}'
+                    </Text>
+                    <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+                </View>
+            )}
         </>
     );
 }
@@ -177,10 +181,19 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 3,
     },
-    loading: {
-        // flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10,
         padding: 20,
+      },
+      
+      loadingText: {
+        fontSize: 18,
+        color: "#333",
+        textAlign: "center",
+        fontStyle: "italic",
       }
 });

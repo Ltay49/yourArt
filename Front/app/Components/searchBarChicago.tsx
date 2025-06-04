@@ -1,7 +1,9 @@
 import axios from "axios";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet, Text } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from 'expo-router';
+import { ActivityIndicator } from "react-native";
+
 
 
 export default function SearchBar() {
@@ -18,6 +20,7 @@ export default function SearchBar() {
     const [artistLinks, setArtistLinks] = useState<string[]>([]);
     const [artistName, setArtistName] = useState<string>("");
     const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
 
     const router = useRouter();
 
@@ -42,7 +45,8 @@ export default function SearchBar() {
 
         const workByArtist = async (artistName: string) => {
             try {
-                // Search for artworks by the artist name
+
+                setLoading(true);
                 const response = await axios.get(
                     `https://api.artic.edu/api/v1/artworks/search`,
                     {
@@ -108,6 +112,7 @@ export default function SearchBar() {
                 console.error("Error fetching artwork details:", error);
                 router.push("/Home");
             } finally {
+                setLoading(false);
                 setSearchTriggered(false);
             }
         };
@@ -123,6 +128,7 @@ export default function SearchBar() {
     };
 
     return (
+        <>
         <View style={styles.searchContainer}>
             <TextInput
                 style={styles.searchBox}
@@ -134,6 +140,15 @@ export default function SearchBar() {
                 onSubmitEditing={handleSubmit}
             />
         </View>
+            {loading && (
+                <View style={styles.loadingOverlay}>
+                    <Text style={styles.loadingText}>
+                        Not long now, just fetching results for '{artistName}'
+                    </Text>
+                    <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+                </View>
+            )}
+            </>
     );
 }
 
@@ -171,4 +186,18 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 3,
     },
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10,
+        padding: 20,
+      },
+      loadingText: {
+        fontSize: 18,
+        color: "#333",
+        textAlign: "center",
+        fontStyle: "italic",
+      }
 });
