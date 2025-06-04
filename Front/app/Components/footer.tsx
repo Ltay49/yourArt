@@ -99,7 +99,7 @@ export default function Footer() {
 
             const pathWithGroup =
               routeGroup && isLast && isIdLike
-                ? `/Chicago/${routeGroup}/${segment}`
+                ? `/chicago/${routeGroup}/${segment}`
                 : basePath;
 
             return (
