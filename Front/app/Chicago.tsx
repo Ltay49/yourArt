@@ -79,7 +79,7 @@ export default function Chicago() {
     useFocusEffect(
         React.useCallback(() => {
             // Detect if the user came from a different route
-            if (pathname === "/Chicago") {
+            if (pathname === "/chicago") {
                 AsyncStorage.getItem("lastVisitedId").then((id) => {
                     if (!id) {
                         // If not returning from a detail page, reset to page 1

@@ -70,7 +70,7 @@ export default function Search() {
               />
               <Text
                 style={styles.galLink}
-                onPress={() => router.push('/Chicago')}
+                onPress={() => router.push('/chicago')}
               >
                 The Art Institute of Chicago
               </Text>
@@ -96,7 +96,7 @@ export default function Search() {
               />
               <Text
                 style={styles.galLink}
-                onPress={() => router.push('/TheMet')}
+                onPress={() => router.push('/themet')}
               >
                 The Metropolitan Museum of Art
               </Text>
