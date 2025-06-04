@@ -68,13 +68,17 @@ export default function artistWork() {
     }, []);
 
     useEffect(() => {
-        // Normalize artist param to string
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
-
+      
         if (artistStr && /^\d+$/.test(artistStr)) {
-            router.replace(`/TheMet/(artwork)/${artistStr}`);
+          // Delay navigation until after mount
+          const timeout = setTimeout(() => {
+            router.replace(`/themet/(artwork)/${artistStr}`);
+          }, 0); // Can also use 100ms if needed
+      
+          return () => clearTimeout(timeout);
         }
-    }, [artist]);
+      }, [artist]);
 
     const fetchArtworksByIDs = async (ids: number[], startIndex = 0, limit = 25) => {
         const artworks: Artwork[] = [];

@@ -31,7 +31,7 @@ export default function Footer() {
     artwork: 'Artwork',
     index: 'Home',
     collection: 'Collection',
-    themet: 'TheMet'
+    themet: 'themet'
   };
 
   // useSavePathOnNavigate(pathname);
@@ -42,7 +42,7 @@ export default function Footer() {
 
       let workingPath = pathname;
 
-      if (pathname === '/collection' || pathname === '/login') {
+      if (pathname === '/Collection' || pathname === '/LogIn') {
         const returnPath = await getReturnPath();
         workingPath = returnPath || '/';
       }
@@ -62,7 +62,7 @@ export default function Footer() {
       }
 
       const breadcrumbTrail =
-        pathname === '/collection' || pathname === '/login'
+        pathname === '/Collection' || pathname === '/LogIn'
           ? ['Home', ...visibleSegments, '']
           : ['Home', ...visibleSegments];
 
@@ -125,10 +125,10 @@ export default function Footer() {
           <Text
             style={styles.footerText}
             onPress={async () => {
-              if (pathname !== '/collection' && pathname !== '/login') {
+              if (pathname !== '/Collection' && pathname !== '/LogIn') {
                 await setReturnPath(pathname); // only save real pages
               }
-              router.push('/collection');
+              router.push('/Collection');
             }}
           >
             <Text style={styles.collection}>Collection</Text>
@@ -136,10 +136,10 @@ export default function Footer() {
           <TouchableOpacity>
             <Text style={styles.footerText}
               onPress={async () => {
-                if (pathname !== '/collection' && pathname !== '/login') {
+                if (pathname !== '/Collection' && pathname !== '/LogIn') {
                   await setReturnPath(pathname); // only save real pages
                 }
-                router.push('/login');
+                router.push('./LogIn');
               }}
             >Log In</Text>
           </TouchableOpacity>
