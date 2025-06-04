@@ -83,17 +83,14 @@ export default function Footer() {
         <View style={styles.breadcrumbContainer}>
           {breadcrumbParts.map((segment, index) => {
             const isLast = index === breadcrumbParts.length - 1;
-            let rawTitle = nameMap[segment.toLowerCase()] || segment;
+            let rawTitle = nameMap[segment] || segment;
             const title = rawTitle.length > 10 ? rawTitle.slice(0, 10) + '…' : rawTitle;
 
 
             const basePath =
-              segment.toLowerCase() === 'home'
-                ? '/'
-                : `/${breadcrumbParts
-                  .slice(1, index + 1)
-                  .map(s => s.toLowerCase())
-                  .join('/')}`;
+            segment.toLowerCase() === 'home'
+              ? '/'
+              : `/${breadcrumbParts.slice(1, index + 1).join('/')}`;
 
             const isIdLike = /^\d+$/.test(segment);
 

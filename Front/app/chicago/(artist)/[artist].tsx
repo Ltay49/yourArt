@@ -15,7 +15,7 @@ export default function ArtistSearch() {
     const [sortOption, setSortOption] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
-    
+
     const scrollRef = useRef<ScrollView>(null);
 
     const { user } = useContext(UserContext);
@@ -78,7 +78,7 @@ export default function ArtistSearch() {
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
 
         if (artistStr && /^\d+$/.test(artistStr)) {
-            router.replace(`/Chicago/(artwork)/${artistStr}`);
+            router.replace(`/chicago/(artwork)/${artistStr}`);
         }
     }, [artist, mounted]);
 
@@ -203,7 +203,7 @@ export default function ArtistSearch() {
                                             <TouchableOpacity
                                                 onPress={async () => {
                                                     await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-                                                    router.push(`/Chicago/(artwork)/${artwork.id}`);
+                                                    router.push(`/chicago/(artwork)/${artwork.id}`);
                                                 }}
                                             >
                                                 <Text style={styles.view}>

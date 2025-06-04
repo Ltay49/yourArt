@@ -64,7 +64,7 @@ export default function SearchBar() {
                 if (!artwork || artwork.length === 0) {
                     console.warn("No artworks found for this artist.");
                     router.push({
-                        pathname: "/Chicago/not-found",
+                        pathname: "/chicago/not-found",
                         params: { artist: artistName },
                     });
                     return;
@@ -89,7 +89,7 @@ export default function SearchBar() {
                 const { total, limit, offset, total_pages, current_page } = paginationData;
 
                 router.push({
-                    pathname: "/Chicago/(artist)/[artist]",
+                    pathname: "/chicago/(artist)/[artist]",
                     params: {
                         artist: artistName,
                         artworks: JSON.stringify(

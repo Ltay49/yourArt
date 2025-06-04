@@ -136,7 +136,7 @@ export default function Chicago() {
                                             <TouchableOpacity
                                                 onPress={async () => {
                                                     await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
-                                                    router.push(`/Chicago/(artwork)/${artwork.id}`);
+                                                    router.push(`/chicago/(artwork)/${artwork.id}`);
                                                 }}
                                             >
                                                 <Text style={styles.view}>View Here</Text>

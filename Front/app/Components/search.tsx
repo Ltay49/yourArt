@@ -96,7 +96,7 @@ export default function Search() {
               />
               <Text
                 style={styles.galLink}
-                onPress={() => router.push('/themet')}
+                onPress={() => router.push(`./TheMet`)}
               >
                 The Metropolitan Museum of Art
               </Text>

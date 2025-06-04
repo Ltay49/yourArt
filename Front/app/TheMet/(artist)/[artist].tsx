@@ -72,7 +72,7 @@ export default function artistWork() {
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
 
         if (artistStr && /^\d+$/.test(artistStr)) {
-            router.replace(`/themet/(artwork)/${artistStr}`);
+            router.replace(`/TheMet/(artwork)/${artistStr}`);
         }
     }, [artist]);
 
