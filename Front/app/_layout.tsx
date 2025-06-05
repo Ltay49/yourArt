@@ -9,7 +9,7 @@ export default function RootLayout() {
     <UserProvider>
       <View style={styles.container}>
         <View style={styles.stackContainer}>
-          <Stack screenOptions={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false}} />
         </View>
         <Footer />
       </View>

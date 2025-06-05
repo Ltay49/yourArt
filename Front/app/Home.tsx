@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ImageBackground } from "react-native";
+import { StyleSheet, Text, View, ImageBackground, SafeAreaView } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Knewave_400Regular } from '@expo-google-fonts/knewave';
 import { useFonts } from 'expo-font';
@@ -29,47 +29,45 @@ const { width } = useWindowDimensions();
 
   return (
     <>
-      <View style={[styles.introContainer, isWebSmall && styles.introContainerWeb]}>
-        <ImageBackground source={KH} style={styles.background}
-         resizeMode="cover">
-          {/* Gradient Overlay */}
-          <LinearGradient
-            colors={['rgba(255,255,255,0.7)', 'rgba(255,255,255,1)']} // transparent top → white bottom
-            style={styles.gradient}
-
-          />
-          <View style={styles.headerRow}>
-            <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>IT'S.</Text>
-            <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>YOUR.</Text>
-            <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>ART.</Text>
-          </View>
-          <Text style={[styles.intro, isWeb && styles.introWeb]}> {isWeb ? introWeb : intro}</Text>
-        </ImageBackground>
-      </View>
-
+      <SafeAreaView style={[styles.introContainer, isWebSmall && styles.introContainerWeb]}>
+          <ImageBackground source={KH} style={styles.background} resizeMode="cover">
+            <LinearGradient
+              colors={['rgba(255,255,255,0.7)', 'rgba(255,255,255,1)']}
+              style={styles.gradient}
+            />
+            <View style={styles.headerRow}>
+              <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>IT'S.</Text>
+              <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>YOUR.</Text>
+              <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>ART.</Text>
+            </View>
+            <Text style={[styles.intro, isWeb && styles.introWeb]}>
+              {isWeb ? introWeb : intro}
+            </Text>
+          </ImageBackground>
+      </SafeAreaView>
+  
       <Search />
     </>
   );
 }
-
 const styles = StyleSheet.create({
   introContainer: {
     width: '100%',
     alignSelf: 'center',
     position: 'absolute',
-    top: '-1%',
-    // borderBottomWidth: 1,
+    top: '0%',
     height: '35%',
   },
   introContainerWeb: {
     width: '100%',
     alignSelf: 'center',
     position: 'absolute',
-    top: '-4%',
-    // borderBottomWidth: 1,
+    top: '0%',
     height: '35%',
   },
   intro: {
+    top:'20%',
+    height:'100%',
     fontSize: 25,
     color: 'black',
     fontWeight: 'bold',
@@ -79,6 +77,7 @@ const styles = StyleSheet.create({
     zIndex: 2, // make sure text is above gradient
   },
   headerRow:{
+    top:'10%',
     justifyContent:'center',
     flexDirection:'row',
     zIndex:2,
@@ -104,6 +103,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   background: {
+    top:'0%',
     width: '100%',
     height: '100%',
     justifyContent: 'center',
