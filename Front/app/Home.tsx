@@ -18,6 +18,7 @@ const { width } = useWindowDimensions();
 
   // Dynamically set font size
   const isWeb = width > 768;
+  const isWebSmall = width > 100;
   const [fontsLoaded] = useFonts({
     Knewave_400Regular,
   });
@@ -28,7 +29,7 @@ const { width } = useWindowDimensions();
 
   return (
     <>
-      <View style={[styles.introContainer, isWeb && styles.introContainerWeb]}>
+      <View style={[styles.introContainer, isWebSmall && styles.introContainerWeb]}>
         <ImageBackground source={KH} style={styles.background}
          resizeMode="cover">
           {/* Gradient Overlay */}
