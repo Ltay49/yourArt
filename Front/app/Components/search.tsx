@@ -112,7 +112,6 @@ export default function Search() {
 const styles = StyleSheet.create({
   container: {
     height: '60%',
-    top: '33%',
   },
   scrollContent: {
     paddingBottom: 15,

@@ -20,7 +20,7 @@ export default function MainScreen() {
   const { width } = useWindowDimensions();
 
   // Dynamically set font size
-  const isWeb = width > 768;
+  const isWeb = width > 777;
   const isWebSmall = width > 100;
   const [fontsLoaded] = useFonts({
     Knewave_400Regular,
@@ -64,15 +64,11 @@ const styles = StyleSheet.create({
   introContainer: {
     width: '100%',
     alignSelf: 'center',
-    position: 'absolute',
-    top: '0%',
     height: '35%',
   },
   introContainerWeb: {
     width: '100%',
     alignSelf: 'center',
-    position: 'absolute',
-    top: '0%',
     height: '35%',
   },
   intro: {
