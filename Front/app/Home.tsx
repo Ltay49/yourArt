@@ -7,6 +7,8 @@ import Search from "./Components/search";
 import React from 'react';
 const KH = require('../assets/images/KH.png');
 import { useWindowDimensions } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+
 
 export default function MainScreen() {
 
@@ -30,6 +32,7 @@ export default function MainScreen() {
 
   return (
     <>
+    <StatusBar style="dark" translucent backgroundColor="transparent" />
       <SafeAreaView
         style={[
           styles.introContainer,
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
     height: '35%',
   },
   intro: {
-    top: '20%',
+    top: '10%',
     height: '100%',
     fontSize: 25,
     color: 'black',
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     zIndex: 2, // make sure text is above gradient
   },
   headerRow: {
-    top: '10%',
+    top: '5%',
     justifyContent: 'center',
     flexDirection: 'row',
     zIndex: 2,
