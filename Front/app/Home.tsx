@@ -38,6 +38,11 @@ const { width } = useWindowDimensions();
             style={styles.gradient}
 
           />
+          <View style={styles.headerRow}>
+            <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>IT'S.</Text>
+            <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>YOUR.</Text>
+            <Text style={[styles.headertext, isWeb && styles.headertextWeb]}>ART.</Text>
+          </View>
           <Text style={[styles.intro, isWeb && styles.introWeb]}> {isWeb ? introWeb : intro}</Text>
         </ImageBackground>
       </View>
@@ -72,6 +77,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 10,
     zIndex: 2, // make sure text is above gradient
+  },
+  headerRow:{
+    justifyContent:'center',
+    flexDirection:'row',
+    zIndex:2,
+  },
+  headertext:{
+    fontSize: 25,
+    color:'darkred',
+    fontWeight:'bold'
+  },
+  headertextWeb:{
+    fontSize: 40,
+    color:'darkred',
+    fontWeight:'bold'
   },
   introWeb:{
     marginLeft:30,
