@@ -102,7 +102,8 @@ export default function SearchBar() {
                         artist: artistName,
                         artworks: JSON.stringify(validArtworks),
                         items: JSON.stringify(validObjectIDs.length),
-                        objectIDs: JSON.stringify(validObjectIDs)
+                        objectIDs: JSON.stringify(validObjectIDs),
+                        date: validArtworks[0]?.date || "Unknown"
                     },
                 });
             } catch (error) {

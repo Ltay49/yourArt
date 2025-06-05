@@ -1,5 +1,5 @@
 import SearchBar from "@/app/Components/searchBarMet"
-import SortBy from "@/app/Components/sortBy"
+import SortByMet from "@/app/Components/sortByMet"
 import { useRouter, useLocalSearchParams, usePathname, router } from "expo-router";
 import { useState, useEffect, useContext, useRef } from "react";
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity, Image, Button } from "react-native";
@@ -25,7 +25,7 @@ export default function artistWork() {
         objectIDs } = useLocalSearchParams();
 
     const parsedArtworks = artworks ? JSON.parse(artworks as string) : [];
-
+    const [sortOption, setSortOption] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
 
@@ -47,9 +47,10 @@ export default function artistWork() {
     type Artwork = {
         id: number
         title: string
-        artistDisplayName: string
+        artist: string
         primaryImage: string
         url: string
+        date: number
     }
 
     useEffect(() => {
@@ -108,7 +109,8 @@ export default function artistWork() {
                     artworks.push({
                         id: data.objectID,
                         title: data.title,
-                        artistDisplayName: data.artistDisplayName,
+                        date: data.objectDate,
+                        artist: data.artistDisplayName,
                         primaryImage: data.primaryImage,
                         url: data.objectURL,
                     });
@@ -121,8 +123,6 @@ export default function artistWork() {
 
         return artworks;
     };
-
-    console.log("object",allObjectIDs)
 
     const handleNext = async () => {
         if (totalItems === null || currentIndex + 25 >= totalItems || loading) return;
@@ -165,10 +165,45 @@ export default function artistWork() {
         fetch();
     }, [currentIndex]);
 
+    const sortAndSetArtistWorks = (artworks: Artwork[], sortKey: string | null) => {
+        if (!sortKey) {
+            setArtistWorks(artworks);
+            return;
+        }
+
+        const sorted = [...artworks];
+
+        switch (sortKey) {
+            case 'year_asc':
+                sorted.sort((a, b) => (a.date ?? 0) - (b.date ?? 0));
+                break;
+            case 'year_desc':
+                sorted.sort((a, b) => (b.date ?? 0) - (a.date ?? 0));
+                break;
+            case 'alpha_asc':
+                sorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+                break;
+            case 'alpha_desc':
+                sorted.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
+                break;
+            default:
+                break;
+        }
+
+        setArtistWorks(sorted);
+
+    };
 
     return (
         <View style={styles.mainContainer}>
             <SearchBar />
+            <SortByMet 
+              onSort={(sortKey) => {
+                setSortOption(sortKey);
+                sortAndSetArtistWorks(artistWorks, sortKey);
+            }}
+            activeSort={sortOption}
+        />
             {loading && (
                 <View style={styles.loadingOverlay}>
                     <Text style={styles.loadingText}>
