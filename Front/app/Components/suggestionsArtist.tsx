@@ -77,7 +77,7 @@ export default function Suggestions({ artist }: SuggestionsProps) {
                         <TouchableOpacity
                             onPress={() => {
                                 router.push({
-                                    pathname: "/Chicago/[id]", // Literal path matching your file
+                                    pathname: "/chicago/(artwork)/[id]", // Literal path matching your file
                                     params: {
                                         title: art.title,
                                         id: art.id.toString(),     // Always pass params as strings

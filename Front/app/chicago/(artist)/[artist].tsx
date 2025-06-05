@@ -28,6 +28,7 @@ export default function ArtistSearch() {
     const [searchPage, setSearchPage] = useState(Number(current_page) || 1);
     const [currentPage, setCurrentPage] = useState(1)
     const { width } = useWindowDimensions();
+    const [totalPages, setTotalPages] =  useState(Number(total_pages))
     const isWeb = width > 768;
 
     type Artwork = {
@@ -39,6 +40,7 @@ export default function ArtistSearch() {
 
     const fetchArtwork = async (page: number) => {
         try {
+            setLoading(true)
             const response = await axios.get(
                 `https://api.artic.edu/api/v1/artworks/search`,
                 {
@@ -64,8 +66,13 @@ export default function ArtistSearch() {
             setSearchPage(page);
         } catch (error) {
             console.error("Error fetching artwork:", error);
+        } finally {
+            setLoading(false);
+            setTimeout(() => {
+                scrollRef.current?.scrollTo({ y: 0, animated: false });
+            }, 100);
         }
-    };
+    }        
 
 
     useEffect(() => {
@@ -85,7 +92,10 @@ export default function ArtistSearch() {
     useEffect(() => {
         const saveArtistWorks = async () => {
             try {
+                await AsyncStorage.setItem('savedPage', JSON.stringify(currentPage))
+                await AsyncStorage.setItem('total_pages', JSON.stringify(totalPages))
                 await AsyncStorage.setItem('artistWorks', JSON.stringify(artistWorks));
+                await AsyncStorage.setItem('savedSearch', JSON.stringify(searchPage));
                 if (artist) {
                     const artistStr = Array.isArray(artist) ? artist[0] : artist;
                     await AsyncStorage.setItem('lastArtist', artistStr);
@@ -106,9 +116,14 @@ export default function ArtistSearch() {
                 if (!artworks) {
                     const savedWorks = await AsyncStorage.getItem('artistWorks');
                     const savedArtist = await AsyncStorage.getItem('lastArtist');
-
+                    const savedTotal = await AsyncStorage.getItem('total_pages');
+                    const savedSearch = await AsyncStorage.getItem('savedSearch')
+                    const savedPage = await AsyncStorage.getItem('savedPage')
                     if (savedWorks) {
                         setArtistWorks(JSON.parse(savedWorks));
+                        setTotalPages(savedTotal ? JSON.parse(savedTotal) : 1);
+                        setSearchPage(savedSearch ? JSON.parse(savedSearch) : 1)
+                        setCurrentPage(savedPage ? JSON.parse(savedPage) : 1)
                     }
 
                     if (savedArtist) {
@@ -170,7 +185,7 @@ export default function ArtistSearch() {
     <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
   </View>
 )}
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+           <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
                 <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                     {/* <Text>{total} </Text>
                     <Text>Results Found For: '{artist}'</Text> */}
@@ -241,12 +256,12 @@ export default function ArtistSearch() {
                     />
                     <View style={styles.row}>
                         <Text style={styles.pageNumber}>
-                            Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{total_pages}</Text>
+                            Page <Text style={styles.bold}>{currentPage}</Text> of <Text style={styles.bold}>{totalPages}</Text>
                         </Text>
                     </View>
                     <Button
                         title="Next"
-                        disabled={searchPage >= Number(total_pages)}
+                        disabled={searchPage >= Number(totalPages)}
                         onPress={() => fetchArtwork(searchPage + 1)}
                     />
                 </View>

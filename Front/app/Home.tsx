@@ -28,7 +28,7 @@ const { width } = useWindowDimensions();
 
   return (
     <>
-      <View style={styles.introContainer}>
+      <View style={[styles.introContainer, isWeb && styles.introContainerWeb]}>
         <ImageBackground source={KH} style={styles.background}
          resizeMode="cover">
           {/* Gradient Overlay */}
@@ -52,6 +52,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     position: 'absolute',
     top: '-1%',
+    // borderBottomWidth: 1,
+    height: '35%',
+  },
+  introContainerWeb: {
+    width: '100%',
+    alignSelf: 'center',
+    position: 'absolute',
+    top: '-4%',
     // borderBottomWidth: 1,
     height: '35%',
   },

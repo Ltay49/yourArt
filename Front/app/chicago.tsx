@@ -78,21 +78,23 @@ export default function Chicago() {
 
     useFocusEffect(
         React.useCallback(() => {
-            // Detect if the user came from a different route
-            if (pathname === "/chicago") {
-                AsyncStorage.getItem("lastVisitedId").then((id) => {
-                    if (!id) {
-                        // If not returning from a detail page, reset to page 1
-                        fetchArtwork("https://api.artic.edu/api/v1/artworks?page=1");
-                    } else {
-                        // Returning from detail page — use saved page
-                        fetchArtwork();
-                        AsyncStorage.removeItem("lastVisitedId"); // clear after use
-                    }
+          if (pathname === "/chicago") {
+            AsyncStorage.getItem("lastVisitedId").then((id) => {
+              if (id) {
+                // Coming back from a detail page
+                fetchArtwork(); // this will read from stored URL
+                AsyncStorage.removeItem("lastVisitedId");
+              } else {
+                // Coming back from anywhere else — resume last page
+                AsyncStorage.getItem("lastArtworkUrl").then((storedUrl) => {
+                  fetchArtwork(storedUrl || "https://api.artic.edu/api/v1/artworks?page=1");
                 });
-            }
+              }
+            });
+          }
         }, [pathname])
-    );
+      );
+      
 
 
     return (
