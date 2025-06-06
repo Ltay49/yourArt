@@ -107,7 +107,7 @@ export default function SearchBar() {
                     },
                 });
             } catch (error) {
-                router.push('./themet/not-found');
+                router.push('/themet/not-found');
             } finally {
                 setLoading(false);
                 setSearchTriggered(false);

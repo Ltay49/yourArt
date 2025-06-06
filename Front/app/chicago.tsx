@@ -92,6 +92,10 @@ export default function Chicago() {
               }
             });
           }
+          if (pathname === "/Home") {
+            // Reset to page 1 if coming to the home page
+            fetchArtwork("https://api.artic.edu/api/v1/artworks?page=1");
+          }
         }, [pathname])
       );
       

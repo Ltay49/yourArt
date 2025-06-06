@@ -39,7 +39,7 @@ export default function Collection() {
             }
 
             // Update local state after successful delete
-            setCollection(prev => prev.filter((_, i) => i !== index));
+            setCollection(prev => prev.filter(item => item.artTitle !== artTitle));
         } catch (error) {
             Alert.alert('Error', 'Could not remove artwork. Please try again.');
             console.error('Delete error:', error);
