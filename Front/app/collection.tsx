@@ -9,7 +9,7 @@ export default function Collection() {
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
     const { width } = useWindowDimensions();
     const isWeb = width > 850;
-    const mobileDevice = width > 300
+    const mobileDevice = width > 389
 
     if (!user) {
         return (
@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
         width:'100%'
     },
     filterContainerWeb: {
+        flexDirection:'column',
         justifyContent: 'center',
         marginBottom: 0,
         paddingHorizontal: 10,
