@@ -9,6 +9,7 @@ export default function Collection() {
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
     const { width } = useWindowDimensions();
     const isWeb = width > 850;
+    const mobileDevice = width > 300
 
     if (!user) {
         return (
@@ -50,9 +51,9 @@ export default function Collection() {
         <View style={[styles.container, isWeb && styles.containerWeb]}>
             {/* <Text style={styles.title}>{user.firstname}'s Collection</Text> */}
         <View>
-            <Text>Your collection ranges from:</Text>
+            <Text style={styles.collectionText}>Your collection ranges from:</Text>
             </View>
-            <View style={styles.filterContainer}>
+            <View style={[styles.filterContainer, mobileDevice && styles.filterContainerWeb]}>
                 <TouchableOpacity
                     style={[
                         styles.filterButton,
@@ -130,6 +131,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         width:'100%'
     },
+    filterContainerWeb: {
+        justifyContent: 'center',
+        marginBottom: 0,
+        paddingHorizontal: 10,
+        width:'100%'
+    },
     filterButton: {
         backgroundColor: '#e0e0e0',
         paddingVertical: 8,
@@ -192,6 +199,13 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#666',
         marginTop: 2,
+    },
+    collectionText: {
+        justifyContent:'center',
+        alignSelf:'center',
+        fontSize: 16,
+        fontWeight:'bold',
+        color: 'black',
     },
     removeButton: {
         marginTop: 10,

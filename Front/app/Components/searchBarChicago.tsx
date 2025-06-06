@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     searchContainer: {
         marginTop: 0,
         marginBottom: 5,
-        height: 120,
+        height: 80,
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 10,
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
     },
     searchBox: {
+        fontSize:16,
         width: '90%',
         borderWidth: 1,
         borderRadius: 30,

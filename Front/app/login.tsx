@@ -171,6 +171,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     input: {
+        fontSize:16,
         borderColor: '#ccc',
         borderWidth: 1,
         padding: 10,
