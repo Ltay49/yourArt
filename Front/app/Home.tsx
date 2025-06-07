@@ -37,7 +37,7 @@ export default function MainScreen() {
         style={[
           styles.introContainer,
           isWebSmall && styles.introContainerWeb,
-          { backgroundColor: 'white' } // ✅ consistent with gradient
+          { backgroundColor: 'white' }
         ]}
       >
         <ImageBackground source={KH} style={styles.background} resizeMode="cover">
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Copperplate',
     textAlign: 'center',
     paddingHorizontal: 10,
-    zIndex: 2, // make sure text is above gradient
+    zIndex: 2,
   },
   headerRow: {
     top: '5%',
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   gradient: {
-    ...StyleSheet.absoluteFillObject, // full cover
-    zIndex: 1, // gradient is between background and text
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1,
   },
 });

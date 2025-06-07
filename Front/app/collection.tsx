@@ -4,7 +4,8 @@ import { UserContext } from '../utils/UserContext';
 import { router} from 'expo-router';
 
 export default function Collection() {
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
+
     const [collection, setCollection] = useState(user?.collection || []);
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
     const { width } = useWindowDimensions();
@@ -26,26 +27,34 @@ export default function Collection() {
         ? collection.filter(item => item.collection === activeFilter)
         : collection;
 
-    const handleRemove = async (artTitle: string, index: number) => {
-        const encodedTitle = encodeURIComponent(artTitle);
-        const username = user.username; // Assuming your user object has a `username` field
-
-        try {
-            const response = await fetch(`https://yourart-production.up.railway.app/api/userProfile/${username}/collection/${encodedTitle}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete');
+        const handleRemove = async (artTitle: string, index: number) => {
+            const encodedTitle = encodeURIComponent(artTitle);
+            const username = user.username;
+        
+            try {
+                const response = await fetch(
+                    `https://yourart-production.up.railway.app/api/userProfile/${username}/collection/${encodedTitle}`,
+                    { method: 'DELETE' }
+                );
+        
+                if (!response.ok) {
+                    throw new Error('Failed to delete');
+                }
+        
+                // Update both local and global state
+                const updatedCollection = collection.filter(item => item.artTitle !== artTitle);
+                setCollection(updatedCollection);
+                setUser({
+                    ...user,
+                    collection: updatedCollection,
+                });
+        
+            } catch (error) {
+                Alert.alert('Error', 'Could not remove artwork. Please try again.');
+                console.error('Delete error:', error);
             }
-
-            // Update local state after successful delete
-            setCollection(prev => prev.filter(item => item.artTitle !== artTitle));
-        } catch (error) {
-            Alert.alert('Error', 'Could not remove artwork. Please try again.');
-            console.error('Delete error:', error);
-        }
-    };
+        };
+        
 
     return (
         <View style={[styles.container, isWeb && styles.containerWeb]}>

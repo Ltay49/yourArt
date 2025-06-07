@@ -8,10 +8,17 @@ import { useWindowDimensions, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddToCollection from "@/app/Functions/addToCollection";
 import { UserContext } from "@/utils/UserContext";
+import { SpecialElite_400Regular,useFonts } from '@expo-google-fonts/special-elite'
+
 
 export default function artistWork() {
 
     const scrollRef = useRef<ScrollView>(null);
+
+    const [fontsLoaded] = useFonts({
+        SpecialElite_400Regular
+    });
+
 
     const {
         artist,
@@ -55,32 +62,32 @@ export default function artistWork() {
 
     useEffect(() => {
         if (allObjectIDs.length > 0) {
-          AsyncStorage.setItem("lastArtistObjectIDs", JSON.stringify(allObjectIDs));
+            AsyncStorage.setItem("lastArtistObjectIDs", JSON.stringify(allObjectIDs));
         }
-      }, [allObjectIDs]);
+    }, [allObjectIDs]);
 
 
-   useEffect(() => {
-  (async () => {
-    if (!artistWorks.length) {
-      const saved = await AsyncStorage.getItem("lastArtistResults");
-      const savedArtist = await AsyncStorage.getItem("lastArtist");
-      const savedTotalItems = await AsyncStorage.getItem("totalLastItems");
-      const savedIndex = await AsyncStorage.getItem("lastArtistIndex");
-      const savedPage = await AsyncStorage.getItem("lastArtistPage");
-      const savedObjectIDs = await AsyncStorage.getItem("lastArtistObjectIDs"); // NEW
+    useEffect(() => {
+        (async () => {
+            if (!artistWorks.length) {
+                const saved = await AsyncStorage.getItem("lastArtistResults");
+                const savedArtist = await AsyncStorage.getItem("lastArtist");
+                const savedTotalItems = await AsyncStorage.getItem("totalLastItems");
+                const savedIndex = await AsyncStorage.getItem("lastArtistIndex");
+                const savedPage = await AsyncStorage.getItem("lastArtistPage");
+                const savedObjectIDs = await AsyncStorage.getItem("lastArtistObjectIDs"); // NEW
 
-      if (saved && savedArtist && savedTotalItems) {
-        setArtistWorks(JSON.parse(saved));
-        setTotalItems(JSON.parse(savedTotalItems));
+                if (saved && savedArtist && savedTotalItems) {
+                    setArtistWorks(JSON.parse(saved));
+                    setTotalItems(JSON.parse(savedTotalItems));
 
-        if (savedIndex) setCurrentIndex(parseInt(savedIndex));
-        if (savedPage) setCurrentPage(parseInt(savedPage));
-        if (savedObjectIDs) setAllObjectIDs(JSON.parse(savedObjectIDs)); // NEW
-      }
-    }
-  })();
-}, []);
+                    if (savedIndex) setCurrentIndex(parseInt(savedIndex));
+                    if (savedPage) setCurrentPage(parseInt(savedPage));
+                    if (savedObjectIDs) setAllObjectIDs(JSON.parse(savedObjectIDs)); // NEW
+                }
+            }
+        })();
+    }, []);
 
     useEffect(() => {
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
@@ -126,17 +133,17 @@ export default function artistWork() {
 
     const handleNext = async () => {
         if (totalItems === null || currentIndex + 25 >= totalItems || loading) return;
-      
+
         scrollRef.current?.scrollTo({ y: 0, animated: false });
-      
+
         const newIndex = currentIndex + 25;
         const newPage = currentPage + 1;
         setCurrentIndex(newIndex);
         setCurrentPage(newPage);
-      
+
         await AsyncStorage.setItem("lastArtistIndex", newIndex.toString());
         await AsyncStorage.setItem("lastArtistPage", newPage.toString());
-      };
+    };
 
     const handlePrevious = async () => {
         if (currentIndex === 0 || loading) return;
@@ -197,13 +204,13 @@ export default function artistWork() {
     return (
         <View style={styles.mainContainer}>
             <SearchBar />
-            <SortByMet 
-              onSort={(sortKey) => {
-                setSortOption(sortKey);
-                sortAndSetArtistWorks(artistWorks, sortKey);
-            }}
-            activeSort={sortOption}
-        />
+            <SortByMet
+                onSort={(sortKey) => {
+                    setSortOption(sortKey);
+                    sortAndSetArtistWorks(artistWorks, sortKey);
+                }}
+                activeSort={sortOption}
+            />
             {loading && (
                 <View style={styles.loadingOverlay}>
                     <Text style={styles.loadingText}>
@@ -219,27 +226,31 @@ export default function artistWork() {
                 <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                     {artistWorks.map((artwork: any, index: number) => (
                         <View style={[styles.card, isWeb && styles.cardWeb]} key={artwork.id}>
-                            <Image
-                                style={styles.image}
-                                source={{ uri: artwork?.image || "https://example.com/no-image.png" }}
-                            />
+
+                            {artwork.primaryImage ? (
+                                <Image style={styles.image} source={{ uri: artwork.primaryImage }} />
+                            ) : (
+                                <View style={styles.noImageBox}>
+                                    <Text style={styles.noImageText}>No image available</Text>
+                                </View>
+                            )}
+
                             <Text style={styles.title}>{artwork.title}</Text>
                             <Text style={styles.date}>{artwork.date}</Text>
                             <Text style={styles.artist}>{artwork.artist}</Text>
+
                             <View style={styles.row}>
                                 <TouchableOpacity
                                     onPress={async () => {
-                                        console.log(artwork.objectID)
+                                        console.log(artwork.objectID);
                                         await AsyncStorage.setItem("lastVisitedId", artwork.id.toString());
                                         router.push(`/themet/(artwork)/${artwork.id}`);
-                                    }
-                                    }>
-                                    <Text style={styles.view}>
-                                        View Here
-                                    </Text>
-                                    <View style={styles.underline}>
-                                    </View>
+                                    }}
+                                >
+                                    <Text style={styles.view}>View Here</Text>
+                                    <View style={styles.underline}></View>
                                 </TouchableOpacity>
+
                                 {(() => {
                                     const isAlreadyAdded = user?.collection?.some(
                                         (item) => item.artTitle === artwork.title
@@ -251,7 +262,7 @@ export default function artistWork() {
                                                 collection: "The Metropolitan Museum of Art",
                                                 artTitle: artwork.title,
                                                 artist: artwork.artist,
-                                                imageUrl: artwork.image
+                                                imageUrl: artwork.primaryImage || "https://example.com/no-image.png",
                                             }}
                                             defaultRotated={isAlreadyAdded}
                                         />
@@ -260,6 +271,7 @@ export default function artistWork() {
                             </View>
                         </View>
                     ))}
+
                     <View>
                     </View>
                 </View>
@@ -325,7 +337,7 @@ const styles = StyleSheet.create({
         minHeight: 250,
     },
     cardWeb: {
-        width: '47%',
+        width: '31%',
         margin: '1%',
     },
     title: {
@@ -389,5 +401,25 @@ const styles = StyleSheet.create({
         color: "#333",
         textAlign: "center",
         fontStyle: "italic",
-    }
+    },
+    noImageText: {
+        top: '10%',
+        height: '40%',
+        width: '80%',
+        alignSelf: 'center',
+        textAlign: 'center',
+        fontSize: 35,
+        fontFamily: 'SpecialElite_400Regular',
+        color: "brown",
+        // transform: [{ rotate: '-45deg' }],
+        // borderWidth: 2
+    },
+    noImageBox: {
+        borderWidth: 2,
+        overflow: 'hidden',
+        height: 300,
+        borderRadius: 10,
+        justifyContent: 'center',
+        borderColor: 'grey'
+    },
 })
