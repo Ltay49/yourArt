@@ -78,27 +78,27 @@ export default function Chicago() {
 
     useFocusEffect(
         React.useCallback(() => {
-          if (pathname === "/chicago") {
-            AsyncStorage.getItem("lastVisitedId").then((id) => {
-              if (id) {
-                // Coming back from a detail page
-                fetchArtwork(); // this will read from stored URL
-                AsyncStorage.removeItem("lastVisitedId");
-              } else {
-                // Coming back from anywhere else — resume last page
-                AsyncStorage.getItem("lastArtworkUrl").then((storedUrl) => {
-                  fetchArtwork(storedUrl || "https://api.artic.edu/api/v1/artworks?page=1");
+            if (pathname === "/chicago") {
+                AsyncStorage.getItem("lastVisitedId").then((id) => {
+                    if (id) {
+                        // Coming back from a detail page
+                        fetchArtwork(); // this will read from stored URL
+                        AsyncStorage.removeItem("lastVisitedId");
+                    } else {
+                        // Coming back from anywhere else — resume last page
+                        AsyncStorage.getItem("lastArtworkUrl").then((storedUrl) => {
+                            fetchArtwork(storedUrl || "https://api.artic.edu/api/v1/artworks?page=1");
+                        });
+                    }
                 });
-              }
-            });
-          }
-          if (pathname === "/Home") {
-            // Reset to page 1 if coming to the home page
-            fetchArtwork("https://api.artic.edu/api/v1/artworks?page=1");
-          }
+            }
+            if (pathname === "/Home") {
+                // Reset to page 1 if coming to the home page
+                fetchArtwork("https://api.artic.edu/api/v1/artworks?page=1");
+            }
         }, [pathname])
-      );
-      
+    );
+
 
 
     return (
@@ -114,7 +114,7 @@ export default function Chicago() {
                     <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                         {artworks.map((artwork) => {
                             const imageUrl = artwork?.image_id
-                                ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
+                                ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/!843,843/0/default.jpg `
                                 : "";
 
                             const artTitle = artwork?.title || "Untitled";
@@ -126,15 +126,27 @@ export default function Chicago() {
                             return (
                                 <View key={artwork.id} style={[styles.card, isWeb && styles.cardWeb]}>
                                     {artwork.image_id ? (
-                                        <Image
-                                            source={{ uri: imageUrl }}
-                                            style={styles.image}
-                                        />
+                                        <View style={{ position: 'relative', width: '100%', height: 300 }}>
+                                            {/** Image Loader */}
+                                            <ActivityIndicator
+                                                style={StyleSheet.absoluteFill}
+                                                size="large"
+                                                color="#888"
+                                            />
+
+                                            <Image
+                                                source={{ uri: imageUrl }}
+                                                style={styles.image}
+                                                onLoadStart={() => console.log("Image loading...")}
+                                                onLoadEnd={() => console.log("Image loaded")}
+                                            />
+                                        </View>
                                     ) : (
                                         <View style={styles.noImageBox}>
                                             <Text style={styles.noImageText}>No image available</Text>
                                         </View>
                                     )}
+
                                     <Text style={styles.title}>{artwork.title}</Text>
                                     <Text style={styles.artist}>{artwork.artist_titles}</Text>
                                     <View style={styles.row}>
@@ -322,7 +334,7 @@ const styles = StyleSheet.create({
     },
     noImageText: {
         textAlign: 'center',
-        fontSize: 50,
+        fontSize: 40,
         fontFamily: 'SpecialElite_400Regular',
         color: "brown",
         transform: [{ rotate: '-45deg' }]

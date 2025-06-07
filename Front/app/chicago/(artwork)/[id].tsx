@@ -34,7 +34,7 @@ export default function ArtworkScreen() {
     artwork_type_title: string;
     credit_line: string;
     department_title: string;
-    category_titles: string;
+    category_titles: string[];
     thumbnail: {
       alt_text: string;
     };
@@ -73,7 +73,7 @@ export default function ArtworkScreen() {
     );
   }
   const imageUrl = artwork.image_id
-    ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
+    ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/!843,843/0/default.jpg`
     : "";
   const artTitle = artwork?.title || "Untitled";
 
@@ -81,25 +81,28 @@ export default function ArtworkScreen() {
     (item) => item.artTitle === artTitle
   );
 
+  const formatedCat = artwork.category_titles.join(", ")
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
       <Text style={styles.title}>{title || "untitled"}</Text>
       <Text style={styles.date}>{artwork.date_display}</Text>
       <Text style={styles.artist}>{artwork.artist_display || "Unknown"}</Text>
       <View style={styles.gallery}>
-        {artwork.image_id && (
+      {imageUrl ? (
           <View style={styles.card}>
             <Image
-              source={{
-                uri: `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`,
-              }}
+              source={{ uri: imageUrl }}
               style={[styles.image, isWeb && styles.imageWeb]}
               resizeMode="contain"
             />
           </View>
+        ) : (
+          <View style={styles.noImageBox}>
+            <Text style={styles.noImageText}>No image available</Text>
+          </View>
         )}
       </View>
-
       <Text style={styles.credit}>Credited: {artwork.credit_line}</Text>
       <Text style={styles.dimensions}>Dimensions:{artwork.dimensions}</Text>
       <Text style={styles.descriptionLabel}>Description</Text>
@@ -114,15 +117,15 @@ export default function ArtworkScreen() {
             artTitle: artwork?.title || "Untitled",
             artist: artwork?.artist_titles[0] || "Unknown Artist",
             imageUrl: imageUrl
-              ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg`
+              ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/!843,843/0/default.jpg`
               : ""
           }}
           defaultRotated={isAlreadyAdded}
         />
       </View>
       <Text style={styles.id}>Artwork ID: {id}</Text>
-      <Text style={styles.category}>Catagory: {artwork.category_titles}</Text>
-      <Text style={styles.suggestion}>More Works by {artwork.artist_titles}</Text>
+      <Text style={styles.category}>Catagory: {formatedCat}</Text>
+      <Text style={styles.suggestion}>See more works by {artwork.artist_display }</Text>
       <Suggestions artist={artwork.artist_titles} />
     </ScrollView>
   );
@@ -265,6 +268,23 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
     fontStyle: "italic",
-  }
+  },
+  noImageText: {
+    height: '40%',
+    width: '80%',
+    alignSelf: 'center',
+    textAlign: 'center',
+    fontSize: 60,
+    fontFamily: 'SpecialElite_400Regular',
+    color: "brown",
+},
+noImageBox: {
+    // borderWidth: 2,
+    overflow: 'hidden',
+    height: 300,
+    borderRadius: 10,
+    justifyContent: 'center',
+    borderColor: 'grey'
+},
 });
 

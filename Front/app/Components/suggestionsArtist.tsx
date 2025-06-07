@@ -11,6 +11,8 @@ type SuggestionsProps = {
 
 export default function Suggestions({ artist }: SuggestionsProps) {
 
+    console.log(artist)
+
     const router = useRouter();
     const { width } = useWindowDimensions();
     const isWeb = width > 768;
@@ -48,8 +50,12 @@ export default function Suggestions({ artist }: SuggestionsProps) {
                 })
             );
 
-            // Save to state
-            setArtworks(artworkDetails); // assuming you want full artwork objects now
+            const filteredArtworks = artworkDetails.filter(a => 
+                a.artist_titles && a.artist_titles.includes(artist[0])
+            );
+            
+            setArtworks(filteredArtworks);
+            // assuming you want full artwork objects now
 
         } catch (error) {
             console.error('Error fetching artist links or artwork details:', error);
@@ -70,7 +76,7 @@ export default function Suggestions({ artist }: SuggestionsProps) {
                     <View style={[styles.card, isWeb && styles.cardWeb ]}>
                         <Image
                             source={{
-                                uri: `https://www.artic.edu/iiif/2/${art.image_id}/full/843,/0/default.jpg`,
+                                uri: `https://www.artic.edu/iiif/2/${art.image_id}/full/!843,843/0/default.jpg`,
                             }}
                             style={styles.image}
                         />
@@ -86,7 +92,7 @@ export default function Suggestions({ artist }: SuggestionsProps) {
                             }}
                         >
                             <Text style={styles.title}>
-                                {art.title}
+                               View - '{art.title}'
                             </Text>
                         </TouchableOpacity>
                         <View style={styles.underline} />
@@ -101,13 +107,14 @@ const styles = StyleSheet.create({
     gallery: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-evenly',
+        justifyContent: 'center',
         // padding: 10,
     },
     galleryWeb: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: "center",
+        justifyContent: "flex-start",
+        marginLeft:35
         // padding: 10,
     },
     // artItem: {
