@@ -164,18 +164,16 @@ export default function artistWork() {
 
 
     useEffect(() => {
-        if (currentIndex === 0 && parsedArtworks?.length > 0) return;
-
         const fetch = async () => {
-            setLoading(true);
-            const newArtworks = await fetchArtworksByIDs(allObjectIDs, currentIndex);
-            setArtistWorks(newArtworks);
-            setLoading(false);
+          setLoading(true);
+          const newArtworks = await fetchArtworksByIDs(allObjectIDs, currentIndex);
+          setArtistWorks(newArtworks);
+          setLoading(false);
         };
-
+      
         fetch();
-    }, [currentIndex]);
-
+      }, [currentIndex]);
+      
     const sortAndSetArtistWorks = (artworks: Artwork[], sortKey: string | null) => {
         if (!sortKey) {
             setArtistWorks(artworks);
