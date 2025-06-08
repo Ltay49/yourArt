@@ -108,24 +108,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
+        // backgroundColor:'#DCDCDC'
         // padding: 10,
     },
     galleryWeb: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: "flex-start",
-        marginLeft:35
+        marginLeft:35,
         // padding: 10,
     },
-    // artItem: {
-    //     width: '48%', // Two per row with space
-    //     marginBottom: 10,
-    //     alignItems: 'center',
-    // },
+
     card: {
         marginBottom: 10,
-        width: 190,
-        flexDirection: 'column'
+        width: 185,
+        flexDirection: 'column',
+        margin:5,
     },
     cardWeb: {
         margin: 10,

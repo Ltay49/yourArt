@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, StyleSheet, Image, ImageBackground, ActivityIndicator } from "react-native"
+import { Text, View, ScrollView, StyleSheet, Image, ImageBackground, ActivityIndicator,useWindowDimensions } from "react-native"
 import { useRouter, usePathname } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState, useContext } from "react";
@@ -13,6 +13,9 @@ export default function TheMetArtwork() {
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const { user } = useContext(UserContext)
   const [loading, setLoading] = useState(false)
+
+  const { width } = useWindowDimensions();
+  const isWeb = width > 850;
 
   const [fontsLoaded] = useFonts({
     NunitoSans_900Black,
@@ -59,7 +62,7 @@ export default function TheMetArtwork() {
   const artTitle = artwork?.title || "Untitled";
 
   const isAlreadyAdded = user?.collection?.some(
-    (item) => item.artTitle === artTitle
+    (item) => item.artTitle === artTitle && item.imageUrl === artwork?.primaryImage
   );
 
   return (
@@ -82,8 +85,8 @@ export default function TheMetArtwork() {
         <Text style={styles.artist}>{artwork?.artistDisplayBio}</Text>
         {artwork?.primaryImage ? (
           <Image
-            style={styles.image}
-            source={{ uri: artwork?.primaryImage || "https://example.com/no-image.png" }}
+            style={[styles.image, isWeb && styles.imageWeb]}
+            source={{ uri: artwork?.primaryImage}}
             resizeMode="contain"
           />) : (
           <ImageBackground style={styles.noImageBox}>
@@ -98,7 +101,7 @@ export default function TheMetArtwork() {
               collection: "The Metropolitan Museum of Art",
               artTitle: artwork?.title || "Untitled",
               artist: artwork?.artistDisplayName || "Unknown Artist",
-              imageUrl: artwork?.primaryImage || "https://example.com/no-image.png"
+              imageUrl: artwork?.primaryImage || "noimage"
             }}
             defaultRotated={isAlreadyAdded}
           />
@@ -138,7 +141,14 @@ const styles = StyleSheet.create({
     borderColor: 'grey'
   },
   image: {
+    alignSelf: 'center',
     width: '100%',           // Two images side by side with some margin
+    aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
+    resizeMode: 'contain',
+  },
+  imageWeb: {
+    alignSelf: 'center',
+    width: '60%',           // Two images side by side with some margin
     aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
     resizeMode: 'contain',
   },

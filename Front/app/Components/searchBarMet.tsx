@@ -78,10 +78,10 @@ export default function SearchBar() {
                         artist: data.artistDisplayName,
                         date: data.objectDate,
                         image: data.primaryImage,
-                        url: data.objectUrl
+                        url: data.objectURL
                     };
                 });
-
+                console.log(validArtworks)
                 if (validArtworks.length === 0) {
                     console.warn("No valid artworks with images found.");
                     router.push("./themet/not-found");
@@ -99,13 +99,14 @@ export default function SearchBar() {
                 router.push({
                     pathname: "/themet/(artist)/[artist]",
                     params: {
-                        artist: artistName,
-                        artworks: JSON.stringify(validArtworks),
-                        items: JSON.stringify(validObjectIDs.length),
-                        objectIDs: JSON.stringify(validObjectIDs),
-                        date: validArtworks[0]?.date || "Unknown"
+                      artist: artistName,
+                      artworks: JSON.stringify(validArtworks), // ❗️consider removing if payload is large
+                      items: JSON.stringify(validObjectIDs.length),
+                      objectIDs: JSON.stringify(validObjectIDs),
+                      date: validArtworks[0]?.date || "Unknown",
+                      image: validArtworks[0]?.image || "" // ✅ Correct access
                     },
-                });
+                  });
             } catch (error) {
                 router.push('/themet/not-found');
             } finally {

@@ -78,14 +78,14 @@ export default function ArtworkScreen() {
   const artTitle = artwork?.title || "Untitled";
 
   const isAlreadyAdded = user?.collection?.some(
-    (item) => item.artTitle === artTitle
+    (item) => item.artTitle === artTitle && `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg` === item.imageUrl
   );
 
   const formatedCat = artwork.category_titles.join(", ")
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
-      <Text style={styles.title}>{title || "untitled"}</Text>
+      <Text style={styles.title}>{artwork.title || "untitled"}</Text>
       <Text style={styles.date}>{artwork.date_display}</Text>
       <Text style={styles.artist}>{artwork.artist_display || "Unknown"}</Text>
       <View style={styles.gallery}>

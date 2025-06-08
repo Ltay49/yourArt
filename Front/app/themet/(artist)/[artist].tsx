@@ -37,6 +37,7 @@ export default function artistWork() {
 
 
     const [artistWorks, setArtistWorks] = useState<Artwork[]>(parsedArtworks || [])
+    console.log(artistWorks)
     const [totalItems, setTotalItems] = useState<number | null>(items ? parseInt(items as string) : null);
     const [currentPage, setCurrentPage] = useState(1)
     const [pageNumber, setPageNumber] = useState([0, 10])
@@ -55,9 +56,9 @@ export default function artistWork() {
         id: number
         title: string
         artist: string
-        primaryImage: string
-        url: string
+        image: string
         date: number
+        url: string
     }
 
     useEffect(() => {
@@ -111,6 +112,7 @@ export default function artistWork() {
             try {
                 const res = await axios.get(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
                 const data = res.data;
+                console.log(data)
 
                 if (data) {
                     artworks.push({
@@ -118,9 +120,11 @@ export default function artistWork() {
                         title: data.title,
                         date: data.objectDate,
                         artist: data.artistDisplayName,
-                        primaryImage: data.primaryImage,
+                        image: data.primaryImage,
                         url: data.objectURL,
                     });
+                    console.log(`Artwork ${data.objectID}:`, data.primaryImage);
+
                 }
             } catch (error) {
                 console.warn(`Failed to fetch object ${id}`, error);
@@ -226,15 +230,13 @@ export default function artistWork() {
                 <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                     {artistWorks.map((artwork: any, index: number) => (
                         <View style={[styles.card, isWeb && styles.cardWeb]} key={artwork.id}>
-
-                            {artwork.primaryImage ? (
-                                <Image style={styles.image} source={{ uri: artwork.primaryImage }} />
+                            {artwork.image ? (
+                                <Image style={styles.image} source={{ uri: artwork.image }} />
                             ) : (
                                 <View style={styles.noImageBox}>
                                     <Text style={styles.noImageText}>No image available</Text>
                                 </View>
                             )}
-
                             <Text style={styles.title}>{artwork.title}</Text>
                             <Text style={styles.date}>{artwork.date}</Text>
                             <Text style={styles.artist}>{artwork.artist}</Text>
@@ -253,7 +255,7 @@ export default function artistWork() {
 
                                 {(() => {
                                     const isAlreadyAdded = user?.collection?.some(
-                                        (item) => item.artTitle === artwork.title
+                                        (item) => item.artTitle === artwork.title && item.imageUrl === artwork.image
                                     );
 
                                     return (
@@ -262,7 +264,7 @@ export default function artistWork() {
                                                 collection: "The Metropolitan Museum of Art",
                                                 artTitle: artwork.title,
                                                 artist: artwork.artist,
-                                                imageUrl: artwork.primaryImage || "https://example.com/no-image.png",
+                                                imageUrl: artwork.image || "https://example.com/no-image.png",
                                             }}
                                             defaultRotated={isAlreadyAdded}
                                         />

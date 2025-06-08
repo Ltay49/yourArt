@@ -120,7 +120,7 @@ export default function Chicago() {
                             const artTitle = artwork?.title || "Untitled";
 
                             const isAlreadyAdded = user?.collection?.some(
-                                (item) => item.artTitle === artTitle
+                                (item) => item.artTitle === artTitle && `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg` === item.imageUrl
                             );
 
                             return (

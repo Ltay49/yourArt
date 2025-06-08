@@ -35,6 +35,7 @@ export default function TheMetScreen() {
         title: string
         artistDisplayName: string
         primaryImageSmall: string
+        primaryImage: string
     }
     const { width } = useWindowDimensions();
     const isWeb = width > 768;
@@ -112,7 +113,7 @@ export default function TheMetScreen() {
                     <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                         {metArtwork.map((art) => {
                             const isAlreadyAdded = user?.collection?.some(
-                                (item) => item.artTitle === (art.title || "Untitled")
+                                (item) => item.artTitle === (art.title || "Untitled") && item.imageUrl === art.primaryImageSmall
                             );
 
                             return (
@@ -120,11 +121,14 @@ export default function TheMetScreen() {
 
                                     {art.primaryImageSmall ? (
                                         <Image style={styles.image} source={{ uri: art.primaryImageSmall }} />
+                                    ) : art.primaryImage ? (
+                                        <Image style={styles.image} source={{ uri: art.primaryImage }} />
                                     ) : (
                                         <ImageBackground style={styles.noImageBox}>
                                             <Text style={styles.noImageText}>No image available</Text>
                                         </ImageBackground>
                                     )}
+
                                     <Text style={styles.title}>{art.title || "unknown"}</Text>
                                     <Text style={styles.artist}>{art.artistDisplayName || "Unknown"}</Text>
                                     <View style={styles.row}>
@@ -147,7 +151,7 @@ export default function TheMetScreen() {
                                                 collection: "The Metropolitan Museum of Art",
                                                 artTitle: art.title || "Untitled",
                                                 artist: art.artistDisplayName || "Unknown Artist",
-                                                imageUrl: art.primaryImageSmall || "https://example.com/no-image.png",
+                                                imageUrl: art.primaryImageSmall || art.primaryImage || "https://example.com/no-image.png",
                                             }}
                                             defaultRotated={isAlreadyAdded}
                                         />

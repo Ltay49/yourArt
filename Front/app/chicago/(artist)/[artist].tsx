@@ -193,9 +193,8 @@ export default function ArtistSearch() {
                     {artistWorks.length > 0 ? (
                         artistWorks.map((artwork: any, index: number) => {
                             const isAlreadyAdded = user?.collection?.some(
-                                (item) => item.artTitle === artwork.title
+                                (item) => item.artTitle === artwork.title && `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg` === item.imageUrl
                             );
-
                             return (
                                 <View key={index} style={[styles.card, isWeb && styles.cardWeb]}>
                                     {artwork.image_id ? (
