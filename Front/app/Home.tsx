@@ -87,27 +87,9 @@ const isLarge = width > 1200;
           >
             {isWeb ? introWeb : intro}
           </Text>
-          {/* <Text
-          style={styles.howTo}
-          accessible={true}
-          accessibilityRole="text"
-          accessibilityLabel="Welcome message and navigation instructions"
-        >
-          Welcome to ITSYOURSART, your go-to curator platform. Search from the exhibition below and build your own collections! 
-          Feel free to have a look around—if you see anything you like, sign up and begin curating!
-        </Text>
-  
-        <Text
-          style={styles.howTo}
-          accessible={true}
-          accessibilityRole="text"
-          accessibilityLabel="Instructions to add and remove art"
-        >
-          Simply press the plus to add, and later the X to remove a piece that no longer suits your taste. Enjoy!
-        </Text> */}
         </ImageBackground>
         <Text
-          style={styles.howTo}
+         style={[styles.howTo, isWebMedium && styles.howToWeb]}
           accessible={true}
           accessibilityRole="text"
           accessibilityLabel="Welcome message and navigation instructions"
@@ -120,7 +102,7 @@ const isLarge = width > 1200;
         </Text>
 
         <Text
-          style={styles.howTo}
+          style={[styles.howTo, isWebMedium && styles.howToWeb]}
           accessible={true}
           accessibilityRole="text"
           accessibilityLabel="Instructions to add and remove art"
@@ -152,7 +134,7 @@ const styles = StyleSheet.create({
   intro: {
     top: '10%',
     height: '100%',
-    fontSize: 24,
+    fontSize: 20,
     color: 'black',
     fontWeight: 'bold',
     fontFamily: 'Copperplate',
@@ -170,6 +152,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 70,
     zIndex: 2,
     lineHeight: 25
+  },
+  howToWeb: {
+    top: '-15%',
+    height: '100%',
+    fontSize: 18,
+    fontFamily:' Lexend_400Regular',
+    color: 'black',
+    textAlign: 'left',
+    paddingHorizontal: 50,
+    zIndex: 2,
+    lineHeight: 22
   },
   headerRow: {
     // top: '5%',
