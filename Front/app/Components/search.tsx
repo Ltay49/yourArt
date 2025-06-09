@@ -7,6 +7,7 @@ const RKJ = require('../../assets/images/RJK.png')
 const Met = require('../../assets/images/MetMus.png')
 import { useWindowDimensions, Platform } from 'react-native';
 import React, { useRef } from 'react';
+import { AccessibilityInfo } from 'react-native';
 
 
 export default function Search() {
@@ -21,7 +22,7 @@ export default function Search() {
 
   const handlePressIn = (scaleRef: Animated.Value) => {
     Animated.spring(scaleRef, {
-      toValue: 1.15,
+      toValue: 1.1,
       useNativeDriver: true,
     }).start();
   };
@@ -35,67 +36,103 @@ export default function Search() {
 
   const chicagoHoverEvents = Platform.OS === 'web'
     ? {
-        onMouseEnter: () => handlePressIn(scaleChicago),
-        onMouseLeave: () => handlePressOut(scaleChicago),
-      } as unknown as ViewProps
+      onMouseEnter: () => handlePressIn(scaleChicago),
+      onMouseLeave: () => handlePressOut(scaleChicago),
+    } as unknown as ViewProps
     : {};
 
   const metHoverEvents = Platform.OS === 'web'
     ? {
-        onMouseEnter: () => handlePressIn(scaleMet),
-        onMouseLeave: () => handlePressOut(scaleMet),
-      } as unknown as ViewProps
+      onMouseEnter: () => handlePressIn(scaleMet),
+      onMouseLeave: () => handlePressOut(scaleMet),
+    } as unknown as ViewProps
     : {};
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* CHICAGO */}
         <View style={[styles.galleryName, isWeb && styles.galleryNameWeb]}>
+          <LinearGradient
+            colors={[
+              'rgba(255,255,255,1)',
+              'rgba(255,255,255,0.1)',
+              'rgba(255,255,255,1)'
+            ]}
+            start={{ x: 0, y: 1 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.gradient}
+          />
           <Animated.View
             style={[
               styles.galleryPic,
-              { transform: [{ scale: scaleChicago }] }
+              { transform: [{ scale: scaleChicago }] },
             ]}
             onTouchStart={() => handlePressIn(scaleChicago)}
             onTouchEnd={() => handlePressOut(scaleChicago)}
             {...chicagoHoverEvents}
           >
-            <ImageBackground source={Chicago} style={styles.galleryPic}>
-              <LinearGradient
-                colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)']}
-                style={styles.gradient}
-              />
-              <Text
-                style={styles.galLink}
+            <ImageBackground
+              source={Chicago}
+              style={[styles.galleryPic, isWeb && styles.galleryPicWeb]}
+              accessibilityRole="image"
+              accessibilityLabel="Image of The Art Institute of Chicago"
+            >
+              <Pressable
                 onPress={() => router.push('/chicago')}
+                accessible={true}
+                accessibilityRole="link"
+                accessibilityLabel="Go to The Art Institute of Chicago gallery"
+                accessibilityHint="Navigates to The Art Institute of Chicago artworks"
+                style={[styles.accessibleLink, isWeb && styles.accessibleLinkWeb]}
               >
-                The Art Institute of Chicago
-              </Text>
+                <Text style={styles.galLink}>
+                  The Art Institute of Chicago
+                </Text>
+              </Pressable>
             </ImageBackground>
           </Animated.View>
         </View>
 
+        {/* MET */}
         <View style={[styles.galleryName, isWeb && styles.galleryNameWeb]}>
+          <LinearGradient
+            colors={[
+              'rgba(255,255,255,1)',
+              'rgba(255,255,255,0.1)',
+              'rgba(255,255,255,1)'
+            ]}
+            start={{ x: 0, y: 1 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.gradient}
+          />
           <Animated.View
             style={[
               styles.galleryPic,
-              { transform: [{ scale: scaleMet }] }
+              { transform: [{ scale: scaleMet }] },
             ]}
             onTouchStart={() => handlePressIn(scaleMet)}
             onTouchEnd={() => handlePressOut(scaleMet)}
             {...metHoverEvents}
           >
-            <ImageBackground source={Met} style={styles.galleryPic}>
-              <LinearGradient
-                colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)']}
-                style={styles.gradient}
-              />
-              <Text
-                style={styles.galLink}
-                onPress={() => router.push(`./themet`)}
+            <ImageBackground
+              source={Met}
+              style={[styles.galleryPic, isWeb && styles.galleryPicWeb]}
+              accessibilityRole="image"
+              accessibilityLabel="Image of The Metropolitan Museum of Art"
+            >
+              <Pressable
+                onPress={() => router.push('./themet')}
+                accessible={true}
+                accessibilityRole="link"
+                accessibilityLabel="Go to The Metropolitan Museum of Art gallery"
+                accessibilityHint="Navigates to The Metropolitan Museum of Art artworks"
+                style={[styles.accessibleLink, isWeb && styles.accessibleLinkWeb]}
               >
-                The Metropolitan Museum of Art
-              </Text>
+                <Text style={styles.galLink}>
+                  The Metropolitan Museum of Art
+                </Text>
+              </Pressable>
             </ImageBackground>
           </Animated.View>
         </View>
@@ -112,44 +149,72 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: "10%",
     alignItems: "center",
+    justifyContent:'center'
   },
   galleryName: {
-    // borderWidth: 2,
-    borderRadius: 40,
     borderColor: "black",
     width: "100%",
     height: 400,
+    padding: 20,
     marginVertical: 0,
-    justifyContent: "flex-end",
+    // justifyContent: "flex-end",
     alignItems: "center",
+    alignContent:'center',
+    borderBottomWidth: 5,
+    backgroundColor: 'brown'
   },
   galleryNameWeb: {
-    width: '95%',
+    alignItems: "center",
+    width: '90%',
     height: 400,
-    borderColor: 'black',
-    borderRadius: 1
+    padding: 20,
+    borderRadius: 2,
+    borderBottomWidth: 5,
+    backgroundColor: 'brown'
   },
   galLink: {
     textAlign: 'center',
-    justifyContent: "flex-end",
-    top: '35%',
-    zIndex: 2,
-    fontSize: 25,
+    fontSize: 30,
     fontFamily: 'Copperplate',
-    color: 'brown',
-    textDecorationLine: 'underline'
+    color: '#ffffff',
+    textDecorationLine: 'underline',
+    zIndex: 2,
+  },
+  accessibleLink: {
+    width: "99%",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(0, 0, 0, .5)', // improves text visibility
+  },
+  accessibleLinkWeb: {
+    width: "90%",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(0, 0, 0, .5)', // improves text visibility
+  },
+  galleryPicWeb: {
+    zIndex: 2,
+    width: '90%',
+    height: '100%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginLeft:'3%',
+    overflow: 'hidden',
+    borderRadius: 2,
   },
   galleryPic: {
-    width: '100%',
+    zIndex: 2,
+    // marginLeft:'.5%',
+    width: '99%',
     height: '100%',
     justifyContent: 'center',
     alignSelf: 'center',
     overflow: 'hidden',
     borderRadius: 2,
-
   },
   gradient: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 1,
   },
 });
+
