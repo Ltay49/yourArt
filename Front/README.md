@@ -29,6 +29,41 @@ git clone https://github.com/yourusername/yourart.git
 cd yourart
 
 npm install
+ 
+### Stack
+React Native / React 19
+
+Expo 53
+
+Expo Router
+
+TypeScript
+
+
+Axios (for HTTP requests)
+
+Met Museum Collection API
+
+Google Fonts via Expo
+
+AsyncStorage
+
+Technologies Used
+React Native / React 19
+
+Expo 53
+
+Expo Router
+
+TypeScript
+
+Axios (for HTTP requests)
+
+Met Museum Collection API
+
+Google Fonts via Expo
+
+AsyncStorage
 
 
 
