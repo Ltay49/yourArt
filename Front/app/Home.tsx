@@ -5,13 +5,17 @@ import { Knewave_400Regular } from '@expo-google-fonts/knewave';
 import { useFonts } from 'expo-font';
 import Search from "./Components/search";
 import React from 'react';
+import { useState } from "react";
 const KH = require('../assets/images/KH.png');
 import { useWindowDimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import {Lexend_400Regular } from '@expo-google-fonts/lexend';
+import { Lexend_400Regular } from '@expo-google-fonts/lexend';
 
 
 export default function MainScreen() {
+
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
 
   const intro = `"Art is for everybody. I don't think art should be only for the select few, I think it should be for the masses of people." 
 — Keith Haring`;
@@ -71,51 +75,69 @@ export default function MainScreen() {
         >
           <LinearGradient
             colors={[
-              'rgba(255,255,255,1)',   // top: solid white
-              'rgba(255,255,255,0.6)',   // middle: fully transparent
-              'rgba(255,255,255,1)'    // bottom: solid white
+              'rgba(255,255,255,1)',   
+              'rgba(255,255,255,0.6)',  
+              'rgba(255,255,255,1)'  
             ]}
             start={{ x: 1, y: 1 }}
             end={{ x: 1, y: 1 }}
             style={styles.gradient}
           />
+          {isMobile && (
+            <Text
+              style={[styles.intro, isWeb && styles.introWeb, isWebMedium && styles.introMed]}
+              accessible={true}
+              accessibilityRole="text"
+              accessibilityLabel="Keith Haring quote"
+            >
+              {isWeb ? introWeb : intro}
+            </Text>
+          )}
+        </ImageBackground>
+        {!isMobile && (
+          <View style={[styles.howToBox, isWebMedium && styles.howToBoxBig]}>
+            <Text
+              style={[styles.howTo, isWebSmall && styles.howToSmall, isWebMedium && styles.howToWeb]}
+              accessible={true}
+              accessibilityRole="text"
+              accessibilityLabel="Welcome message and navigation instructions"
+            >
+              Welcome to{' '}
+              <Text style={{ color: 'brown', fontWeight: 'bold' }}>
+                ITSYOURSART
+              </Text>
+              , your go-to curator platform. Search from the exhibitions below and build your own collections! Feel free to have a look around—if you see anything you like, sign up and begin curating!
+            </Text>
 
+            <Text
+              style={[styles.howTo, isWebSmall && styles.howToSmall, isWebMedium && styles.howToWeb]}
+              accessible={true}
+              accessibilityRole="text"
+              accessibilityLabel="Instructions to add and remove art"
+            >
+              Simply press the{' '}
+              <Text style={{ color: 'green', fontWeight: 'bold', fontSize: 25 }}>+</Text>
+              , and later the{' '}
+              Remove item: <Text style={{ color: 'darkred', fontWeight: 'bold', fontSize: 25 }}>x</Text>
+              {' '}to remove a piece that no longer suits your taste. Enjoy!
+            </Text>
+          </View>
+        )}
+
+        {isMobile && (
           <Text
-            style={[styles.intro, isWeb && styles.introWeb, isWebMedium && styles.introMed ]}
+            style={[styles.howTo, isWebSmall && styles.howToSmall]}
             accessible={true}
             accessibilityRole="text"
-            accessibilityLabel="Keith Haring quote"
+            accessibilityLabel="Mobile welcome message"
           >
-            {isWeb ? introWeb : intro}
+            Welcome to
+             <Text style={{ color: 'brown', fontWeight: 'bold' }}>
+                ITSYOURSART
+              </Text>
+              choose from the exhibitions below to start curating now!
           </Text>
-        </ImageBackground>
-        <View style={[styles.howToBox, isWebMedium && styles.howToBoxBig]}>
-        <Text
-         style={[styles.howTo, isWebSmall && styles.howToSmall, isWebMedium && styles.howToWeb]}
-          accessible={true}
-          accessibilityRole="text"
-          accessibilityLabel="Welcome message and navigation instructions"
-        >
-          Welcome to{' '}
-          <Text style={{ color: 'brown', fontWeight: 'bold' }}>
-            ITSYOURSART
-          </Text>
-          , your go-to curator platform. Search from the exhibitions below and build your own collections! Feel free to have a look around—if you see anything you like, sign up and begin curating!
-        </Text>
-
-        <Text
-           style={[styles.howTo, isWebSmall && styles.howToSmall, isWebMedium && styles.howToWeb]}
-          accessible={true}
-          accessibilityRole="text"
-          accessibilityLabel="Instructions to add and remove art"
-        >
-          Simply press the <Text>
-            <Text style={{ color: 'green', fontWeight: 'bold', fontSize: 25 }}>+</Text>
-          </Text>, and later the <Text>
-            Remove item: <Text style={{ color: 'darkred', fontWeight: 'bold', fontSize: 25 }}>x</Text>
-          </Text> to remove a piece that no longer suits your taste. Enjoy!
-        </Text>
-        </View>
+        )}
       </SafeAreaView>
 
       <Search />
@@ -138,12 +160,12 @@ const styles = StyleSheet.create({
   introContainerWebFS: {
     width: '100%',
     alignSelf: 'center',
-    height: '35%',
+    height: '3%',
     marginBottom: 40,
   },
-  introContainerWebMb:{
-    height: '40%',
-    marginBottom: 140,
+  introContainerWebMb: {
+    height: '35%',
+    marginBottom: 5,
   },
 
   intro: {
@@ -158,9 +180,10 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   howTo: {
+    marginTop:10,
     height: '100%',
     fontSize: 20,
-    fontFamily:' Lexend_400Regular',
+    fontFamily: ' Lexend_400Regular',
     color: 'black',
     textAlign: 'left',
     paddingHorizontal: 70,
@@ -170,17 +193,17 @@ const styles = StyleSheet.create({
   howToWeb: {
     height: '100%',
     fontSize: 18,
-    fontFamily:' Lexend_400Regular',
+    fontFamily: ' Lexend_400Regular',
     color: 'black',
     textAlign: 'left',
     paddingHorizontal: 50,
     zIndex: 2,
     lineHeight: 22
-  }, 
-  howToBox:{
+  },
+  howToBox: {
     top: '-15%',
   },
-  howToBoxBig:{
+  howToBoxBig: {
     top: '-10%',
 
   },
@@ -188,11 +211,12 @@ const styles = StyleSheet.create({
   howToSmall: {
     height: '100%',
     fontSize: 16,
-    fontFamily:' Lexend_400Regular',
+    fontFamily: ' Lexend_400Regular',
     color: 'black',
     textAlign: 'left',
     paddingHorizontal: 20,
     zIndex: 2,
+    top: '-15%',
     lineHeight: 22,
   },
   headerRow: {
@@ -205,7 +229,7 @@ const styles = StyleSheet.create({
   headertext: {
     fontSize: 25,
     color: 'darkred',
-    fontFamily:' Lexend_400Regular',
+    fontFamily: ' Lexend_400Regular',
     fontWeight: 'bold',
   },
   headertextWeb: {

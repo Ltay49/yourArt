@@ -7,8 +7,6 @@ const RKJ = require('../../assets/images/RJK.png')
 const Met = require('../../assets/images/MetMus.png')
 import { useWindowDimensions, Platform } from 'react-native';
 import React, { useRef } from 'react';
-import { AccessibilityInfo } from 'react-native';
-
 
 export default function Search() {
   const router = useRouter();
@@ -51,7 +49,6 @@ export default function Search() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* CHICAGO */}
         <View style={[styles.galleryName, isWeb && styles.galleryNameWeb]}>
           <LinearGradient
             colors={[
@@ -157,7 +154,6 @@ const styles = StyleSheet.create({
     height: 400,
     padding: 20,
     marginVertical: 0,
-    // justifyContent: "flex-end",
     alignItems: "center",
     alignContent:'center',
     borderBottomWidth: 5,
@@ -184,13 +180,13 @@ const styles = StyleSheet.create({
     width: "99%",
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: 'rgba(0, 0, 0, .5)', // improves text visibility
+    backgroundColor: 'rgba(0, 0, 0, .5)',
   },
   accessibleLinkWeb: {
     width: "90%",
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: 'rgba(0, 0, 0, .5)', // improves text visibility
+    backgroundColor: 'rgba(0, 0, 0, .5)',
   },
   galleryPicWeb: {
     zIndex: 2,
@@ -204,7 +200,6 @@ const styles = StyleSheet.create({
   },
   galleryPic: {
     zIndex: 2,
-    // marginLeft:'.5%',
     width: '99%',
     height: '100%',
     justifyContent: 'center',

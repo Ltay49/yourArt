@@ -63,13 +63,13 @@ export default function TheMetScreen() {
     const fetchInitialIDs = async () => {
         try {
             const response = await axios.get('https://collectionapi.metmuseum.org/public/collection/v1/objects');
-            let ids = response.data.objectIDs?.slice(0, 1000); // Limit to 500
+            let ids = response.data.objectIDs?.slice(0, 1000);
             if (!ids || ids.length === 0) {
                 console.log("No artwork IDs found.");
                 return;
             }
 
-            ids = shuffleArray(ids); // Randomize the order
+            ids = shuffleArray(ids); 
             artIdListRef.current = ids;
             setTotal(ids.length);
         } catch (error) {
@@ -184,7 +184,7 @@ export default function TheMetScreen() {
 
                                 if (sortOrder === "asc") return dateA - dateB;
                                 if (sortOrder === "desc") return dateB - dateA;
-                                return 0; // no sort
+                                return 0; 
                             })
                             .map((art) => {
 
@@ -303,7 +303,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        // paddingTop: 100,
     },
     loaderText: {
         fontSize: 18,
@@ -353,8 +352,6 @@ const styles = StyleSheet.create({
         fontSize: 35,
         fontFamily: 'SpecialElite_400Regular',
         color: "brown",
-        // transform: [{ rotate: '-45deg' }],
-        // borderWidth: 2
     },
     noImageBox: {
         borderWidth: 2,

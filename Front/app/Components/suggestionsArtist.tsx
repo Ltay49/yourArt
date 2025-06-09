@@ -11,8 +11,6 @@ type SuggestionsProps = {
 
 export default function Suggestions({ artist }: SuggestionsProps) {
 
-    console.log(artist)
-
     const router = useRouter();
     const { width } = useWindowDimensions();
     const isWeb = width > 768;
@@ -42,7 +40,6 @@ export default function Suggestions({ artist }: SuggestionsProps) {
 
             setArtistLinks(artistLinks);
 
-            // Fetch each artwork's full details
             const artworkDetails = await Promise.all(
                 artistLinks.map(async (link: any) => {
                     const res = await axios.get(link);
@@ -80,10 +77,10 @@ export default function Suggestions({ artist }: SuggestionsProps) {
                         <TouchableOpacity
                             onPress={() => {
                                 router.push({
-                                    pathname: "/chicago/(artwork)/[id]", // Literal path matching your file
+                                    pathname: "/chicago/(artwork)/[id]",
                                     params: {
                                         title: art.title,
-                                        id: art.id.toString(),     // Always pass params as strings
+                                        id: art.id.toString(),
                                     },
                                 });
                             }}

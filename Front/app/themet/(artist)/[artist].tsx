@@ -113,10 +113,9 @@ export default function artistWork() {
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
 
         if (artistStr && /^\d+$/.test(artistStr)) {
-            // Delay navigation until after mount
             const timeout = setTimeout(() => {
                 router.replace(`/themet/(artwork)/${artistStr}`);
-            }, 0); // Can also use 100ms if needed
+            }, 0); 
 
             return () => clearTimeout(timeout);
         }
@@ -210,7 +209,7 @@ export default function artistWork() {
     return (
         <View style={styles.mainContainer}>
             <SearchBar />
-            <View style={{ flexDirection: 'row', paddingHorizontal: 10, gap: 10 }}>
+            <View style={{paddingHorizontal: 10, gap: 5 }}>
                 <View style={{ flex: 1 }}>
                     <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Filter by Artist:</Text>
                     <Picker
@@ -433,8 +432,6 @@ const styles = StyleSheet.create({
         fontSize: 35,
         fontFamily: 'SpecialElite_400Regular',
         color: "brown",
-        // transform: [{ rotate: '-45deg' }],
-        // borderWidth: 2
     },
     noImageBox: {
         borderWidth: 2,

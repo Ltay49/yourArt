@@ -268,9 +268,9 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "#fff",
         borderColor: 'grey',
-        shadowColor: 'black',  // Shadow color (black here)
-        shadowOffset: { width: 0, height: 2 },  // x: 0 (no horizontal offset), y: 10 (vertical offset)
-        shadowOpacity: .3,  // Set shadow opacity (0-1 range)
+        shadowColor: 'black', 
+        shadowOffset: { width: 0, height: 2 },  
+        shadowOpacity: .3, 
         shadowRadius: 2,
     },
     searchText: {
@@ -293,18 +293,14 @@ const styles = StyleSheet.create({
     },
     card: {
         width: "95%",
-        // borderRightWidth:2,
-        // borderBottomWidth:2,
         backgroundColor: "#f0f0f0",
         borderColor: 'grey',
         borderRadius: 20,
         padding: 10,
-        // marginLeft: 10,
-        // marginRight:10,
         marginBottom: 10,
         flexDirection: "column",
         justifyContent: "space-between",
-        minHeight: 250, // ensure there's enough space
+        minHeight: 250,
     },
     cardWeb: {
         width: '31%',
@@ -349,7 +345,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: -2, // adjust this to offset the line
+        bottom: -2,
         height: 2,
         backgroundColor: 'black',
         width: '100%'

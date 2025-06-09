@@ -201,8 +201,7 @@ export default function ArtistSearch() {
     return (
         <>
             <SearchBar />
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 10, gap: 20 }}>
-                {/* Filter by Artist */}
+            <View style={{ alignItems: 'center', marginHorizontal: 10, gap: 5 }}>
                 <View style={{ flex: 1 }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Filter by Artist:</Text>
                     <Picker
@@ -216,7 +215,6 @@ export default function ArtistSearch() {
                     </Picker>
                 </View>
 
-                {/* SortBy component */}
                 <View style={{ flex: 1 }}>
                     <SortBy
                         onSort={(sortKey) => {
