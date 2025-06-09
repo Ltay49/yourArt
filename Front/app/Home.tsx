@@ -72,7 +72,7 @@ export default function MainScreen() {
           <LinearGradient
             colors={[
               'rgba(255,255,255,1)',   // top: solid white
-              'rgba(255,255,255,0.4)',   // middle: fully transparent
+              'rgba(255,255,255,0.6)',   // middle: fully transparent
               'rgba(255,255,255,1)'    // bottom: solid white
             ]}
             start={{ x: 1, y: 1 }}
@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   introContainerWebMb:{
-    height: '35%',
-    marginBottom: 80,
+    height: '40%',
+    marginBottom: 100,
   },
 
   intro: {
