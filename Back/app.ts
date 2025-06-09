@@ -7,7 +7,7 @@ const app = express();
 app.get("/api", getApi);
 
 app.use(cors());
-app.use(express.json()); // ✅ Essential for parsing JSON
+app.use(express.json());
 
 app.post("/api/userProfile", addUser)
 app.get("/api/userProfile/:username", getUser);

@@ -1,6 +1,6 @@
 import { MongoClient, Db } from "mongodb";
 
-let client: MongoClient | null = null;  // Global client variable
+let client: MongoClient | null = null;
 let db: Db | null = null;
 
 export const initializeConnection = async (uri: string, dbName: string) => {
@@ -24,8 +24,8 @@ export const getDb = (): Db => {
 
 export const closeConnection = async () => {
   if (client) {
-    await client.close(); // Close the MongoDB connection
-    client = null; // Reset the client and db variables
+    await client.close();
+    client = null; 
     db = null;
     console.log("MongoDB connection closed.");
   }

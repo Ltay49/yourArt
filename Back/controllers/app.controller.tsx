@@ -48,7 +48,7 @@ export const addArtwork = async (
 
     const updatedProfile = await addToCollection(username, artwork);
 
-    res.status(201).json(updatedProfile); // or just res.status(201).json(artwork)
+    res.status(201).json(updatedProfile);
   } catch (error) {
     next(error);
   }

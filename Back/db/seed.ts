@@ -6,7 +6,7 @@ export async function seeding(
 ): Promise<void> {
   try {
     const db = getDb();
-    console.log("Connected to database:", db.databaseName);  // Logs the database name to confirm
+    console.log("Connected to database:", db.databaseName);
     
 
     const collections = [

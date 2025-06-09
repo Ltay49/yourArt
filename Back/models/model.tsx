@@ -62,7 +62,7 @@ export const removeArtworkFromCollection = async (
 
 
 export const addNewUser = async (
-    newUser: Profile // or use `object` if you prefer looser typing
+    newUser: Profile
   ): Promise<Profile> => {
     await initializeConnection(MONGODB_URI, DATABASE_NAME);
     const db = getDb();

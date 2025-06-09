@@ -1,6 +1,6 @@
-import app from "./app"; // Import the Express app from app.ts
-import { initializeConnection } from "./db/connect"; // MongoDB connection logic
-import { MONGODB_URI, DATABASE_NAME } from "./db/config"; // Environment variables for MongoDB URI and DB name
+import app from "./app"; 
+import { initializeConnection } from "./db/connect"; 
+import { MONGODB_URI, DATABASE_NAME } from "./db/config";
 
 const { PORT = 4000 } = process.env;
 
@@ -20,8 +20,8 @@ const startServer = async () => {
     });
   } catch (error) {
     console.error("Failed to start the server:", error);
-    process.exit(1); // Exit process if there is an error
+    process.exit(1);
   }
 };
 
-startServer(); // Call the startServer function
+startServer();

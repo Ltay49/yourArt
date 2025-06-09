@@ -115,7 +115,7 @@ afterAll(async () => {
   describe("DELETE: will remove artwork from user's collection", () => {
     test("removes artwork from collection by title", async () => {
       const response = await request(app)
-        .delete("/api/userProfile/Jimmy123/collection/Water%20Lilies") // encode the space
+        .delete("/api/userProfile/Jimmy123/collection/Water%20Lilies") 
         .expect(200);
   
       expect(response.body).toMatchObject({
@@ -126,4 +126,3 @@ afterAll(async () => {
   
   
 
-  // PASSWORD
