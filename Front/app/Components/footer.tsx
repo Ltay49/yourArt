@@ -34,8 +34,6 @@ export default function Footer() {
     themet: 'themet'
   };
 
-  // useSavePathOnNavigate(pathname);
-
   useEffect(() => {
     const generateBreadcrumbs = async () => {
       const clean = (s: string) => s.replace(/\[|\]/g, '');
@@ -73,13 +71,9 @@ export default function Footer() {
     generateBreadcrumbs();
   }, [pathname]);
 
-
-
-
   return (
     <View style={styles.container}>
       <View style={styles.footer}>
-        {/* Breadcrumb navigation */}
         <View style={styles.breadcrumbContainer}>
           {breadcrumbParts.map((segment, index) => {
             const isLast = index === breadcrumbParts.length - 1;
@@ -119,14 +113,12 @@ export default function Footer() {
             );
           })}
         </View>
-
-        {/* Right side links */}
         <View style={styles.rightLinks}>
         <Text
             style={styles.footerText}
             onPress={async () => {
               if (pathname !== '/collection' && pathname !== '/login') {
-                await setReturnPath(pathname); // only save real pages
+                await setReturnPath(pathname);
               }
               router.push('/collection');
             }}
@@ -137,7 +129,7 @@ export default function Footer() {
             <Text style={styles.footerText}
               onPress={async () => {
                 if (pathname !== '/collection' && pathname !== '/login') {
-                  await setReturnPath(pathname); // only save real pages
+                  await setReturnPath(pathname); 
                 }
                 router.push('/login');
               }}
@@ -159,14 +151,14 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     borderColor: 'grey',
-    shadowColor: 'black',  // Shadow color (black here)
-    shadowOffset: { width: 0, height: 0 },  // x: 0 (no horizontal offset), y: 10 (vertical offset)
-    shadowOpacity: 1,  // Set shadow opacity (0-1 range)
-    shadowRadius: 2,  // Set blur radius
+    shadowColor: 'black', 
+    shadowOffset: { width: 0, height: 0 },  
+    shadowOpacity: 1,
+    shadowRadius: 2, 
     elevation: 2,
     padding: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',  // Ensures space between the left and right sections
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   breadcrumbContainer: {
@@ -182,7 +174,7 @@ const styles = StyleSheet.create({
   },
   activeText: {
     fontWeight: 'bold',
-    color: '#000',  // Darker color for the active page
+    color: '#000',  
   },
   separator: {
     color: '#888',
@@ -190,11 +182,10 @@ const styles = StyleSheet.create({
   },
   rightLinks: {
     flexDirection: 'row',
-    gap: 5,  // Adds space between "Collection" and "Profile"
+    gap: 5,  
   },
   collection: {
     color: 'brown',
-
   }
 });
 

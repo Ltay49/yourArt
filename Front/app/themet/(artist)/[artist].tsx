@@ -14,6 +14,21 @@ import { SpecialElite_400Regular,useFonts } from '@expo-google-fonts/special-eli
 export default function artistWork() {
 
     const scrollRef = useRef<ScrollView>(null);
+    const artworkCache = useRef<Record<number, Artwork[]>>({});
+
+
+    const fetchAndCacheArtworks = async (index: number) => {
+        if (artworkCache.current[index]) {
+          setArtistWorks(artworkCache.current[index]);
+          return;
+        }
+      
+        setLoading(true);
+        const data = await fetchArtworksByIDs(allObjectIDs, index);
+        artworkCache.current[index] = data;
+        setArtistWorks(data);
+        setLoading(false);
+      };
 
     const [fontsLoaded] = useFonts({
         SpecialElite_400Regular
@@ -35,6 +50,7 @@ export default function artistWork() {
     const [sortOption, setSortOption] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
+    console.log(artworks)
 
     const [artistWorks, setArtistWorks] = useState<Artwork[]>(parsedArtworks || [])
     console.log(artistWorks)
@@ -44,9 +60,10 @@ export default function artistWork() {
     const parsedObjectIDs = objectIDs ? JSON.parse(objectIDs as string) : [];
     const [allObjectIDs, setAllObjectIDs] = useState<number[]>(parsedObjectIDs);
 
+    console.log("total",totalItems)
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const totalPages = Math.ceil(Number(items || 0) / 25);
+    const totalPages = Math.ceil(Number(items || 0) / 10);
 
     const { width } = useWindowDimensions();
     const isWeb = width > 768;
@@ -103,75 +120,61 @@ export default function artistWork() {
         }
     }, [artist]);
 
-    const fetchArtworksByIDs = async (ids: number[], startIndex = 0, limit = 25) => {
-        const artworks: Artwork[] = [];
-        let i = startIndex;
+  const fetchArtworksByIDs = async (ids: number[], start = 0, limit = 10): Promise<Artwork[]> => {
+  const batch = ids.slice(start, start + limit);
 
-        while (artworks.length < limit && i < ids.length) {
-            const id = ids[i];
-            try {
-                const res = await axios.get(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
-                const data = res.data;
-                console.log(data)
+  const results = await Promise.allSettled(
+    batch.map(id =>
+      axios
+        .get(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+        .then(res => res.data)
+        .catch(() => null)
+    )
+  );
 
-                if (data) {
-                    artworks.push({
-                        id: data.objectID,
-                        title: data.title,
-                        date: data.objectDate,
-                        artist: data.artistDisplayName,
-                        image: data.primaryImage,
-                        url: data.objectURL,
-                    });
-                    console.log(`Artwork ${data.objectID}:`, data.primaryImage);
+  return results
+    .filter(r => r.status === "fulfilled" && r.value && !r.value.message)
+    .map(r => {
+      const data = (r as PromiseFulfilledResult<any>).value;
+      return {
+        id: data.objectID,
+        title: data.title,
+        date: data.objectDate,
+        artist: data.artistDisplayName,
+        image: data.primaryImage,
+        url: data.objectURL,
+      };
+    });
+};
 
-                }
-            } catch (error) {
-                console.warn(`Failed to fetch object ${id}`, error);
-            }
-            i++;
-        }
+const handleNext = async () => {
+    if (totalItems === null || currentIndex + 10 >= totalItems || loading) return;
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  
+    const newIndex = currentIndex + 10;
+    setCurrentIndex(newIndex);
+    setCurrentPage(currentPage + 1);
+  
+    await AsyncStorage.setItem("lastArtistIndex", newIndex.toString());
+    await AsyncStorage.setItem("lastArtistPage", (currentPage + 1).toString());
+  };
+  
 
-        return artworks;
-    };
-
-    const handleNext = async () => {
-        if (totalItems === null || currentIndex + 25 >= totalItems || loading) return;
-
-        scrollRef.current?.scrollTo({ y: 0, animated: false });
-
-        const newIndex = currentIndex + 25;
-        const newPage = currentPage + 1;
-        setCurrentIndex(newIndex);
-        setCurrentPage(newPage);
-
-        await AsyncStorage.setItem("lastArtistIndex", newIndex.toString());
-        await AsyncStorage.setItem("lastArtistPage", newPage.toString());
-    };
-
-    const handlePrevious = async () => {
-        if (currentIndex === 0 || loading) return;
-        scrollRef.current?.scrollTo({ y: 0, animated: false });
-
-        const newIndex = currentIndex - 25;
-        const newPage = currentPage - 1;
-        setCurrentIndex(newIndex);
-        setCurrentPage(newPage);
-
-        await AsyncStorage.setItem("lastArtistIndex", newIndex.toString());
-        await AsyncStorage.setItem("lastArtistPage", newPage.toString());
-    };
-
-
+  const handlePrevious = async () => {
+    if (currentIndex === 0 || loading) return;
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  
+    const newIndex = currentIndex - 10;
+    setCurrentIndex(newIndex);
+    setCurrentPage(currentPage - 1);
+  
+    await AsyncStorage.setItem("lastArtistIndex", newIndex.toString());
+    await AsyncStorage.setItem("lastArtistPage", (currentPage - 1).toString());
+  };
+  
     useEffect(() => {
-        const fetch = async () => {
-          setLoading(true);
-          const newArtworks = await fetchArtworksByIDs(allObjectIDs, currentIndex);
-          setArtistWorks(newArtworks);
-          setLoading(false);
-        };
-      
-        fetch();
+        console.log("artworks",artworks)
+        fetchAndCacheArtworks(currentIndex);
       }, [currentIndex]);
       
     const sortAndSetArtistWorks = (artworks: Artwork[], sortKey: string | null) => {
@@ -216,7 +219,7 @@ export default function artistWork() {
             {loading && (
                 <View style={styles.loadingOverlay}>
                     <Text style={styles.loadingText}>
-                        Not long now, just fetching more results for '{artist}'
+                        Fetching results for '{artist}'
                     </Text>
                     <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
                 </View>
@@ -285,7 +288,7 @@ export default function artistWork() {
                         <Text style={styles.pageNumber}>
                             Page <Text style={styles.bold}>{currentPage}</Text> of{" "}
                             <Text style={styles.bold}>
-                                {totalPages || (totalItems ? Math.ceil(totalItems / 25) : "?")}
+                                {totalPages || (totalItems ? Math.ceil(totalItems / 10) : "?")}
                             </Text>
                         </Text>
 
@@ -293,7 +296,7 @@ export default function artistWork() {
                     <Button
                         title="Next"
                         onPress={handleNext}
-                        disabled={totalItems === null || currentIndex + 25 >= totalItems || loading}
+                        disabled={totalItems === null || currentIndex + 10 >= totalItems || loading}
                     />
                 </View>
             </ScrollView>

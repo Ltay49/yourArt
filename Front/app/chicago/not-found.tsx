@@ -4,7 +4,6 @@ import { View, Text, StyleSheet, Image } from "react-native"
 export default function NotFound() {
   return (
     <View style={styles.container}>
-      {/* Optional: Add an image or icon */}
       <Text style={styles.emoji}>🤔</Text>
       <Text style={styles.title}>Oops! Something's not right.</Text>
       <Text style={styles.message}>

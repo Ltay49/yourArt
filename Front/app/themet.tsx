@@ -1,6 +1,6 @@
 import { View, Text, TextInput, StyleSheet, ScrollView, Image, TouchableOpacity, ImageBackground, Button } from "react-native";
 import axios from "axios";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import React from 'react';
 import SerachBar from "./Components/searchBarMet";
 import { ActivityIndicator } from "react-native";
@@ -41,36 +41,49 @@ export default function TheMetScreen() {
     const isWeb = width > 768;
 
     const [metArtwork, setMetArtwork] = useState<Artwork[]>([]);
+    const artIdListRef = useRef<number[]>([]);
 
-    const fetchArtwork = async () => {
+    const shuffleArray = (array: number[]) => {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      };
+
+      const fetchInitialIDs = async () => {
         try {
-            const response = await axios.get('https://collectionapi.metmuseum.org/public/collection/v1/objects');
-            const artIdList = response.data.objectIDs;
-            const total = response.data.total
+          const response = await axios.get('https://collectionapi.metmuseum.org/public/collection/v1/objects');
+          let ids = response.data.objectIDs?.slice(0, 1000); // Limit to 500
+          if (!ids || ids.length === 0) {
+            console.log("No artwork IDs found.");
+            return;
+          }
+      
+          ids = shuffleArray(ids); // Randomize the order
+          artIdListRef.current = ids;
+          setTotal(ids.length);
+        } catch (error) {
+          console.error("Error fetching object IDs:", error);
+        }
+      };
+      
 
-            setTotal(total)
 
-            if (!artIdList || artIdList.length === 0) {
-                console.log("No artwork IDs found.");
-                return [];
-            }
-
-            const first12Ids = artIdList.slice(pageNumber[0], pageNumber[1]);
-
-            // Fetch artwork details in parallel
-            const artworkPromises = first12Ids.map((id: any) =>
+    const fetchArtworkDetails = async () => {
+        try {
+            const slice = artIdListRef.current.slice(pageNumber[0], pageNumber[1]);
+            const artworkPromises = slice.map((id) =>
                 axios.get(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
             );
-
             const artworkResponses = await Promise.all(artworkPromises);
-            const artworks = artworkResponses.map((res) => res.data);
-
-            return artworks ?? []
+            return artworkResponses.map((res) => res.data);
         } catch (error) {
-            console.error("Error fetching artwork:", error);
-            return []
+            console.error("Error fetching artwork details:", error);
+            return [];
         }
     };
+    
 
 
     const nextPage = () => {
@@ -88,19 +101,30 @@ export default function TheMetScreen() {
 
 
     useEffect(() => {
-        const loadArt = async () => {
-            setLoading(true); // start loading
-            const artworks = await fetchArtwork();
+        const loadInitialData = async () => {
+            setLoading(true);
+            await fetchInitialIDs();
+            const artworks = await fetchArtworkDetails();
             setMetArtwork(artworks);
-            setLoading(false); // stop loading
+            setLoading(false);
         };
-        loadArt();
+        loadInitialData();
+    }, []);
+    
+    useEffect(() => {
+        const loadPage = async () => {
+            if (artIdListRef.current.length === 0) return;
+            setLoading(true);
+            const artworks = await fetchArtworkDetails();
+            setMetArtwork(artworks);
+            setLoading(false);
+        };
+        loadPage();
     }, [pageNumber]);
 
     const totalPages = Math.ceil(total / 10);
 
     return (
-
         <View style={styles.mainContainer}>
             <SerachBar />
             {loading ? (
@@ -193,21 +217,17 @@ const styles = StyleSheet.create({
     },
     card: {
         width: "95%",
-        // borderRightWidth:2,
-        // borderBottomWidth:2,
         backgroundColor: "#f0f0f0",
         borderColor: 'grey',
         borderRadius: 20,
         padding: 10,
-        // marginLeft: 10,
-        // marginRight:10,
         marginBottom: 10,
         flexDirection: "column",
         justifyContent: "space-between",
-        minHeight: 250, // ensure there's enough space
+        minHeight: 250,
     },
     cardWeb: {
-        width: '47%',
+        width: '31%',
         margin: '1%',
     },
     image: {

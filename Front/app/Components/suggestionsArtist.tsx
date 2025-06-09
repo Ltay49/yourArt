@@ -40,13 +40,13 @@ export default function Suggestions({ artist }: SuggestionsProps) {
 
             const artistLinks = data.map((art: any) => art.api_link);
 
-            setArtistLinks(artistLinks); // assuming this is state you're using
+            setArtistLinks(artistLinks);
 
             // Fetch each artwork's full details
             const artworkDetails = await Promise.all(
                 artistLinks.map(async (link: any) => {
                     const res = await axios.get(link);
-                    return res.data.data; // or res.data depending on the structure
+                    return res.data.data; 
                 })
             );
 
@@ -55,7 +55,6 @@ export default function Suggestions({ artist }: SuggestionsProps) {
             );
             
             setArtworks(filteredArtworks);
-            // assuming you want full artwork objects now
 
         } catch (error) {
             console.error('Error fetching artist links or artwork details:', error);
@@ -66,8 +65,6 @@ export default function Suggestions({ artist }: SuggestionsProps) {
     useEffect(() => {
         fetchMoreWorks();
     }, []);
-
-    console.log(artworks)
 
     return (
         <View style={[styles.gallery, isWeb && styles.galleryWeb]}>
@@ -108,15 +105,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        // backgroundColor:'#DCDCDC'
-        // padding: 10,
     },
     galleryWeb: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: "flex-start",
         marginLeft:35,
-        // padding: 10,
     },
 
     card: {
@@ -131,8 +125,8 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     image: {
-        width: '100%',           // Two images side by side with some margin
-        aspectRatio: 2 / 3,     // Example aspect ratio (width:height) — adjust as needed
+        width: '100%',          
+        aspectRatio: 2 / 3,   
         resizeMode: 'contain',
       
       },
@@ -147,7 +141,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: -2, // adjust this to offset the line
+        bottom: -2, 
         height: 2,
         backgroundColor: 'black',
         width: '100%'

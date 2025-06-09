@@ -15,7 +15,6 @@ export default function LogIn() {
     const [error, setError] = useState<string | null>(null);
     const loggedIn = !!user;
 
-    // Login handler
     const handleLogin = async () => {
         setLoading(true);
         setError(null);
@@ -34,7 +33,6 @@ export default function LogIn() {
         }
     };
 
-    // Signup handler
     const handleSignUp = async () => {
         setLoading(true);
         setError(null);
@@ -51,7 +49,7 @@ export default function LogIn() {
             }
             const data = await res.json();
             setUser(data);
-            setMode('login'); // optional
+            setMode('login');
         } catch (err: any) {
             setError(`Sign up failed: ${err.message}`);
         } finally {
@@ -154,8 +152,6 @@ export default function LogIn() {
         </ScrollView>
     );
 }
-
-// keep your styles as before...
 
 const styles = StyleSheet.create({
     container: {

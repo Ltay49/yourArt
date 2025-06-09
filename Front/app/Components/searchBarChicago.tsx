@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from 'expo-router';
 import { ActivityIndicator } from "react-native";
 
-
-
 export default function SearchBar() {
 
     const [searchPage, setSearchPage] = useState(1)
@@ -69,8 +67,6 @@ export default function SearchBar() {
                     });
                     return;
                 }
-
-                // Extract artwork IDs for detailed data fetching
                 const artworkIds = artwork.map((art: any) => art.id);
 
                 const artworkDetails = await Promise.all(
@@ -82,10 +78,8 @@ export default function SearchBar() {
                     })
                 );
 
-                console.log(artworkDetails)
                 setArtworks(artworkDetails);
-                console.log(paginationData)
-                // Extract pagination properties from the response data
+            
                 const { total, limit, offset, total_pages, current_page } = paginationData;
 
                 router.push({

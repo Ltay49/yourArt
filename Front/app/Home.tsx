@@ -53,6 +53,9 @@ export default function MainScreen() {
           <Text style={[styles.intro, isWeb && styles.introWeb]}>
             {isWeb ? introWeb : intro}
           </Text>
+          <Text style={styles.howTo}>Welcome to ITSYOURSART your go to curator platform, search from the Exhibition below and build up your own collections!
+          feel free to have a look around, if you see anything you like make sure to quicly sign up and begin curating!</Text>
+          <Text style={styles.howTo}>Simply press the + to add and a later date the x that piece no longer suites your taste, enjoy!</Text>
         </ImageBackground>
       </SafeAreaView>
 
@@ -65,6 +68,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     height: '35%',
+    marginBottom:10
   },
   introContainerWeb: {
     width: '100%',
@@ -80,6 +84,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Copperplate',
     textAlign: 'center',
     paddingHorizontal: 10,
+    zIndex: 2,
+  },
+  howTo: {
+    top: '10%',
+    height: '100%',
+    fontSize: 16,
+    color: 'black',
+    textAlign: 'left',
+    paddingHorizontal: 39,
     zIndex: 2,
   },
   headerRow: {

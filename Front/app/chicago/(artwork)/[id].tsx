@@ -142,7 +142,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-evenly',
-    // padding: 10,
   },
   card: {
     marginBottom: 20,
@@ -151,14 +150,14 @@ const styles = StyleSheet.create({
   },
   image: {
     alignSelf: 'center',
-    width: '100%',           // Two images side by side with some margin
-    aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
+    width: '100%',     
+    aspectRatio: 4 / 3,    
     resizeMode: 'contain',
   },
   imageWeb: {
     alignSelf: 'center',
-    width: '60%',           // Two images side by side with some margin
-    aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
+    width: '60%',         
+    aspectRatio: 4 / 3, 
     resizeMode: 'contain',
   },
   scrollContent: {
@@ -227,7 +226,6 @@ const styles = StyleSheet.create({
     color: "black",
   },
   category: {
-    // fontFamily: 'NunitoSans_700Bold',
     padding: 10,
     fontSize: 16,
   },
@@ -245,9 +243,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderBottomWidth: 2,
     alignSelf: 'center',
-    flexDirection: 'row',     // Lay out children horizontally
-    justifyContent: 'space-evenly', // Push content to the right
-    padding: 8,                 // Optional: spacing inside the container
+    flexDirection: 'row',   
+    justifyContent: 'space-evenly',
+    padding: 8,            
   },
   collectionText: {
     fontFamily: 'NunitoSans_700Bold',
@@ -279,7 +277,6 @@ const styles = StyleSheet.create({
     color: "brown",
 },
 noImageBox: {
-    // borderWidth: 2,
     overflow: 'hidden',
     height: 300,
     borderRadius: 10,

@@ -11,9 +11,6 @@ import { SpecialElite_400Regular, useFonts } from '@expo-google-fonts/special-el
 import { useWindowDimensions } from 'react-native';
 import { UserContext } from '../utils/UserContext'
 
-// Add to collection - POST request 
-
-
 export default function Chicago() {
     const router = useRouter();
     const pathname = usePathname();
@@ -47,12 +44,10 @@ export default function Chicago() {
         setLoading(true);
 
         try {
-            // If no URL is passed, try loading the last saved URL
             if (!url) {
                 const storedUrl = await AsyncStorage.getItem("lastArtworkUrl");
                 url = storedUrl || "https://api.artic.edu/api/v1/artworks?page=1";
             } else {
-                // Save current URL to storage
                 await AsyncStorage.setItem("lastArtworkUrl", url);
             }
 
@@ -81,11 +76,9 @@ export default function Chicago() {
             if (pathname === "/chicago") {
                 AsyncStorage.getItem("lastVisitedId").then((id) => {
                     if (id) {
-                        // Coming back from a detail page
-                        fetchArtwork(); // this will read from stored URL
+                        fetchArtwork();
                         AsyncStorage.removeItem("lastVisitedId");
                     } else {
-                        // Coming back from anywhere else — resume last page
                         AsyncStorage.getItem("lastArtworkUrl").then((storedUrl) => {
                             fetchArtwork(storedUrl || "https://api.artic.edu/api/v1/artworks?page=1");
                         });
@@ -93,7 +86,6 @@ export default function Chicago() {
                 });
             }
             if (pathname === "/Home") {
-                // Reset to page 1 if coming to the home page
                 fetchArtwork("https://api.artic.edu/api/v1/artworks?page=1");
             }
         }, [pathname])
@@ -127,7 +119,6 @@ export default function Chicago() {
                                 <View key={artwork.id} style={[styles.card, isWeb && styles.cardWeb]}>
                                     {artwork.image_id ? (
                                         <View style={{ position: 'relative', width: '100%', height: 300 }}>
-                                            {/** Image Loader */}
                                             <ActivityIndicator
                                                 style={StyleSheet.absoluteFill}
                                                 size="large"

@@ -33,7 +33,6 @@ export default function Search() {
     }).start();
   };
 
-  // Web hover events for Chicago image
   const chicagoHoverEvents = Platform.OS === 'web'
     ? {
         onMouseEnter: () => handlePressIn(scaleChicago),
@@ -41,7 +40,6 @@ export default function Search() {
       } as unknown as ViewProps
     : {};
 
-  // Web hover events for Met image
   const metHoverEvents = Platform.OS === 'web'
     ? {
         onMouseEnter: () => handlePressIn(scaleMet),
@@ -52,7 +50,6 @@ export default function Search() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Chicago */}
         <View style={[styles.galleryName, isWeb && styles.galleryNameWeb]}>
           <Animated.View
             style={[
@@ -78,7 +75,6 @@ export default function Search() {
           </Animated.View>
         </View>
 
-        {/* Met */}
         <View style={[styles.galleryName, isWeb && styles.galleryNameWeb]}>
           <Animated.View
             style={[
@@ -114,7 +110,7 @@ const styles = StyleSheet.create({
     height: '60%',
   },
   scrollContent: {
-    paddingBottom: 15,
+    paddingBottom: "10%",
     alignItems: "center",
   },
   galleryName: {
@@ -131,9 +127,7 @@ const styles = StyleSheet.create({
     width: '95%',
     height: 400,
     borderColor: 'black',
-    // borderBottomWidth:2,
-    // borderTopWidth:2,
-    borderRadius: 1 // bigger on web
+    borderRadius: 1
   },
   galLink: {
     textAlign: 'center',
@@ -142,10 +136,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
     fontSize: 25,
     fontFamily: 'Copperplate',
-    // fontWeight:'bold',
     color: 'brown',
     textDecorationLine: 'underline'
-
   },
   galleryPic: {
     width: '100%',
@@ -157,7 +149,7 @@ const styles = StyleSheet.create({
 
   },
   gradient: {
-    ...StyleSheet.absoluteFillObject, // full cover
-    zIndex: 1, // gradient is between background and text
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1,
   },
 });

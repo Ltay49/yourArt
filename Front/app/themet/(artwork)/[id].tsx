@@ -41,7 +41,7 @@ export default function TheMetArtwork() {
     const fetchArtwork = async () => {
       if (!id) return;
   
-      setLoading(true); // ✅ Start loading here
+      setLoading(true);
   
       try {
         const response = await axios.get(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
@@ -49,7 +49,7 @@ export default function TheMetArtwork() {
       } catch (error) {
         console.error("Error fetching artwork:", error);
       } finally {
-        setLoading(false); // ✅ Only stop loading after try/catch finishes
+        setLoading(false);
       }
     };
   
@@ -113,7 +113,6 @@ export default function TheMetArtwork() {
 
 const styles = StyleSheet.create({
   page: {
-    // flex: 1,
     justifyContent: 'center'
   },
   scrollContent: {
@@ -130,7 +129,6 @@ const styles = StyleSheet.create({
     fontFamily: 'SpecialElite_400Regular',
     color: "brown",
     transform: [{ rotate: '-45deg' }],
-    // borderWidth: 2
   },
   noImageBox: {
     borderTopWidth: 2,
@@ -142,14 +140,14 @@ const styles = StyleSheet.create({
   },
   image: {
     alignSelf: 'center',
-    width: '100%',           // Two images side by side with some margin
-    aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
+    width: '100%',         
+    aspectRatio: 4 / 3,     
     resizeMode: 'contain',
   },
   imageWeb: {
     alignSelf: 'center',
-    width: '60%',           // Two images side by side with some margin
-    aspectRatio: 4 / 3,     // Example aspect ratio (width:height) — adjust as needed
+    width: '60%',         
+    aspectRatio: 4 / 3,     
     resizeMode: 'contain',
   },
   collection: {
@@ -157,9 +155,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderBottomWidth: 2,
     alignSelf: 'center',
-    flexDirection: 'row',     // Lay out children horizontally
-    justifyContent: 'space-evenly', // Push content to the right
-    padding: 8,                 // Optional: spacing inside the container
+    flexDirection: 'row',     
+    justifyContent: 'space-evenly', 
+    padding: 8,              
   },
   collectionText: {
     fontFamily: 'NunitoSans_700Bold',

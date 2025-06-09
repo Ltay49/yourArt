@@ -25,12 +25,12 @@ export default function SortBy({ onSort, activeSort }: SortByProps) {
           onPress={() => onSort(item.key)}
           style={[
             styles.button,
-            item.key === activeSort && styles.activeButton, // Add active styling
+            item.key === activeSort && styles.activeButton, 
           ]}
         >
           <Text style={[
             styles.buttonText,
-            item.key === activeSort && styles.activeButtonText, // Optional for text
+            item.key === activeSort && styles.activeButtonText, 
           ]}>
             {item.label}
           </Text>
@@ -44,15 +44,12 @@ export default function SortBy({ onSort, activeSort }: SortByProps) {
 
 const styles = StyleSheet.create({
   sortContainer: {
-    // marginTop:-10,
     paddingTop:0,
     paddingBottom:10,
     marginBottom: 5,
     height: 50,
     justifyContent: "center",
-    // paddingHorizontal: 10,
     textAlign:'center',
-    // backgroundColor: "#fff",
     borderTopWidth:0,
     borderBottomWidth: 1,
     borderTopColor:"#fff",
@@ -63,10 +60,10 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   buttonContainer: {
-    justifyContent: 'center', // centers in main axis
-    alignItems: 'center',     // centers in cross axis
-    flexDirection: 'row',     // horizontal layout
-    width: '100%',            // use full width of parent
+    justifyContent: 'center', 
+    alignItems: 'center',     
+    flexDirection: 'row',   
+    width: '100%',      
   },
   button: {
     justifyContent: "center",
@@ -74,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee",
     paddingHorizontal: 12,
     paddingVertical: 8,
-    marginHorizontal: 6, // smaller spacing between buttons
+    marginHorizontal: 6,
     borderRadius: 6,
   },
   buttonText: {
@@ -84,9 +81,9 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   activeButton: {
-    backgroundColor: '#000',  // Highlight active button
+    backgroundColor: '#000',
   },
   activeButtonText: {
-    color: '#fff',  // White text on dark background
+    color: '#fff', 
   },
 });

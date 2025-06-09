@@ -80,8 +80,7 @@ export default function ArtistSearch() {
     }, []);
 
     useEffect(() => {
-        if (!mounted) return; // Wait for mount
-
+        if (!mounted) return; 
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
 
         if (artistStr && /^\d+$/.test(artistStr)) {
@@ -162,9 +161,7 @@ export default function ArtistSearch() {
             default:
                 break;
         }
-
         setArtistWorks(sorted);
-
     };
 
     return (
@@ -187,9 +184,6 @@ export default function ArtistSearch() {
 )}
            <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
                 <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
-                    {/* <Text>{total} </Text>
-                    <Text>Results Found For: '{artist}'</Text> */}
-                    {/* <Text> - {limit} per page</Text> */}
                     {artistWorks.length > 0 ? (
                         artistWorks.map((artwork: any, index: number) => {
                             const isAlreadyAdded = user?.collection?.some(
@@ -295,7 +289,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         flexDirection: "column",
         justifyContent: "space-between",
-        minHeight: 250, // ensure there's enough space
+        minHeight: 250, 
     },
     cardWeb: {
         width: '31%',
@@ -352,7 +346,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: -2, // adjust this to offset the line
+        bottom: -2,
         height: 2,
         backgroundColor: 'black',
         width: '100%'

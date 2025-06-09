@@ -15,8 +15,6 @@ export default function SearchBar() {
     const [processedCount, setProcessedCount] = useState(0)
     const [allObjectIDs, setAllObjectIDs] = useState<number[]>([]);
 
-
-
     const router = useRouter();
 
     useEffect(() => {
@@ -25,20 +23,17 @@ export default function SearchBar() {
         const searchMetMuseum = async () => {
             try {
                 setLoading(true);
-
-                // 1. Search for all objectIDs based on the artist name
                 const searchRes = await axios.get(
                     `https://collectionapi.metmuseum.org/public/collection/v1/search`,
                     { params: { q: artistName } }
                 );
 
-                const rawObjectIDs: number[] = searchRes.data.objectIDs || [];
+                const rawObjectIDs: number[] = searchRes.data.objectIDs?.slice(0, 50) || [];
 
                 if (!rawObjectIDs.length) {
                     throw new Error("No object IDs found.");
                 }
 
-                // 2. Validate the objectIDs — remove ones with { message: "Not a valid object" }
                 const validatedResults = await Promise.allSettled(
                     rawObjectIDs.map(id =>
                         axios
@@ -59,10 +54,9 @@ export default function SearchBar() {
                     throw new Error("No valid object IDs found.");
                 }
 
-                // Use validObjectIDs directly — don't rely on state
-                setAllObjectIDs(validObjectIDs); // This is still useful if other components depend on it
+                setAllObjectIDs(validObjectIDs);
 
-                const first25 = validObjectIDs.slice(0, 25);
+                const first25 = validObjectIDs
 
                 const artworkResponses = await Promise.all(
                     first25.map(id =>
@@ -88,7 +82,6 @@ export default function SearchBar() {
                     return;
                 }
 
-                // Persist results
                 await AsyncStorage.setItem("lastArtistResults", JSON.stringify(validArtworks));
                 await AsyncStorage.setItem("lastArtist", artistName);
                 await AsyncStorage.setItem("totalLastItems", JSON.stringify(validObjectIDs.length));
@@ -100,11 +93,11 @@ export default function SearchBar() {
                     pathname: "/themet/(artist)/[artist]",
                     params: {
                       artist: artistName,
-                      artworks: JSON.stringify(validArtworks), // ❗️consider removing if payload is large
+                      artworks: JSON.stringify(validArtworks),
                       items: JSON.stringify(validObjectIDs.length),
                       objectIDs: JSON.stringify(validObjectIDs),
                       date: validArtworks[0]?.date || "Unknown",
-                      image: validArtworks[0]?.image || "" // ✅ Correct access
+                      image: validArtworks[0]?.image || "" 
                     },
                   });
             } catch (error) {
@@ -120,7 +113,7 @@ export default function SearchBar() {
 
     const handleSubmit = () => {
         if (artistName.trim()) {
-            setArtworks([]); // optional: clear previous results
+            setArtworks([]);
             setSearchTriggered(true);
         }
     };
@@ -141,7 +134,7 @@ export default function SearchBar() {
             {loading && (
                 <View style={styles.loadingOverlay}>
                     <Text style={styles.loadingText}>
-                        Not long now, just fetching results for '{artistName}'
+                        Fetching results for '{artistName}'
                     </Text>
                     <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
                 </View>
