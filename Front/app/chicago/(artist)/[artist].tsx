@@ -1,13 +1,14 @@
 import { Text, View, StyleSheet, ScrollView, Image, Button, TouchableOpacity, useWindowDimensions, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
 import SearchBar from "../../Components/searchBarChicago";
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import SortBy from "../../Components/sortBy";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddToCollection from "@/app/Functions/addToCollection";
 import { useContext } from "react";
 import { UserContext } from "@/utils/UserContext";
+import { Picker } from '@react-native-picker/picker';
 
 
 export default function ArtistSearch() {
@@ -15,6 +16,10 @@ export default function ArtistSearch() {
     const [sortOption, setSortOption] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
+
+    const [selectedArtist, setSelectedArtist] = useState<string>('All');
+    const [availableArtists, setAvailableArtists] = useState<string[]>([]);
+
 
     const scrollRef = useRef<ScrollView>(null);
 
@@ -28,14 +33,40 @@ export default function ArtistSearch() {
     const [searchPage, setSearchPage] = useState(Number(current_page) || 1);
     const [currentPage, setCurrentPage] = useState(1)
     const { width } = useWindowDimensions();
-    const [totalPages, setTotalPages] =  useState(Number(total_pages))
+    const [totalPages, setTotalPages] = useState(Number(total_pages))
     const isWeb = width > 768;
+
+    const filteredArtistWorks = selectedArtist === 'All'
+        ? artistWorks
+        : artistWorks.filter(art => {
+            if (Array.isArray(art.artist_titles)) {
+                return art.artist_titles.includes(selectedArtist);
+            }
+            return art.artist_titles === selectedArtist;
+        });
+
+    useEffect(() => {
+        const artistsSet = new Set<string>();
+        artistWorks.forEach((art) => {
+            if (Array.isArray(art.artist_titles)) {
+                art.artist_titles.forEach((name) => {
+                    if (name) artistsSet.add(name);
+                });
+            } else if (typeof art.artist_titles === 'string') {
+                artistsSet.add(art.artist_titles);
+            }
+        });
+
+        setAvailableArtists(['All', ...Array.from(artistsSet)]);
+    }, [artistWorks]);
+
 
     type Artwork = {
         id: number;
         image_url: string;
         title: string;
         date_start: number
+        artist_titles: string
     }
 
     const fetchArtwork = async (page: number) => {
@@ -61,6 +92,7 @@ export default function ArtistSearch() {
                     return detail.data.data;
                 })
             );
+            setSelectedArtist('All')
             setCurrentPage(pagination.current_page)
             sortAndSetArtistWorks(newArtworks, sortOption);
             setSearchPage(page);
@@ -72,7 +104,7 @@ export default function ArtistSearch() {
                 scrollRef.current?.scrollTo({ y: 0, animated: false });
             }, 100);
         }
-    }        
+    }
 
 
     useEffect(() => {
@@ -80,7 +112,7 @@ export default function ArtistSearch() {
     }, []);
 
     useEffect(() => {
-        if (!mounted) return; 
+        if (!mounted) return;
         const artistStr = Array.isArray(artist) ? artist[0] : artist;
 
         if (artistStr && /^\d+$/.test(artistStr)) {
@@ -108,6 +140,8 @@ export default function ArtistSearch() {
             saveArtistWorks();
         }
     }, [artistWorks, artist]);
+
+
 
     useEffect(() => {
         const loadSavedArtistWorks = async () => {
@@ -167,25 +201,44 @@ export default function ArtistSearch() {
     return (
         <>
             <SearchBar />
-            <SortBy
-                onSort={(sortKey) => {
-                    setSortOption(sortKey);
-                    sortAndSetArtistWorks(artistWorks, sortKey);
-                }}
-                activeSort={sortOption}
-            />
-                    {loading && (
-  <View style={styles.loadingOverlay}>
-    <Text style={styles.loadingText}>
-      Not long now, just fetching more results for '{artist}'
-    </Text>
-    <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
-  </View>
-)}
-           <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 10, gap: 20 }}>
+                {/* Filter by Artist */}
+                <View style={{ flex: 1 }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Filter by Artist:</Text>
+                    <Picker
+                        selectedValue={selectedArtist}
+                        onValueChange={(value) => setSelectedArtist(value)}
+                        style={{ height: 50, width: 180 }}
+                    >
+                        {availableArtists.map((artistName, i) => (
+                            <Picker.Item key={i} label={artistName} value={artistName} />
+                        ))}
+                    </Picker>
+                </View>
+
+                {/* SortBy component */}
+                <View style={{ flex: 1 }}>
+                    <SortBy
+                        onSort={(sortKey) => {
+                            setSortOption(sortKey);
+                            sortAndSetArtistWorks(artistWorks, sortKey);
+                        }}
+                        activeSort={sortOption}
+                    />
+                </View>
+            </View>
+            {loading && (
+                <View style={styles.loadingOverlay}>
+                    <Text style={styles.loadingText}>
+                        Not long now, just fetching more results for '{artist}'
+                    </Text>
+                    <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+                </View>
+            )}
+            <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
                 <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
-                    {artistWorks.length > 0 ? (
-                        artistWorks.map((artwork: any, index: number) => {
+                    {filteredArtistWorks.length > 0 ? (
+                        filteredArtistWorks.map((artwork: any, index: number) => {
                             const isAlreadyAdded = user?.collection?.some(
                                 (item) => item.artTitle === artwork.title && `https://www.artic.edu/iiif/2/${artwork.image_id}/full/843,/0/default.jpg` === item.imageUrl
                             );
@@ -289,7 +342,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         flexDirection: "column",
         justifyContent: "space-between",
-        minHeight: 250, 
+        minHeight: 250,
     },
     cardWeb: {
         width: '31%',
@@ -363,12 +416,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         zIndex: 10,
         padding: 20,
-      },
-      
-      loadingText: {
+    },
+
+    loadingText: {
         fontSize: 18,
         color: "#333",
         textAlign: "center",
         fontStyle: "italic",
-      }
+    }
 });

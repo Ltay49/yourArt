@@ -10,6 +10,8 @@ import SerachBar from "./Components/searchBarChicago";
 import { SpecialElite_400Regular, useFonts } from '@expo-google-fonts/special-elite'
 import { useWindowDimensions } from 'react-native';
 import { UserContext } from '../utils/UserContext'
+import { Picker } from '@react-native-picker/picker';
+
 
 export default function Chicago() {
     const router = useRouter();
@@ -27,8 +29,12 @@ export default function Chicago() {
         id: number;
         title: string;
         image_id: string;
-        artist_titles: string
+        date_start: string
+        artist_titles: string[];
     };
+
+
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
 
     const [artworks, setArtworks] = useState<Artwork[]>([]);
@@ -37,6 +43,21 @@ export default function Chicago() {
     const [currentPage, setCurrentPage] = useState<string | null>(null);
     const [totalPages, setToatlPages] = useState<string | null>(null);
     const { width } = useWindowDimensions();
+
+    const [selectedArtist, setSelectedArtist] = useState<string>('All');
+    const [availableArtists, setAvailableArtists] = useState<string[]>([]);
+
+    const filteredArtworks = (selectedArtist === 'All'
+        ? artworks
+        : artworks.filter((a) => a.artist_titles.includes(selectedArtist))
+    ).sort((a, b) => {
+        const aDate = parseInt(a.date_start);
+        const bDate = parseInt(b.date_start);
+
+        return sortOrder === 'asc' ? aDate - bDate : bDate - aDate;
+    });
+
+
 
     const isWeb = width > 768;
 
@@ -51,11 +72,27 @@ export default function Chicago() {
                 await AsyncStorage.setItem("lastArtworkUrl", url);
             }
 
-            const response = await axios.get(url);
+            const response = await axios.get<{
+                data: Artwork[];
+                pagination: {
+                    next_url: string | null;
+                    prev_url: string | null;
+                    current_page: string;
+                    total_pages: string;
+                };
+            }>(url);
             const newArtworks = response.data.data;
             const pagination = response.data.pagination;
 
             setArtworks(newArtworks);
+
+            const artists = Array.from(
+                new Set(
+                    newArtworks.flatMap((a) => a.artist_titles).filter((name): name is string => typeof name === 'string')
+                )
+            );
+            setAvailableArtists(['All', ...artists]);
+            setSelectedArtist('All')
             setNextUrl(pagination.next_url || null);
             setPrevUrl(pagination.prev_url || null);
             setCurrentPage(pagination.current_page || null);
@@ -96,6 +133,30 @@ export default function Chicago() {
     return (
         <View style={styles.mainContainer}>
             <SerachBar />
+            <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10, gap: 20 }}>
+                {/* Filter by Artist */}
+                <View>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Filter by Artist:</Text>
+                    <Picker
+                        selectedValue={selectedArtist}
+                        onValueChange={(itemValue) => setSelectedArtist(itemValue)}
+                        style={{ height: 50, width: 150 }}
+                    >
+                        {availableArtists.map((artist, index) => (
+                            <Picker.Item key={index} label={artist} value={artist} />
+                        ))}
+                    </Picker>
+                </View>
+
+                {/* Sort by Date */}
+                <View>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 5 }}>Sort by Date:</Text>
+                    <Button
+                        title={sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
+                        onPress={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                    />
+                </View>
+            </View>
             {loading ? (
                 <View style={styles.loaderContainer}>
                     <ActivityIndicator size="large" color="#333" />
@@ -104,7 +165,7 @@ export default function Chicago() {
             ) : (
                 <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
                     <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
-                        {artworks.map((artwork) => {
+                        {filteredArtworks.map((artwork) => {
                             const imageUrl = artwork?.image_id
                                 ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/!843,843/0/default.jpg `
                                 : "";
@@ -139,7 +200,8 @@ export default function Chicago() {
                                     )}
 
                                     <Text style={styles.title}>{artwork.title}</Text>
-                                    <Text style={styles.artist}>{artwork.artist_titles}</Text>
+                                    <Text style={styles.artist}>{artwork.artist_titles.join(', ')}</Text>
+                                    <Text style={styles.date}>Date: {artwork.date_start}</Text>
                                     <View style={styles.row}>
                                         <View style={{ alignSelf: 'flex-start' }}>
                                             <TouchableOpacity
@@ -336,5 +398,10 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         justifyContent: 'center',
         borderColor: 'grey'
-    }
+    },
+    date: {
+        fontSize: 14,
+        color: '#777',
+        marginBottom: 5,
+    },
 })
