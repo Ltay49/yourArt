@@ -1,6 +1,6 @@
 # ITSYOURSART
 
-**ITSYOURSART** is a cross-platform mobile and web app that allows users to browse artwork exhibitions from the Met Museum API as well The Art Institute of Chicago API and curate personal collections. The app is built with **Expo Router**, React Native, and TypeScript. It supports responsive a layouts for web, includes custom fonts, and offers accessible and interactive UI components for a seamless user experience. Users need to make an account to begin a collection.
+**ITSYOURSART** is a cross-platform mobile and web app that allows users to browse artwork exhibitions from the Met Museum API as well The Art Institute of Chicago API and curate personal collections. The app is built with **Expo Router**, React Native, and TypeScript. It supports responsive a layouts for web, includes custom fonts, and offers accessible and interactive UI components for a seamless user experience. Users need to make an account to begin a collection. Users are free to roam the site without logging in and make the most of searching for artists, as well as filtering and sorting depending on their preferneces viewing single pieces. Users can add and delete any artwork of their choice. what linkn up to a backend built.
 
 ## ✨ Features
 
