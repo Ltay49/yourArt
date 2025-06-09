@@ -21,7 +21,9 @@ export default function MainScreen() {
   const { width } = useWindowDimensions();
 
   // Dynamically set font size
+  const fullScreen = width > 1200 && width <= 1800
   const isWeb = width > 1100;
+  const isMobile = width >100 && width <= 300
   const isWebSmall = width > 100 && width <= 800
   const isWebMedium = width > 800 && width <= 1142;
 
@@ -44,6 +46,8 @@ export default function MainScreen() {
         style={[
           styles.introContainer,
           isWebSmall && styles.introContainerWeb,
+          fullScreen && styles.introContainerWebFS,
+          isMobile && styles.introContainerWebMb,
           { backgroundColor: 'white' }
         ]}
       >
@@ -85,7 +89,7 @@ export default function MainScreen() {
             {isWeb ? introWeb : intro}
           </Text>
         </ImageBackground>
-        <View style={styles.howToBox}>
+        <View style={[styles.howToBox, isWebMedium && styles.howToBoxBig]}>
         <Text
          style={[styles.howTo, isWebSmall && styles.howToSmall, isWebMedium && styles.howToWeb]}
           accessible={true}
@@ -122,14 +126,26 @@ const styles = StyleSheet.create({
   introContainer: {
     width: '100%',
     alignSelf: 'center',
-    height: '40%',
-    marginBottom: 50,
+    height: '45%',
+    marginBottom: 64,
   },
   introContainerWeb: {
     width: '100%',
     alignSelf: 'center',
-    height: '50%',
+    height: '35%',
+    marginBottom: 78,
   },
+  introContainerWebFS: {
+    width: '100%',
+    alignSelf: 'center',
+    height: '35%',
+    marginBottom: 40,
+  },
+  introContainerWebMb:{
+    height: '35%',
+    marginBottom: 100,
+  },
+
   intro: {
     top: '10%',
     height: '100%',
@@ -164,6 +180,10 @@ const styles = StyleSheet.create({
   howToBox:{
     top: '-15%',
     borderWidth:1,
+  },
+  howToBoxBig:{
+    top: '-10%',
+
   },
 
   howToSmall: {
