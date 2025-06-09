@@ -11,16 +11,21 @@ import { useRouter, usePathname } from 'expo-router';
 import { useWindowDimensions } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserContext } from "@/utils/UserContext";
+import { Picker } from '@react-native-picker/picker';
+
 
 export default function TheMetScreen() {
 
     const router = useRouter();
     const pathname = usePathname();
 
+
+    const [selectedArtist, setSelectedArtist] = useState('All');
+
     const [currentPage, setCurrentPage] = useState(1)
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0)
-    const [pageNumber, setPageNumber] = useState([0, 10])
+    const [pageNumber, setPageNumber] = useState([0, 20])
     const { user } = useContext(UserContext)
 
     const [fontsLoaded] = useFonts({
@@ -36,6 +41,7 @@ export default function TheMetScreen() {
         artistDisplayName: string
         primaryImageSmall: string
         primaryImage: string
+        classification: string
     }
     const { width } = useWindowDimensions();
     const isWeb = width > 768;
@@ -45,29 +51,29 @@ export default function TheMetScreen() {
 
     const shuffleArray = (array: number[]) => {
         for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
-      };
+    };
 
-      const fetchInitialIDs = async () => {
+    const fetchInitialIDs = async () => {
         try {
-          const response = await axios.get('https://collectionapi.metmuseum.org/public/collection/v1/objects');
-          let ids = response.data.objectIDs?.slice(0, 1000); // Limit to 500
-          if (!ids || ids.length === 0) {
-            console.log("No artwork IDs found.");
-            return;
-          }
-      
-          ids = shuffleArray(ids); // Randomize the order
-          artIdListRef.current = ids;
-          setTotal(ids.length);
+            const response = await axios.get('https://collectionapi.metmuseum.org/public/collection/v1/objects');
+            let ids = response.data.objectIDs?.slice(0, 1000); // Limit to 500
+            if (!ids || ids.length === 0) {
+                console.log("No artwork IDs found.");
+                return;
+            }
+
+            ids = shuffleArray(ids); // Randomize the order
+            artIdListRef.current = ids;
+            setTotal(ids.length);
         } catch (error) {
-          console.error("Error fetching object IDs:", error);
+            console.error("Error fetching object IDs:", error);
         }
-      };
-      
+    };
+
 
 
     const fetchArtworkDetails = async () => {
@@ -83,21 +89,22 @@ export default function TheMetScreen() {
             return [];
         }
     };
-    
+
 
 
     const nextPage = () => {
-        setCurrentPage(currentPage + 1)
-        setPageNumber([pageNumber[0] + 10, pageNumber[1] + 10])
-    }
-    const prevPage = () => {
-        if (pageNumber[0] >= 10) {
-            setCurrentPage(currentPage - 1)
-            setPageNumber([pageNumber[0] - 10, pageNumber[1] - 10]);
-        }
+        setSelectedArtist('All');
+        setCurrentPage(currentPage + 1);
+        setPageNumber([pageNumber[0] + 20, pageNumber[1] + 20]);
     };
 
-
+    const prevPage = () => {
+        if (pageNumber[0] >= 20) {
+            setSelectedArtist('All');
+            setCurrentPage(currentPage - 1);
+            setPageNumber([pageNumber[0] - 20, pageNumber[1] - 20]);
+        }
+    };
 
 
     useEffect(() => {
@@ -110,8 +117,9 @@ export default function TheMetScreen() {
         };
         loadInitialData();
     }, []);
-    
+
     useEffect(() => {
+        console.log(metArtwork)
         const loadPage = async () => {
             if (artIdListRef.current.length === 0) return;
             setLoading(true);
@@ -122,11 +130,26 @@ export default function TheMetScreen() {
         loadPage();
     }, [pageNumber]);
 
-    const totalPages = Math.ceil(total / 10);
+    const totalPages = Math.ceil(total / 20);
+
+    const uniqueArtists = ["All", ...new Set(metArtwork.map(art => art.artistDisplayName || "Unknown"))];
 
     return (
+
         <View style={styles.mainContainer}>
             <SerachBar />
+            <View style={{ paddingHorizontal: 10 }}>
+                <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Filter by Artist:</Text>
+                <Picker
+                    selectedValue={selectedArtist}
+                    onValueChange={(itemValue) => setSelectedArtist(itemValue)}
+                    style={{ height: 50, backgroundColor: '#f0f0f0', borderRadius: 10, width:'50%' }}
+                >
+                    {uniqueArtists.map((artist, index) => (
+                        <Picker.Item label={artist} value={artist} key={index} />
+                    ))}
+                </Picker>
+            </View>
             {loading ? (
                 <View style={styles.loaderContainer}>
                     <Text style={styles.loaderText}>Loading artwork...</Text>
@@ -135,54 +158,57 @@ export default function TheMetScreen() {
             ) : (
                 <ScrollView contentContainerStyle={styles.scrollContent}>
                     <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
-                        {metArtwork.map((art) => {
-                            const isAlreadyAdded = user?.collection?.some(
-                                (item) => item.artTitle === (art.title || "Untitled") && item.imageUrl === art.primaryImageSmall
-                            );
+                        {metArtwork
+                            .filter(art => selectedArtist === "All" || art.artistDisplayName === selectedArtist)
+                            .map((art) => {
+                                const uniqueArtists = ["All", ...new Set(metArtwork.map(art => art.artistDisplayName || "Unknown"))];
+                                const isAlreadyAdded = user?.collection?.some(
+                                    (item) => item.artTitle === (art.title || "Untitled") && item.imageUrl === art.primaryImageSmall
+                                );
 
-                            return (
-                                <View key={art.objectID} style={[styles.card, isWeb && styles.cardWeb]}>
+                                return (
+                                    <View key={art.objectID} style={[styles.card, isWeb && styles.cardWeb]}>
 
-                                    {art.primaryImageSmall ? (
-                                        <Image style={styles.image} source={{ uri: art.primaryImageSmall }} />
-                                    ) : art.primaryImage ? (
-                                        <Image style={styles.image} source={{ uri: art.primaryImage }} />
-                                    ) : (
-                                        <ImageBackground style={styles.noImageBox}>
-                                            <Text style={styles.noImageText}>No image available</Text>
-                                        </ImageBackground>
-                                    )}
+                                        {art.primaryImageSmall ? (
+                                            <Image style={styles.image} source={{ uri: art.primaryImageSmall }} />
+                                        ) : art.primaryImage ? (
+                                            <Image style={styles.image} source={{ uri: art.primaryImage }} />
+                                        ) : (
+                                            <ImageBackground style={styles.noImageBox}>
+                                                <Text style={styles.noImageText}>No image available</Text>
+                                            </ImageBackground>
+                                        )}
 
-                                    <Text style={styles.title}>{art.title || "unknown"}</Text>
-                                    <Text style={styles.artist}>{art.artistDisplayName || "Unknown"}</Text>
-                                    <View style={styles.row}>
-                                        <TouchableOpacity
-                                            onPress={async () => {
-                                                await AsyncStorage.setItem("lastVisitedId", art.objectID.toString());
+                                        <Text style={styles.title}>{art.title || "unknown"}</Text>
+                                        <Text style={styles.artist}>{art.artistDisplayName || "Unknown"}</Text>
+                                        <View style={styles.row}>
+                                            <TouchableOpacity
+                                                onPress={async () => {
+                                                    await AsyncStorage.setItem("lastVisitedId", art.objectID.toString());
 
-                                                router.push({
-                                                    pathname: "/themet/(artwork)/[id]",
-                                                    params: { id: art.objectID },
-                                                });
-                                            }}
-                                        >
-                                            <Text style={styles.view}>View Here</Text>
-                                            <View style={styles.underline} />
-                                        </TouchableOpacity>
+                                                    router.push({
+                                                        pathname: "/themet/(artwork)/[id]",
+                                                        params: { id: art.objectID },
+                                                    });
+                                                }}
+                                            >
+                                                <Text style={styles.view}>View Here</Text>
+                                                <View style={styles.underline} />
+                                            </TouchableOpacity>
 
-                                        <AddToCollection
-                                            collectionItem={{
-                                                collection: "The Metropolitan Museum of Art",
-                                                artTitle: art.title || "Untitled",
-                                                artist: art.artistDisplayName || "Unknown Artist",
-                                                imageUrl: art.primaryImageSmall || art.primaryImage || "https://example.com/no-image.png",
-                                            }}
-                                            defaultRotated={isAlreadyAdded}
-                                        />
+                                            <AddToCollection
+                                                collectionItem={{
+                                                    collection: "The Metropolitan Museum of Art",
+                                                    artTitle: art.title || "Untitled",
+                                                    artist: art.artistDisplayName || "Unknown Artist",
+                                                    imageUrl: art.primaryImageSmall || art.primaryImage || "https://example.com/no-image.png",
+                                                }}
+                                                defaultRotated={isAlreadyAdded}
+                                            />
+                                        </View>
                                     </View>
-                                </View>
-                            );
-                        })}
+                                );
+                            })}
                     </View>
                     <View>
                         <View style={styles.row1}>
