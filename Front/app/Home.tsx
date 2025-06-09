@@ -23,8 +23,8 @@ export default function MainScreen() {
   // Dynamically set font size
   const fullScreen = width > 1200 && width <= 1800
   const isWeb = width > 1100;
-  const isMobile = width >100 && width <= 300
-  const isWebSmall = width > 100 && width <= 800
+  const isMobile = width > 100 && width <= 390
+  const isWebSmall = width > 300 && width <= 800
   const isWebMedium = width > 800 && width <= 1142;
 
   const [fontsLoaded] = useFonts({
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   introContainerWebMb:{
     height: '35%',
-    marginBottom: 100,
+    marginBottom: 80,
   },
 
   intro: {
@@ -179,7 +179,6 @@ const styles = StyleSheet.create({
   }, 
   howToBox:{
     top: '-15%',
-    borderWidth:1,
   },
   howToBoxBig:{
     top: '-10%',
