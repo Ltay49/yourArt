@@ -29,6 +29,7 @@ git clone https://github.com/yourusername/yourart.git
 cd yourart
 
 npm install
+npm run web
  
 ### Stack
 React Native / React 19
