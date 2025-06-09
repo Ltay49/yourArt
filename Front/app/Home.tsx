@@ -22,12 +22,9 @@ export default function MainScreen() {
 
   // Dynamically set font size
   const isWeb = width > 1100;
-  const isWebSmall = width > 100;
+  const isWebSmall = width > 100 && width <= 800
   const isWebMedium = width > 800 && width <= 1142;
 
-  const isSmall = width <= 600;
-const isMedium = width > 600 && width <= 1200;
-const isLarge = width > 1200;
   const [fontsLoaded] = useFonts({
     Knewave_400Regular,
     Lexend_400Regular,
@@ -88,8 +85,9 @@ const isLarge = width > 1200;
             {isWeb ? introWeb : intro}
           </Text>
         </ImageBackground>
+        <View style={styles.howToBox}>
         <Text
-         style={[styles.howTo, isWebMedium && styles.howToWeb]}
+         style={[styles.howTo, isWebSmall && styles.howToSmall, isWebMedium && styles.howToWeb]}
           accessible={true}
           accessibilityRole="text"
           accessibilityLabel="Welcome message and navigation instructions"
@@ -102,7 +100,7 @@ const isLarge = width > 1200;
         </Text>
 
         <Text
-          style={[styles.howTo, isWebMedium && styles.howToWeb]}
+           style={[styles.howTo, isWebSmall && styles.howToSmall, isWebMedium && styles.howToWeb]}
           accessible={true}
           accessibilityRole="text"
           accessibilityLabel="Instructions to add and remove art"
@@ -113,6 +111,7 @@ const isLarge = width > 1200;
             Remove item: <Text style={{ color: 'darkred', fontWeight: 'bold', fontSize: 25 }}>x</Text>
           </Text> to remove a piece that no longer suits your taste. Enjoy!
         </Text>
+        </View>
       </SafeAreaView>
 
       <Search />
@@ -123,13 +122,13 @@ const styles = StyleSheet.create({
   introContainer: {
     width: '100%',
     alignSelf: 'center',
-    height: '35%',
-    marginBottom: 40,
+    height: '40%',
+    marginBottom: 50,
   },
   introContainerWeb: {
     width: '100%',
     alignSelf: 'center',
-    height: '35%',
+    height: '50%',
   },
   intro: {
     top: '10%',
@@ -143,7 +142,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   howTo: {
-    top: '-15%',
     height: '100%',
     fontSize: 20,
     fontFamily:' Lexend_400Regular',
@@ -154,7 +152,6 @@ const styles = StyleSheet.create({
     lineHeight: 25
   },
   howToWeb: {
-    top: '-15%',
     height: '100%',
     fontSize: 18,
     fontFamily:' Lexend_400Regular',
@@ -163,6 +160,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     zIndex: 2,
     lineHeight: 22
+  }, 
+  howToBox:{
+    top: '-15%',
+    borderWidth:1,
+  },
+
+  howToSmall: {
+    height: '100%',
+    fontSize: 16,
+    fontFamily:' Lexend_400Regular',
+    color: 'black',
+    textAlign: 'left',
+    paddingHorizontal: 20,
+    zIndex: 2,
+    lineHeight: 22,
   },
   headerRow: {
     // top: '5%',
