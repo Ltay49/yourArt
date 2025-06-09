@@ -21,6 +21,8 @@ export default function TheMetScreen() {
 
 
     const [selectedArtist, setSelectedArtist] = useState('All');
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none");
+
 
     const [currentPage, setCurrentPage] = useState(1)
     const [loading, setLoading] = useState(true);
@@ -42,6 +44,7 @@ export default function TheMetScreen() {
         primaryImageSmall: string
         primaryImage: string
         classification: string
+        artistBeginDate: string
     }
     const { width } = useWindowDimensions();
     const isWeb = width > 768;
@@ -132,24 +135,39 @@ export default function TheMetScreen() {
 
     const totalPages = Math.ceil(total / 20);
 
-    const uniqueArtists = ["All", ...new Set(metArtwork.map(art => art.artistDisplayName || "Unknown"))];
+    const uniqueArtists = ["All", ...Array.from(new Set(metArtwork.map(art => art.artistDisplayName || "Unknown"))).sort()];
 
     return (
 
         <View style={styles.mainContainer}>
             <SerachBar />
-            <View style={{ paddingHorizontal: 10 }}>
-                <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Filter by Artist:</Text>
-                <Picker
-                    selectedValue={selectedArtist}
-                    onValueChange={(itemValue) => setSelectedArtist(itemValue)}
-                    style={{ height: 50, backgroundColor: '#f0f0f0', borderRadius: 10, width:'50%' }}
-                >
-                    {uniqueArtists.map((artist, index) => (
-                        <Picker.Item label={artist} value={artist} key={index} />
-                    ))}
-                </Picker>
+            <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 10 }}>
+                <View style={{ flex: 1 }}>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Filter by Artist:</Text>
+                    <Picker
+                        selectedValue={selectedArtist}
+                        onValueChange={(itemValue) => setSelectedArtist(itemValue)}
+                        style={{ height: 50, backgroundColor: '#f0f0f0', borderRadius: 10 }}
+                    >
+                        {uniqueArtists.map((artist, index) => (
+                            <Picker.Item label={artist} value={artist} key={index} />
+                        ))}
+                    </Picker>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Sort by Start Date:</Text>
+                    <Picker
+                        selectedValue={sortOrder}
+                        onValueChange={(value) => setSortOrder(value)}
+                        style={{ height: 50, backgroundColor: '#f0f0f0', borderRadius: 10 }}
+                    >
+                        <Picker.Item label="None" value="none" />
+                        <Picker.Item label="Oldest to Newest" value="asc" />
+                        <Picker.Item label="Newest to Oldest" value="desc" />
+                    </Picker>
+                </View>
             </View>
+
             {loading ? (
                 <View style={styles.loaderContainer}>
                     <Text style={styles.loaderText}>Loading artwork...</Text>
@@ -160,7 +178,16 @@ export default function TheMetScreen() {
                     <View style={[styles.gridContainer, isWeb && styles.gridContainerWeb]}>
                         {metArtwork
                             .filter(art => selectedArtist === "All" || art.artistDisplayName === selectedArtist)
+                            .sort((a, b) => {
+                                const dateA = parseInt(a.artistBeginDate) || 0;
+                                const dateB = parseInt(b.artistBeginDate) || 0;
+
+                                if (sortOrder === "asc") return dateA - dateB;
+                                if (sortOrder === "desc") return dateB - dateA;
+                                return 0; // no sort
+                            })
                             .map((art) => {
+
                                 const uniqueArtists = ["All", ...new Set(metArtwork.map(art => art.artistDisplayName || "Unknown"))];
                                 const isAlreadyAdded = user?.collection?.some(
                                     (item) => item.artTitle === (art.title || "Untitled") && item.imageUrl === art.primaryImageSmall
@@ -181,6 +208,7 @@ export default function TheMetScreen() {
 
                                         <Text style={styles.title}>{art.title || "unknown"}</Text>
                                         <Text style={styles.artist}>{art.artistDisplayName || "Unknown"}</Text>
+                                        <Text style={styles.artist}>Date: {art.artistBeginDate || "Unknown"}</Text>
                                         <View style={styles.row}>
                                             <TouchableOpacity
                                                 onPress={async () => {

@@ -44,20 +44,17 @@ export default function SortBy({ onSort, activeSort }: SortByProps) {
 
 const styles = StyleSheet.create({
   sortContainer: {
-    paddingTop:0,
+    borderRadius:10,
+    marginTop:20,
+    paddingTop:10,
     paddingBottom:10,
     marginBottom: 5,
     height: 50,
     justifyContent: "center",
     textAlign:'center',
-    borderTopWidth:0,
-    borderBottomWidth: 1,
-    borderTopColor:"#fff",
+    borderWidth: 1,
+    backgroundColor:'#f0f0f0',
     borderColor: "grey",
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
   },
   buttonContainer: {
     justifyContent: 'center',
@@ -68,7 +65,7 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#eee",
+    backgroundColor: 'white',
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginHorizontal: 6, 
