@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   introContainerWebMb:{
     height: '40%',
-    marginBottom: 100,
+    marginBottom: 140,
   },
 
   intro: {

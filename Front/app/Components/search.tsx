@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     height: '60%',
   },
   scrollContent: {
-    paddingBottom: "10%",
+    paddingBottom: "20%",
     alignItems: "center",
     justifyContent:'center'
   },
