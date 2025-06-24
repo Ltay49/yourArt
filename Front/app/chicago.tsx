@@ -133,14 +133,13 @@ export default function Chicago() {
     return (
         <View style={styles.mainContainer}>
             <SerachBar />
-            <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10, gap: 20 }}>
-                {/* Filter by Artist */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10, gap: 20, justifyContent:'center' }}>
                 <View>
                     <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Filter by Artist:</Text>
                     <Picker
                         selectedValue={selectedArtist}
                         onValueChange={(itemValue) => setSelectedArtist(itemValue)}
-                        style={{ height: 50, width: 150 }}
+                        style={{ height: 32, width: 180 }}
                     >
                         {availableArtists.map((artist, index) => (
                             <Picker.Item key={index} label={artist} value={artist} />
@@ -148,9 +147,8 @@ export default function Chicago() {
                     </Picker>
                 </View>
 
-                {/* Sort by Date */}
                 <View>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 5 }}>Sort by Date:</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 0 }}>Sort by Date:</Text>
                     <Button
                         title={sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
                         onPress={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
@@ -260,7 +258,6 @@ const styles = StyleSheet.create({
         marginTop: 0,
         marginBottom: 5,
         height: 120,
-        // backgroundColor: "#f0f0f0",
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 10,

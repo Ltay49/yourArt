@@ -1,69 +1,87 @@
-# ITSYOURSART
+# 🖼️ ITSYOURSART
 
-**ITSYOURSART** is a cross-platform mobile and web app that allows users to browse artwork exhibitions from the Met Museum API as well The Art Institute of Chicago API and curate personal collections. The app is built with **Expo Router**, React Native, and TypeScript. It supports responsive a layouts for web, includes custom fonts, and offers accessible and interactive UI components for a seamless user experience. Users need to make an account to begin a collection. Users are free to roam the site without logging in and make the most of searching for artists, as well as filtering and sorting depending on their preferneces viewing single pieces. Users can add and delete any artwork of their choice. what linkn up to a backend built.
+Deployed and accessible at [ITSYOURSART](https://itsyourart.netlify.app)
 
-## ✨ Features
+---
 
-- Browse artworks from exhibitions via the Met Museum API
-- Filter by artist
-- Add and remove artworks from your personal collection
-- Responsive design optimized for both mobile and web
-- Accessible UI with screen reader support
-- Custom Google Fonts (Knewave, Lexend, Nunito Sans, Special Elite)
-- Smooth transitions with Expo’s Linear Gradient and Haptics
-- State persistence via AsyncStorage
+## What is ITSYOURSART?
 
-## 🚀 Getting Started
+**ITSYOURSART** showcases works from The Metropolitan Museum of Art and the Art Institute of Chicago, offering users am intuitive way to discover, view, and even curate their owne personal collections. Whether you're a curious browser or a passionate collector, ITSYOURSART lets you explore exhibitions, save your favorites, and create your own collections — all from your phone or browser. It is a web appplication and repsonsive acrross all size screens.
 
-### Prerequisites
+---
 
-- Node.js `v18+`
+## 🎯 Key Features of ITSYOURSART
+
+🔍 **Browse by Collection**  
+Explore artwork from both The Met and The Art Institute of Chicago APIs.
+
+🎨 **Search and Filter**  
+Find specific artworks using search, filter by artist, or sort based on your preferences.
+
+🖼️ **Create a Custom Collection**  
+Add your favorite artworks to a personal collection stored locally.
+
+🧹 **Manage Your Collection**  
+Easily add or delete any piece from your collection — no account required to start!
+
+🔗 **Accessible UI**  
+Includes responsive layouts, screen reader support, and clean design for all users.
+
+📱 **Fully Mobile & Web Friendly**  
+Works seamlessly across devices — built with Expo + React Native Web.
+
+---
+
+## ⚙️ Running the Project Locally
+
+How To Run The Project Locally, follow below step by step.
+
+### 1. Requirements
+
+Make sure you have the following installed:
+
+- Node.js (v18 or later)
 - npm or yarn
-- Expo CLI installed globally  
-  ```bash
-  npm install -g expo-cli
+- Expo CLI (Install via `npm install -g expo-cli`)
 
-### To Run
+---
 
-git clone https://github.com/yourusername/yourart.git
+### 2. Clone the Repositor
+
+```bash
+git clone https://github.com/your-username/yourart.git
 cd yourart
 
+---
+
+### 3. Install Dependencies
+
 npm install
- 
-### Stack
-React Native / React 19
 
-Expo 53
+### 4. Start the Development Server
 
-Expo Router
+npm start
+# or
+expo start
 
-TypeScript
+then press W, this will open application in your web browser.
 
+🧪 Tech Stack
+React Native (v0.79) – Mobile & Web interface
 
-Axios (for HTTP requests)
+React 19 – Core UI library
 
-Met Museum Collection API
+Expo 53 + Expo Router – Routing and deployment
 
-Google Fonts via Expo
+TypeScript – Type safety
 
-AsyncStorage
+Axios – API requests to Met & AIC
 
-Technologies Used
-React Native / React 19
+AsyncStorage – Store user collections locally
 
-Expo 53
+Google Fonts – Knewave, Lexend, Nunito Sans, Special Elite
 
-Expo Router
+🌍 APIs Used
+Metropolitan Museum of Art Collection API
 
-TypeScript
-
-Axios (for HTTP requests)
-
-Met Museum Collection API
-
-Google Fonts via Expo
-
-AsyncStorage
-
-
-
+Art Institute of Chicago API

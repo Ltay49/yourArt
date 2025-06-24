@@ -209,13 +209,13 @@ export default function artistWork() {
     return (
         <View style={styles.mainContainer}>
             <SearchBar />
-            <View style={{paddingHorizontal: 10, gap: 5 }}>
-                <View style={{ flex: 1 }}>
-                    <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Filter by Artist:</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10, gap: 20, justifyContent:'center' }}>
+                <View >
+                    <Text style={{ fontWeight: 'bold' }}>Filter by Artist:</Text>
                     <Picker
                         selectedValue={selectedArtistFilter}
                         onValueChange={(itemValue) => setSelectedArtistFilter(itemValue)}
-                        style={{ height: 50, backgroundColor: '#f0f0f0', borderRadius: 10 }}
+                        style={{ height: 30, backgroundColor: '#f0f0f0', borderRadius: 10, width:180}}
                     >
                         {uniqueArtists.map((artistName, i) => (
                             <Picker.Item label={artistName} value={artistName} key={i} />

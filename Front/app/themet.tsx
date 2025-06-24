@@ -141,30 +141,25 @@ export default function TheMetScreen() {
 
         <View style={styles.mainContainer}>
             <SerachBar />
-            <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 10 }}>
-                <View style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10, gap: 20, justifyContent:'center' }}>
+                <View>
                     <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Filter by Artist:</Text>
                     <Picker
                         selectedValue={selectedArtist}
                         onValueChange={(itemValue) => setSelectedArtist(itemValue)}
-                        style={{ height: 50, backgroundColor: '#f0f0f0', borderRadius: 10 }}
+                        style={{ height: 32, backgroundColor: '#f0f0f0', borderRadius: 5, width:180 }}
                     >
                         {uniqueArtists.map((artist, index) => (
                             <Picker.Item label={artist} value={artist} key={index} />
                         ))}
                     </Picker>
                 </View>
-                <View style={{ flex: 1 }}>
-                    <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Sort by Start Date:</Text>
-                    <Picker
-                        selectedValue={sortOrder}
-                        onValueChange={(value) => setSortOrder(value)}
-                        style={{ height: 50, backgroundColor: '#f0f0f0', borderRadius: 10 }}
-                    >
-                        <Picker.Item label="None" value="none" />
-                        <Picker.Item label="Oldest to Newest" value="asc" />
-                        <Picker.Item label="Newest to Oldest" value="desc" />
-                    </Picker>
+                <View>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 0 }}>Sort by Date:</Text>
+                    <Button
+                        title={sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
+                        onPress={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                    />
                 </View>
             </View>
 

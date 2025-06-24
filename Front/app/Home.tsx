@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   introContainerWeb: {
     width: '100%',
     alignSelf: 'center',
-    height: '35%',
+    height: '30%',
     marginBottom: 0,
   },
   introContainerWebFS: {
@@ -131,44 +131,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 30,
     zIndex: 2,
-  },
-  howTo: {
-    height: '100%',
-    fontSize: 20,
-    fontFamily:' Lexend_400Regular',
-    color: 'black',
-    textAlign: 'left',
-    paddingHorizontal: 70,
-    zIndex: 2,
-    lineHeight: 25
-  },
-  howToWeb: {
-    height: '100%',
-    fontSize: 18,
-    fontFamily:' Lexend_400Regular',
-    color: 'black',
-    textAlign: 'left',
-    paddingHorizontal: 50,
-    zIndex: 2,
-    lineHeight: 22
-  }, 
-  howToBox:{
-    top: '-15%',
-  },
-  howToBoxBig:{
-    top: '-10%',
-
-  },
-
-  howToSmall: {
-    height: '100%',
-    fontSize: 16,
-    fontFamily:' Lexend_400Regular',
-    color: 'black',
-    textAlign: 'left',
-    paddingHorizontal: 20,
-    zIndex: 2,
-    lineHeight: 22,
   },
   headerRow: {
     // top: '5%',
@@ -210,7 +172,7 @@ const styles = StyleSheet.create({
   },
   background: {
     width: '97%',
-    height: '80%',
+    height: '100%',
     justifyContent: 'center',
   },
   gradient: {

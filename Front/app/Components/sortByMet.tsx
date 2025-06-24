@@ -45,8 +45,8 @@ export default function SortBy({ onSort, activeSort }: SortByProps) {
 const styles = StyleSheet.create({
   sortContainer: {
     borderRadius:10,
-    paddingBottom:10,
-    marginBottom: 5,
+    // paddingBottom:10,
+    // marginBottom: 5,
     height: 50,
     justifyContent: "center",
     textAlign:'center',
