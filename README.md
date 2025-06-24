@@ -21,13 +21,16 @@ Explore artwork from both The Met and The Art Institute of Chicago APIs.
 Find specific artworks using search, filter by artist, or sort based on your preferences.
 
 🗾️ **Create a Custom Collection**
-Add your favorite artworks to a personal collection stored locally.
+Add your favorite artworks to a personal collection and save in the db.
 
 🧹 **Manage Your Collection**
-Easily add or delete any piece from your collection — no account required to start!
+Easily add or delete any piece from your collection.
 
 🔗 **Accessible UI**
 Includes responsive layouts, screen reader support, and clean design for all users.
+
+🌍 **Access**
+Access your artworks from any device through creating an account.
 
 📱 **Fully Mobile & Web Friendly**
 Works seamlessly across devices — built with Expo + React Native Web.
@@ -152,4 +155,3 @@ DATABASE_NAME=yourart
 * 🔗 Designed to connect with a React Native frontend (mobile & web)
 * 📁 Modular structure with `controllers`, `routes`, `models`
 * 🧪 Testing setup included with `jest` and `supertest`
-* 🧑‍💻 Easily extendable for login/auth or artwork storage
